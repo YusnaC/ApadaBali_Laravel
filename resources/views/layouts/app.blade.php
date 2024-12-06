@@ -32,17 +32,19 @@
 
     <!-- MAIN CONTENT -->
     <section id="main-content" class="col-md-12">
-      <div class="flex-grow-1 p-4 mt-2">
+      <div class="main-content p-4 mt-2">
         @yield('content') <!-- Content area to be injected here -->
       </div>
     </section>
 
-    @include('layouts.footer') <!-- Include Footer -->
+  <!-- FOOTER -->
+    @include('layouts.footer') 
+    
     <!-- Scripts -->
     <script>
   const sidebar = document.getElementById("sidebar");
   const toggleButton = document.getElementById("burgerButton");
-  const mainContent = document.querySelector(".flex-grow-1");
+  const mainContent = document.querySelector(".dashboard-content");
   const maincontent = document.getElementById("mainContent");
   // Fungsi untuk toggle sidebar
 //   toggleButton.addEventListener("click", () => {
@@ -83,11 +85,11 @@ toggleButton.addEventListener("click", () => {
     sidebar.style.transform = sidebar.style.transform === "translateX(0%)" ? "translateX(-100%)" : "translateX(0%)";
 
     if (isSidebarVisible) {
-      mainContent.classList.remove("flex-grow-1"); // Hilangkan class
-      maincontent.classList.remove("flex-grow-1")
+      mainContent.classList.remove("dashboard-content"); // Hilangkan class
+      maincontent.classList.remove("dashboard-content")
     } else {
-      mainContent.classList.add("flex-grow-1"); // Tambahkan class
-      maincontent.classList.add("flex-grow-1"); // Tambahkan class
+      mainContent.classList.add("dashboard-content"); // Tambahkan class
+      maincontent.classList.add("dashboard-content"); // Tambahkan class
 
     }
   }
