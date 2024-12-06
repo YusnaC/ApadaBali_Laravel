@@ -37,6 +37,7 @@
       </div>
     </section>
 
+    @include('layouts.footer') <!-- Include Footer -->
     <!-- Scripts -->
     <script>
   const sidebar = document.getElementById("sidebar");

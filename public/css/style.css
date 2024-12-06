@@ -349,3 +349,7 @@ select.form-select-sm {
     display: block;
   }
 } */
+
+.footer {
+  text-align: right;
+}

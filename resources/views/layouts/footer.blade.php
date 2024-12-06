@@ -1,3 +1,3 @@
 <footer class="footer">
-    <p>&copy; {{ date('Y') }} All Rights Reserved</p>
+  <p class="footer-text">Copyright &copy; ApadaBali {{ date('Y') }} All Rights Reserved</p>
 </footer>
