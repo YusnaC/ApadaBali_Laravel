@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+//import controller
+use App\Http\Controllers\ProjectController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,6 +60,8 @@ Route::get('/Ubah-Profile', function () {
 Route::get('/Detail-Progres-Proyek', function () {
     return view('detailProgres');
 });
+
+Route::get('/projects', [App\Http\Controllers\ProjectController::class, 'index'])->name('projects.index');
 
 
 

@@ -1,0 +1,59 @@
+  /* Header Tabel */
+  thead th {
+    text-align: center;
+    font-size: 0.875rem; /* Ukuran font lebih kecil */
+    background-color: #edf2f7; /* Warna header abu-abu muda */
+    color: #333;
+    font-weight: 600;
+  }
+
+  /* Ikon Sorting */
+  th a {
+    color: #333;
+    margin-left: 5px;
+    text-decoration: none;
+  }
+
+  th a:hover {
+    color: #007bff;
+  }
+
+  /* Tombol Tambah */
+  .btn-add {
+    background-color: #e3342f;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: bold;
+    border: none;
+  }
+
+  .btn-add:hover {
+    background-color: #d32928;
+  }
+
+  /* Pagination */
+  .pagination {
+    margin: 0;
+  }
+
+  .pagination li a {
+    font-size: 0.875rem;
+    color: #333;
+  }
+
+  .pagination li.active a {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+  }
+
+  /* Search Input */
+  .form-control-sm {
+    font-size: 0.875rem;
+    border-radius: 5px;
+  }
+
+  /* Tombol Edit & Hapus */
+  .btn-sm {
+    font-size: 0.75rem;
+  }

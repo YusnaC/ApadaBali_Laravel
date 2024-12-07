@@ -20,6 +20,8 @@
     />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/tableStyle.css') }}" />
+
     <title>@yield('title', 'ApadaStudio - Admin Page')</title>
   </head>
 
