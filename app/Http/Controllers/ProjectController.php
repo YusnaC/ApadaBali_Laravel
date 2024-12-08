@@ -46,11 +46,11 @@ class ProjectController extends Controller
         $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
     
         // Pagination
-        $perPage = 10;
+        $perPage = $request->query('entries', 10); // Ambil nilai 'entries' dari query string
         $currentPage = $request->query('page', 1);
         $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-        $total = $mappedProjects->count(); // Use count for total items
-    
+        $total = $mappedProjects->count();
+
         // Manually create a paginator object
         $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
             $pagedProjects, 
@@ -59,8 +59,8 @@ class ProjectController extends Controller
             $currentPage, 
             ['path' => $request->url(), 'query' => $request->query()]
         );
-    
-        return view('projects.index', [
+
+        return view('tables.index', [
             'projects' => $projectsPaginator,
             'total' => $total,
             'perPage' => $perPage,

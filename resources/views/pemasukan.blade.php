@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'pemasukan')
+@section('title', 'Tambah Data Pemasukan')
 
 @section('content')
 <section id="main-content" class="col-md-12 ms-md-7">

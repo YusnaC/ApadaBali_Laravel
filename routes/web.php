@@ -54,14 +54,16 @@ Route::get('/Tambah-Data-Klien', function () {
 Route::get('/Ubah-Data-Klien', function () {
     return view('editKlien');
 });
-Route::get('/Ubah-Profile', function () {
+Route::get('/Profile', function () {
     return view('editProfile');
 });
 Route::get('/Detail-Progres-Proyek', function () {
     return view('detailProgres');
 });
 
-Route::get('/projects', [App\Http\Controllers\ProjectController::class, 'index'])->name('projects.index');
+Route::get('/Pencatatan-Proyek', [App\Http\Controllers\ProjectController::class, 'index'])->name('tables.index');
+
+
 
 
 

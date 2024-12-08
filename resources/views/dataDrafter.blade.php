@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'dataDrafter')
+@section('title', 'Tambah Data Drafter')
 
 @section('content')
 <section id="main-content" class="col-md-12 ms-md-7">

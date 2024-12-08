@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'editFurniture')
+@section('title', 'Ubah Data Furniture')
 
 @section('content')
 <section id="main-content" class="col-md-12 ms-md-7">

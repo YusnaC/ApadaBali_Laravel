@@ -6,7 +6,7 @@
 
 @section('content')
 <section id="main-content" class="col-md-12">
-      <div id="mainContent" class="dashboard-content p-4 ">
+      <div id="mainContent" class="dashboard-content px-4 mt-3 mb-3 ">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="fw-bold">Dashboard</h3>
         </div>
@@ -104,7 +104,7 @@
         </div>
         <!-- Bagian chart -->
         <div class="container mt-5">
-            <div class="row g-5">
+            <div class="row g-4">
                 <!-- Kolom 1: Rincian Proyek -->
                 <div class="col-md-6">
                 <div class="barchart bg-white p-3 shadow-sm">

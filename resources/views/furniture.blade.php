@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'furniture')
+@section('title', 'Tambah Data Furniture')
 
 @section('content')
 <section id="main-content" class="col-md-12 ms-md-7">

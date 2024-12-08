@@ -11,6 +11,8 @@
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -65,7 +67,7 @@
     }
   });
 
-  // Pastikan sidebar tertutup saat transisi dari desktop ke mobile
+// Pastikan sidebar tertutup saat transisi dari desktop ke mobile
 //   window.addEventListener("resize", () => {
 //     if (window.innerWidth > 767) {
 //       sidebar.classList.add("open"); // Sidebar tampil otomatis di desktop

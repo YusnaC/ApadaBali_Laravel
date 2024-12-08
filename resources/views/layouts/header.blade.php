@@ -1,5 +1,5 @@
 <section id="header">
-  <header class="bg-white py-2 px-5">
+  <header class="shadow-sm py-2 px-5">
     <div class="d-flex align-items-center">
       <div class="wrap d-flex align-items-center">
         <button class="btn btn-toggle p-0" id="burgerButton">
@@ -13,7 +13,7 @@
         <i class="bx bx-bell fs-4 text-secondary me-4"></i>
         <div class="vertical-divider"></div>
         <div class="dropdown me-4">
-          <button class="btn dropdown-toggle text-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn-admin dropdown-toggle text-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Admin
           </button>
           <ul class="dropdown-menu mt-3">

@@ -6,7 +6,6 @@
     padding: 0;
     font-family: "Poppins", sans-serif;
 }
-
 :root {
     --primary: #ff6842;
     --secondary: #797a7c;
@@ -18,6 +17,7 @@
     --edit: #0061f2;
     --delete: #da0909;
     --hover: #ffd9d0;
+    --lightblue: #e6f2ff;
 }
 body {
     background: var(--body-clr);
@@ -167,6 +167,9 @@ li {
 }
 
 /* ============================ HEADER ============================*/
+#header {
+    background-color: var(--sidebar);
+}
 #header .wrap {
     margin-left: 20%;
 }
@@ -176,23 +179,32 @@ li {
     background-color: var(--secondary);
     margin-right: 1rem;
 }
-.dropdown .btn:focus {
-    outline: none;
+.dropdown .btn-admin {
+    border: none;
+    font-size: 1rem;
+    background-color: transparent;
+}
+.dropdown .btn-admin:focus {
     box-shadow: none;
+    border: none;
+}
+.dropdown-menu .dropdown-item {
+    transition: transform 0.1s ease-in-out;
 }
 .dropdown-menu .dropdown-item:hover {
-    background-color: var(--hover);
-    color: var(--text-clr);
-}
-.dropdown-menu .dropdown-item:active {
     background-color: var(--primary);
     color: var(--sidebar);
+}
+.dropdown-menu .dropdown-item:active {
+    background-color: #d2593b;
+    color: var(--sidebar);
+    transform: scale(0.95);
 }
 .dropdown-menu .dropdown-item {
     color: var(--secondary);
 }
 .dropdown-menu .dropdown-item i {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     margin-right: 10px;
 }
 .bx.bx-bell {
@@ -206,6 +218,9 @@ li {
 }
 
 /* ============================ MAIN CONTENT ============================*/
+.pencatatan-proyek-content {
+    margin-left: 7rem;
+}
 .main-content,
 .dashboard-content,
 .proyek-content,
@@ -213,7 +228,6 @@ li {
 .pemasukan-content {
     margin-left: 9rem;
 }
-
 .card {
     border-radius: 1rem;
 }
@@ -234,7 +248,7 @@ li {
     outline: none;
     box-shadow: none;
     background-color: var(--primary);
-    color: white;
+    color: var(--sidebar);
 }
 .btn-card {
     background-color: var(--hover);
@@ -243,6 +257,7 @@ li {
     padding: 0.8rem;
     border-radius: 0.5rem;
     border: none;
+    transition: transform 0.1s ease-in-out;
 }
 .btn-card:hover {
     background-color: var(--primary);
@@ -251,8 +266,9 @@ li {
 .btn-card:hover:active {
     outline: none;
     box-shadow: none;
-    background-color: var(--primary);
+    background-color: #d2593b;
     color: var(--sidebar);
+    transform: scale(0.95);
 }
 .btn-card i {
     font-size: 1.2rem;
@@ -285,7 +301,6 @@ canvas {
     margin: -1rem -1rem 0 -1rem;
     text-align: left;
 }
-
 .barchart {
     border: 1px solid #dfdfdf;
     border-radius: 20px;
@@ -308,8 +323,13 @@ button:focus {
     padding: 1rem 3rem;
     border-radius: 0.5rem;
     border: none;
+    transition: transform 0.1s ease-in-out;
 }
-
+.btn-save:active {
+    background-color: #d2593b;
+    color: var(--sidebar);
+    transform: scale(0.95);
+}
 #sidebar {
     position: fixed;
     left: 0;
@@ -321,7 +341,6 @@ button:focus {
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
 }
-
 #sidebar.open {
     transform: translateX(0); /* Sidebar terbuka */
 }
