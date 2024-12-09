@@ -5,9 +5,9 @@
 @section('content')
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-proyek-content">
-        <div class="row justify-content-center">
-            <div class="col-lg-11">
-                <div class="card shadow-sm rounded-0 p-3">
+        <div class="row">
+            <div class="col-lg-20">
+                <div class="card shadow-sm rounded-0">
                     <div class="card-body">
                         <h4 class="mb-4 fw-bold">Pencatatan Proyek</h4>
                             <!-- Tombol Tambah dan Search -->
@@ -53,17 +53,17 @@
                                 <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
-                                            Id Proyek  
-                                            <div>       
+                                <th>
+                                    <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white  header-link">
+                                        Id Proyek
+                                        <span class="sort-icons">
                                             <i class="bx bxs-up-arrow {{ $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
                                             <i class="bx bxs-down-arrow {{ $sortField === 'id_proyek' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                            </div>
-                                        </a>
-                                    </th>
+                                        </span>
+                                    </a>
+                                </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'kategori', 'direction' => $sortField === 'kategori' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'kategori', 'direction' => $sortField === 'kategori' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                             Kategori
                                             <div>
                                             <i class="bx bxs-up-arrow {{ $sortField === 'kategori' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -72,7 +72,7 @@
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'tgl_proyek', 'direction' => $sortField === 'tgl_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'tgl_proyek', 'direction' => $sortField === 'tgl_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                             Tgl Proyek
                                             <div>
                                             <i class="bx bxs-up-arrow {{ $sortField === 'tgl_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -81,7 +81,7 @@
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'nama_proyek', 'direction' => $sortField === 'nama_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'nama_proyek', 'direction' => $sortField === 'nama_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                             Nama Proyek
                                             <div>
                                             <i class="bx bxs-up-arrow {{ $sortField === 'nama_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -90,7 +90,7 @@
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'lokasi', 'direction' => $sortField === 'lokasi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'lokasi', 'direction' => $sortField === 'lokasi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                             Lokasi
                                             <div>
                                             <i class="bx bxs-up-arrow {{ $sortField === 'lokasi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -99,7 +99,7 @@
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'jenis', 'direction' => $sortField === 'jenis' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'jenis', 'direction' => $sortField === 'jenis' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                             Jenis
                                             <div>
                                             <i class="bx bxs-up-arrow {{ $sortField === 'jenis' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -108,25 +108,25 @@
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'luas', 'direction' => $sortField === 'luas' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'luas', 'direction' => $sortField === 'luas' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                             Luas (m²)
-                                            <div>
-                                            <i class="bx bxs-up-arrow {{ $sortField === 'luas' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                            <i class="bx bxs-down-arrow {{ $sortField === 'luas' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                            <div class="sort-icons">
+                                                <i class="bx bxs-up-arrow {{ $sortField === 'luas' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                                <i class="bx bxs-down-arrow {{ $sortField === 'luas' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
                                             </div>
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'jumlah_lantai', 'direction' => $sortField === 'jumlah_lantai' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'jumlah_lantai', 'direction' => $sortField === 'jumlah_lantai' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                             Jumlah Lantai
-                                            <div>
-                                            <i class="bx bxs-up-arrow {{ $sortField === 'jumlah_lantai' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                            <i class="bx bxs-down-arrow {{ $sortField === 'jumlah_lantai' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                            <div class="sort-icons">
+                                                <i class="bx bxs-up-arrow {{ $sortField === 'jumlah_lantai' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                                <i class="bx bxs-down-arrow {{ $sortField === 'jumlah_lantai' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
                                             </div>
                                         </a>
                                     </th>
                                     <th>
-                                    <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'tgl_deadline', 'direction' => $sortField === 'tgl_deadline' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-row align-items-center">
+                                    <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'tgl_deadline', 'direction' => $sortField === 'tgl_deadline' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                         Tgl Deadline
                                         <div>
                                             <i class="bx bxs-up-arrow {{ $sortField === 'tgl_deadline' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -135,7 +135,7 @@
                                     </a>
                                     </th>
                                     <th>
-                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'id_drafter', 'direction' => $sortField === 'id_drafter' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white d-flex flex-column align-items-center">
+                                        <a href="{{ route('tables.index', array_merge(request()->query(), ['sort' => 'id_drafter', 'direction' => $sortField === 'id_drafter' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link ">
                                             Id Drafter
                                             <div>
                                             <i class="bx bxs-up-arrow {{ $sortField === 'id_drafter' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -143,7 +143,9 @@
                                             </div>
                                         </a>
                                     </th>
-                                    <th>Aksi</th>
+                                    <th>
+                                        <a class="text-white header-link">Aksi</a>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>

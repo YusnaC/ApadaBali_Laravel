@@ -11,6 +11,7 @@
     --hover: #ffd9d0;
     --lightblue: #e6f2ff;
 }
+
 /* ========================== Header Tabel ========================== */
 thead {
     background-color: var(--edit);
@@ -18,33 +19,25 @@ thead {
 }
 thead th {
     text-align: center;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: bold;
 }
 
 /* Ikon Sorting */
-.bx.bxs-up-arrow,
+/* .bx.bxs-up-arrow,
 .bx.bxs-down-arrow {
     display: block;
     font-size: 0.8rem;
     transition: color 0.3s ease;
 }
-/* Warna aktif untuk segitiga atas */
-.bx.bxs-up-arrow.active {
-    color: #fff;
-}
-/* Warna non-aktif untuk segitiga atas */
-.bx.bxs-up-arrow.inactive {
-    color: rgba(255, 255, 255, 0.6);
-}
-/* Warna aktif untuk segitiga bawah */
+.bx.bxs-up-arrow.active,
 .bx.bxs-down-arrow.active {
     color: #fff;
 }
-/* Warna non-aktif untuk segitiga bawah */
+.bx.bxs-up-arrow.inactive,
 .bx.bxs-down-arrow.inactive {
     color: rgba(255, 255, 255, 0.6);
-}
+} */
 
 /* ========================== Search Input & Entries ========================== */
 .form-select-entries {
@@ -68,7 +61,7 @@ thead th {
 }
 .input-group-text i {
     font-size: 1.3rem;
-    color: var(var(--secondary));
+    color: var(--secondary);
 }
 .input-group-text {
     display: flex;
@@ -106,57 +99,30 @@ thead th {
     color: var(--sidebar);
     transform: scale(0.95);
 }
+
 /* ========================== Isi Tabel ========================== */
-tbody td {
-    font-size: 0.8rem;
+table {
+    width: 100%;
+    table-layout: fixed; /* Tetapkan ukuran kolom secara otomatis */
+    border-collapse: collapse;
 }
+
+thead, tbody td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 1px;
+    word-wrap: break-word; /* Membungkus kata panjang agar sesuai dengan kolom */
+    font-size: 0.9rem;
+}
+
+/* Warna baris ganjil dan genap */
 tbody tr:nth-child(odd) {
-    background-color: var(--sidebar); /* Warna putih untuk baris ganjil */
+    background-color: var(--sidebar);
 }
 tbody tr:nth-child(even) {
-    background-color: var(--lightblue); /* Warna biru muda untuk baris genap */
+    background-color: var(--lightblue);
 }
-/* lebar per-kolom */
-.table th:nth-child(1),
-.table td:nth-child(1) {
-    width: 90px;
-}
-.table th:nth-child(2),
-.table td:nth-child(2) {
-    width: 100px;
-}
-.table th:nth-child(3),
-.table td:nth-child(3) {
-    width: 110px;
-}
-.table th:nth-child(4),
-.table td:nth-child(4) {
-    width: 120px;
-}
-.table th:nth-child(5),
-.table td:nth-child(5) {
-    width: 120px;
-}
-.table th:nth-child(6),
-.table td:nth-child(6) {
-    width: 90px;
-}
-.table th:nth-child(7),
-.table td:nth-child(7) {
-    width: 70px;
-}
-.table th:nth-child(8),
-.table td:nth-child(8) {
-    width: 70px;
-}
-.table th:nth-child(9),
-.table td:nth-child(9) {
-    width: 90px;
-}
-.table th:nth-child(10),
-.table td:nth-child(10) {
-    width: 90px;
-}
+
 /* ========================== Pagination ========================== */
 .pagination {
     margin: 0;
@@ -178,23 +144,20 @@ tbody tr:nth-child(even) {
 /* ========================== Tombol Edit & Hapus ========================== */
 .button-container {
     display: flex;
-    gap: 0.3rem;
+    gap: 8px;
+    justify-content: center;
 }
 .btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
-    padding: 0.7rem 0.9rem;
+    padding: 0.5rem 0.5rem;
     border: none;
     border-radius: 0.5rem;
     font-size: 0.8rem;
-    font-weight: 500;
     cursor: pointer;
     transition: transform 0.1s ease-in-out;
-}
-.btn-edit i,
-.btn-delete i {
-    font-size: 0.8rem;
 }
 .btn-edit {
     background-color: var(--edit);
@@ -212,15 +175,43 @@ tbody tr:nth-child(even) {
     background-color: var(--sidebar);
     border: 1px solid var(--hover);
     color: var(--delete);
-    padding: 0.5rem 0.7rem;
-}
-.btn-delete:hover {
-    border: 1px solid var(--hover);
-    color: var(--delete);
-    padding: 0.5rem 0.7rem;
 }
 .btn-delete:active {
     background-color: var(--delete);
     color: var(--sidebar);
     transform: scale(0.95);
+}
+
+/* Header kolom khusus untuk Luas (m²) dan Jumlah Lantai */
+.header-link {
+    display: flex; /* Gunakan Flexbox untuk mengatur tata letak */
+    align-items: center; /* Pusatkan secara vertikal */
+    justify-content: space-between; /* Jarak antara teks dan ikon */
+    color: white; /* Warna putih untuk teks dan ikon */
+    text-decoration: none; /* Hapus garis bawah */
+    padding: 10px; /* Tambahkan padding agar lebih rapi */
+    gap: 5px; /* Atur jarak antar elemen */
+}
+
+.sort-icons {
+    display: flex;
+    flex-direction: column; /* Atur ikon dalam kolom vertikal */
+    justify-content: center; /* Pusatkan ikon */
+    align-items: center;
+    gap: 2px; /* Tambahkan jarak antar ikon */
+    line-height: 1; /* Pastikan ikon saling berdekatan */
+}
+
+.bx {
+    font-size: 1rem; /* Sesuaikan ukuran ikon */
+    cursor: pointer;
+    transition: color 0.3s ease; /* Animasi untuk perubahan warna */
+}
+
+.bx.active {
+    color: #fff; /* Warna ikon aktif */
+}
+
+.bx.inactive {
+    color: rgba(255, 255, 255, 0.6); /* Warna ikon tidak aktif */
 }

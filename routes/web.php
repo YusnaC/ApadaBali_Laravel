@@ -63,6 +63,8 @@ Route::get('/Detail-Progres-Proyek', function () {
 
 Route::get('/Pencatatan-Proyek', [App\Http\Controllers\ProjectController::class, 'index'])->name('tables.index');
 
+//untuk logout, untuk login cara sama cuman berbeda behavior
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 
