@@ -5,90 +5,103 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="mb-4">
-    <!-- Title Row -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">Dashboard</h3>
-    </div>
-
-    <div class="row">
-        <!-- Card 1: Total Proyek -->
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-body">
-                    <!-- Card Header with Icon -->
-                    <div class="card-icon d-flex justify-content-between align-items-center">
-                        <h5 class="text-secondary">Total Proyek</h5>
-                        <img src="./icon/total proyek.svg" alt="icon" />
-                    </div>
-                    <!-- Card Text: Display the total number of projects -->
-                    <p class="card-text mt-3">150</p>
-                    <!-- Card Button: Link to view all projects -->
-                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
-                        Lihat Proyek
-                        <i class="bx bx-chevron-right ms-2"></i>
-                    </a>
+<section id="main-content" class="col-md-12">
+      <div id="mainContent" class="dashboard-content px-4 mt-3 mb-3 ">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-bold">Dashboard</h3>
+        </div>
+        <div class="row">
+          <!-- Card 1 total proyek -->
+          <div class="col-sm-3">
+            <div class="card ">
+              <div class="card-body">
+                <div
+                  class="card-icon d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="text-secondary">Total Proyek</h5>
+                  <img src="./icon/total proyek.svg" alt="icon" />
                 </div>
+                <p class="card-text mt-3">150</p>
+                <a
+                  href="#"
+                  class="w-100 d-flex justify-content-start align-items-center btn-card position-relative"
+                >
+                  Lihat Proyek
+                  <i class="bx bx-chevron-right position-absolute end-0  me-2  align-item-center"></i>
+                </a>
+              </div>
             </div>
         </div>
 
         <!-- Card 2: Total Pendapatan -->
         <div class="col-sm-3">
             <div class="card">
-                <div class="card-body">
-                    <!-- Card Header with Icon -->
-                    <div class="card-icon d-flex justify-content-between align-items-center">
-                        <h5 class="text-secondary">Total Pendapatan</h5>
-                        <img src="./icon/Total Pendapatan.svg" alt="icon" />
-                    </div>
-                    <!-- Card Text: Display the total revenue -->
-                    <p class="card-text mt-3">Rp 20,000,000</p>
-                    <!-- Card Button: Link to view revenue details -->
-                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
-                        Lihat Pendapatan
-                        <i class="bx bx-chevron-right ms-2"></i>
-                    </a>
+              <div class="card-body">
+                <div
+                  class="card-icon d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="text-secondary">Total Pendapatan</h5>
+                  <img
+                    src="./icon/Total Pendapatan.svg"
+                    alt="icon"
+                  />
                 </div>
+                <p class="card-text mt-3">Rp 20,000,000</p>
+                <a
+                  href="#"
+                  class="w-100 d-flex justify-content-start align-items-center btn-card position-relative"
+                >
+                  Lihat Pendapatan
+                  <i class="bx bx-chevron-right position-absolute end-0  me-2  align-item-center"></i>
+                </a>
+              </div>
             </div>
         </div>
 
         <!-- Card 3: Total Klien -->
         <div class="col-sm-3">
             <div class="card">
-                <div class="card-body">
-                    <!-- Card Header with Icon -->
-                    <div class="card-icon d-flex justify-content-between align-items-center">
-                        <h5 class="text-secondary">Total Klien</h5>
-                        <img src="./icon/Total Klien.svg" alt="icon" />
-                    </div>
-                    <!-- Card Text: Display the total number of clients -->
-                    <p class="card-text">110</p>
-                    <!-- Card Button: Link to view client details -->
-                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
-                        Lihat Klien
-                        <i class="bx bx-chevron-right ms-2"></i>
-                    </a>
+              <div class="card-body">
+                <div
+                  class="card-icon d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="text-secondary">Total Klien</h5>
+                  <img src="./icon/Total Klien.svg" alt="icon" />
                 </div>
+                <p class="card-text">110</p>
+                <a
+                  href="#"
+                  class="w-100 d-flex justify-content-start align-items-center btn-card position-relative"
+                >
+                  Lihat Klien
+                  <i class="bx bx-chevron-right position-absolute end-0  me-2  align-item-center"></i>
+                </a>
+              </div>
             </div>
         </div>
 
         <!-- Card 4: Proyek Berjalan -->
         <div class="col-sm-3">
             <div class="card">
-                <div class="card-body">
-                    <!-- Card Header with Icon -->
-                    <div class="card-icon d-flex justify-content-between align-items-center">
-                        <h5 class="text-secondary">Proyek Berjalan</h5>
-                        <img src="./icon/Proyek Berjalan.svg" alt="icon" />
-                    </div>
-                    <!-- Card Text: Display the number of ongoing projects -->
-                    <p class="card-text">10</p>
-                    <!-- Card Button: Link to view project progress -->
-                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
-                        Lihat Progres
-                        <i class="bx bx-chevron-right ms-2"></i>
-                    </a>
+              <div class="card-body">
+                <div
+                  class="card-icon d-flex justify-content-between align-items-center"
+                >
+                  <h5 class="text-secondary">Proyek Berjalan</h5>
+                  <img
+                    src="./icon/Proyek Berjalan.svg"
+                    alt="icon"
+                  />
                 </div>
+                <p class="card-text">10</p>
+                <a
+                  href="#"
+                  class="w-100 d-flex justify-content-start align-items-center btn-card position-relative"
+                >
+                  Lihat Progres
+                  <i class="bx bx-chevron-right position-absolute end-0  me-2  align-item-center"></i>
+                </a>
+              </div>
             </div>
         </div>
     </div>

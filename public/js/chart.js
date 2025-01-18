@@ -119,6 +119,14 @@ const projectChart = new Chart(projectCtx, {
             },
         ],
     },
+    // options: {
+    //     responsive: true,
+    //     scales: {
+    //         y: {
+    //             beginAtZero: true,
+    //         },
+    //     },
+    // },
     options: {
         responsive: true,
         plugins: {
@@ -149,8 +157,21 @@ const revenueChart = new Chart(revenueCtx, {
             },
         ],
     },
+    // options: {
+    //     responsive: true,
+    //     scales: {
+    //         y: {
+    //             beginAtZero: true,
+    //         },
+    //     },
+    // },
     options: {
         responsive: true,
+        plugins: {
+            legend: {
+                display: false, // Hilangkan label
+            },
+        },
         scales: {
             y: {
                 beginAtZero: true,
