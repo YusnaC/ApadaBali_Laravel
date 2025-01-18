@@ -21,7 +21,6 @@
 }
 body {
     background: var(--body-clr);
-    height: 100vh;
     cursor: default;
 }
 a {
@@ -131,6 +130,35 @@ li {
     filter: brightness(0) invert(1);
 }
 
+/* ============================ SWEET ALERT LOGOUT ============================*/
+.custom-popup {
+    background-color: var(--sidebar);
+    border-radius: 1rem;
+    padding: 0 1rem 2rem 1rem;
+    font-family: "Poppins", sans-serif;
+}
+.custom-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-clr);
+}
+.custom-confirm-button {
+    background-color: var(--sidebar);
+    color: var(--sidebar);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+}
+.custom-cancel-button {
+    background-color: var(--primary);
+    color: var(--secondary);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+}
+
 /* ============================ SIDEBAR DROPDOWN MENU ============================*/
 #sidebar .slide-dropdown {
     padding-left: 2.3rem;
@@ -206,6 +234,7 @@ li {
 .dropdown-menu .dropdown-item i {
     font-size: 1.3rem;
     margin-right: 10px;
+    transition: none;
 }
 .bx.bx-bell {
     cursor: pointer;
@@ -220,13 +249,6 @@ li {
 /* ============================ MAIN CONTENT ============================*/
 .pencatatan-proyek-content {
     margin-left: 10.5rem;
-}
-.main-content,
-.dashboard-content,
-.proyek-content,
-.furniture-content,
-.pemasukan-content {
-    margin-left: 9rem;
 }
 .card {
     border-radius: 1rem;

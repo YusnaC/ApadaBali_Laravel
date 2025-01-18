@@ -106,15 +106,14 @@ table {
     table-layout: fixed; /* Tetapkan ukuran kolom secara otomatis */
     border-collapse: collapse;
 }
-
-thead, tbody td {
+thead,
+tbody td {
     text-align: center;
     vertical-align: middle;
     padding: 1px;
     word-wrap: break-word; /* Membungkus kata panjang agar sesuai dengan kolom */
     font-size: 0.9rem;
 }
-
 /* Warna baris ganjil dan genap */
 tbody tr:nth-child(odd) {
     background-color: var(--sidebar);
@@ -176,8 +175,11 @@ tbody tr:nth-child(even) {
     border: 1px solid var(--hover);
     color: var(--delete);
 }
+.btn-delete:hover {
+    color: var(--delete);
+}
 .btn-delete:active {
-    background-color: var(--delete);
+    background-color: var(--hover);
     color: var(--sidebar);
     transform: scale(0.95);
 }

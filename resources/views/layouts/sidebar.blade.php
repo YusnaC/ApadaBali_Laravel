@@ -1,12 +1,10 @@
-<!-- resources/views/layouts/sidebar.blade.php -->
-
-<section id="sidebar" class="sidebar col-md-3 h-100 shadow">
+<section id="sidebar" class="sidebar col-md-3 h-100 shadow position-fixed top-0 start-0" style="z-index: 1050;">
   <div class="company-logo d-flex justify-content-center align-items-center">
     <img src="{{ asset('icon/Logo.svg') }}" alt="Logo" class="logo-img me-3" />
     <h4 class="fw-bold">Apada<span class="text-span">Bali</span></h4>
   </div>
   <ul class="side-menu">
-    <li><a href="/"><img src="{{ asset('icon/dashboard.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />Dashboard</a></li>
+    <li><a href="/dashboard-admin"><img src="{{ asset('icon/dashboard.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />Dashboard</a></li>
     <hr class="line-divider" />
     <li class="text-divider fw-bold mt-4">DATA</li>
     <li>
@@ -15,8 +13,8 @@
         Pencatatan <i class="bx bx-chevron-right icon-right"></i>
       </a>
       <ul class="slide-dropdown">
-        <li><a href="#">Proyek</a></li>
-        <li><a href="#">Furniture</a></li>
+        <li><a href="/Pencatatan-Proyek">Proyek</a></li>
+        <li><a href="/Pencatatan-Furniture">Furniture</a></li>
       </ul>
     </li>
     <li>
@@ -26,7 +24,7 @@
       </a>
     </li>
     <li>
-      <a href=>
+      <a href="#">
         <img src="{{ asset('icon/manajemen keuangan.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />
         Manajemen Keuangan <i class="bx bx-chevron-right icon-right"></i>
       </a>
@@ -67,4 +65,3 @@
   </ul>
   <img src="{{ asset('icon/sidebar element.svg') }}" alt="element" class="element-sidebar mt-3" />
 </section>
-

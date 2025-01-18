@@ -36,7 +36,7 @@
 
     <!-- MAIN CONTENT -->
     <section id="main-content" class="col-md-12">
-      <div class="main-content p-4 mt-2">
+      <div class="main-content px-5" style="margin: 7rem 0 0 18rem;">
         @yield('content') <!-- Content area to be injected here -->
       </div>
     </section>

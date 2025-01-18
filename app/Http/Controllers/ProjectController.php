@@ -19,13 +19,13 @@ class ProjectController extends Controller
             return [
                 'id_proyek' => 'ASB' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
                 'kategori' => $index % 2 === 0 ? 'Proyek Arsitektur' : 'Jasa',
-                'tgl_proyek' => now()->subDays($index)->format('Y-m-d'),
+                'tgl_proyek' => now()->subDays($index)->format('d-m-Y'),
                 'nama_proyek' => 'Proyek ' . ($index + 1),
                 'lokasi' => 'Jl. Kamboja',
                 'jenis' => 'Perumahan',
                 'luas' => 500,
                 'jumlah_lantai' => 3,
-                'tgl_deadline' => now()->addDays(30)->format('Y-m-d'),
+                'tgl_deadline' => now()->addDays(30)->format('d-m-Y'),
                 'id_drafter' => 'D000' . ($index + 1),
             ];
         });

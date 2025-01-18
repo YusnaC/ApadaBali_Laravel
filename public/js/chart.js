@@ -121,6 +121,11 @@ const projectChart = new Chart(projectCtx, {
     },
     options: {
         responsive: true,
+        plugins: {
+            legend: {
+                display: false, // Hilangkan label
+            },
+        },
         scales: {
             y: {
                 beginAtZero: true,

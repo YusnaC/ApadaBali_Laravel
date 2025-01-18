@@ -3,8 +3,7 @@
 @section('title', 'Tambah Data Pengeluaran')
 
 @section('content')
-<section id="main-content" class="col-md-12 ms-md-7">
-    <div class="pemasukan-content">
+
         <!-- Back Button -->
         <div class="mb-4 ms-5">
             <a href="#" class="text-decoration-none text-dark d-inline-flex align-items-center">
@@ -54,6 +53,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</section>
+ 
+
 @endsection

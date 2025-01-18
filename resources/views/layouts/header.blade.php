@@ -1,5 +1,5 @@
 <section id="header">
-  <header class="shadow-sm py-2 px-5">
+  <header class="shadow-sm py-2 px-5 fixed-top bg-white">
     <div class="d-flex align-items-center">
       <div class="wrap d-flex align-items-center">
         <button class="btn btn-toggle p-0" id="burgerButton">
@@ -17,7 +17,11 @@
             Admin
           </button>
           <ul class="dropdown-menu mt-3">
-            <li><a class="dropdown-item d-flex align-items-center" href="/Ubah-Profile"><i class="bx bx-user-circle"></i>Profile</a></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/Profile">
+                <i class="bx bx-user-circle"></i> Profile
+              </a>
+            </li>
           </ul>
         </div>
         <img src="{{ asset('icon/right element.svg') }}" alt="element" class="icon" style="width: 100px; height: 50px" />
