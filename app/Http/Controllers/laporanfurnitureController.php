@@ -7,19 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
-class furnitureController extends Controller
+class laporanfurnitureController extends Controller
 {
-    public function furniture(Request $request)
+    public function laporanfurniture(Request $request)
     {
         // Ambil data dari API Dummy
         $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
     
         // Mapping data dummy agar sesuai dengan kebutuhan
-        $mappedProjects = collect($projects)->map(function ($project, $furniture) {
+        $mappedProjects = collect($projects)->map(function ($project, $laporanfurniture) {
             return [
-                'id_furniture' => 'AFB' . str_pad($furniture + 1, 4, '0', STR_PAD_LEFT),
-                'tgl_pembuatan' => now()->subDays($furniture)->format('d/m/Y'),          
-                'nama_furniture' => 'Furniture ' . ($furniture + 1),
+                'id_furniture' => 'AFB' . str_pad($laporanfurniture + 1, 4, '0', STR_PAD_LEFT),
+                'tgl_pembuatan' => now()->subDays($laporanfurniture)->format('d/m/Y'),          
+                'nama_furniture' => 'furniture ' . ($laporanfurniture + 1),
                 'jumlah_unit' => 3,
                 'harga_unit' => 1000000,
                 'lokasi' => 'Jl. Tukad Pakerisan',
@@ -57,7 +57,7 @@ class furnitureController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('tables.furniture', [
+        return view('tables.laporanfurniture', [
             'projects' => $projectsPaginator,
             'total' => $total,
             'perPage' => $perPage,

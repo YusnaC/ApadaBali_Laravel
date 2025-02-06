@@ -7,26 +7,25 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
-class ProjectController extends Controller
+class projectController extends Controller
 {
-    public function index(Request $request)
+    public function proyek(Request $request)
     {
         // Ambil data dari API Dummy
         $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
     
         // Mapping data dummy agar sesuai dengan kebutuhan
-        $mappedProjects = collect($projects)->map(function ($project, $index) {
+        $mappedProjects = collect($projects)->map(function ($project, $proyek) {
             return [
-                'id_proyek' => 'ASB' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
-                'kategori' => $index % 2 === 0 ? 'Proyek Arsitektur' : 'Jasa',
-                'tgl_proyek' => now()->subDays($index)->format('d-m-Y'),
-                'nama_proyek' => 'Proyek ' . ($index + 1),
-                'lokasi' => 'Jl. Kamboja',
-                'jenis' => 'Perumahan',
+                'id_proyek' => 'ASB' . str_pad($proyek + 1, 4, '0', STR_PAD_LEFT),
+                'kategori' => $proyek % 2 === 0 ? 'Proyek Arsitektur' : 'Jasa',
+                'tgl_proyek' => now()->subDays($proyek)->format('d/m/Y'),
+                'nama_proyek' => 'Proyek ' . ($proyek + 1),
+                'lokasi' => 'Jl. Tukad Pakerisan',
                 'luas' => 500,
                 'jumlah_lantai' => 3,
-                'tgl_deadline' => now()->addDays(30)->format('d-m-Y'),
-                'id_drafter' => 'D000' . ($index + 1),
+                'tgl_deadline' => now()->addDays(30)->format('d/m/Y'),
+                'id_drafter' => 'D000' . ($proyek + 1),
             ];
         });
     
@@ -60,7 +59,7 @@ class ProjectController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('tables.index', [
+        return view('tables.proyek', [
             'projects' => $projectsPaginator,
             'total' => $total,
             'perPage' => $perPage,

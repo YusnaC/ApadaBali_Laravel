@@ -6,7 +6,7 @@
 
 <!-- Back Button -->
 <div class="mb-4 ms-5">
-    <a href="#" class="text-decoration-none text-dark d-inline-flex align-items-center">
+    <a href="/Data-Drafter" class="text-decoration-none text-dark d-inline-flex align-items-center">
         <i class='bx bx-arrow-back fs-2'></i>
     </a>
 </div>

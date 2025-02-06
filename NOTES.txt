@@ -1,0 +1,19 @@
+CSS FILE : ./public/css/...
+- style.css -> general styling
+- tableStyle.css -> table styling
+
+ICON / IMAGES : ./public/icon
+
+JS (JAVASCRIPT) : ./public/js
+- buttonControl.js -> sweet alert for logout btn in the sidebar menu.
+- chart.js -> for charts in the admin dashboard
+
+
+All of the project files is in the : ./resources/views...
+The tables design is in the : ./resources/views/tables
+
+API configuration for temporary table data, located in : ./app/Http/Coontrollers
+
+To create a route page to display on localhost : ./routes/web.php
+
+RUN CODE in terminal : php artisan serve

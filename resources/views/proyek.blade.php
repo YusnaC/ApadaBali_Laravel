@@ -6,7 +6,7 @@
 
     <!-- Back Button -->
     <div class="mb-4 ms-5">
-        <a href="#" class="text-decoration-none text-dark d-inline-flex align-items-center">
+        <a href="/Pencatatan-Proyek" class="text-decoration-none text-dark d-inline-flex align-items-center">
             <i class='bx bx-arrow-back fs-2'></i>
         </a>
     </div>
@@ -47,15 +47,11 @@
                                 <input type="text" class="form-control" id="lokasi">
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="jenis" class="form-label">Jenis</label>
-                                <input type="text" class="form-control" id="jenis">
-                            </div>
-
-                            <!-- Baris 3 -->
-                            <div class="col-md-4 mb-3">
                                 <label for="luas" class="form-label">Luas</label>
                                 <input type="number" class="form-control" id="luas">
                             </div>
+
+                            <!-- Baris 3 -->
                             <div class="col-md-4 mb-3">
                                 <label for="jumlahLantai" class="form-label">Jumlah Lantai</label>
                                 <input type="number" class="form-control" id="jumlahLantai">
@@ -64,8 +60,6 @@
                                 <label for="tglDeadline" class="form-label">Tgl Deadline</label>
                                 <input type="date" class="form-control" id="tglDeadline">
                             </div>
-
-                            <!-- Baris 4 -->
                             <div class="col-md-4 mb-3">
                                 <label for="idDrafter" class="form-label">Id Drafter</label>
                                 <select class="form-select" id="idDrafter">

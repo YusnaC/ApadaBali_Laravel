@@ -11,11 +11,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 confirmButtonColor: "#FF6842",
                 confirmButtonText: "Yes, Logout",
                 cancelButtonText: "No, cancel!",
-                reverseButtons: true, // Membalik posisi tombol
+                reverseButtons: true,
 
                 customClass: {
-                    popup: "custom-popup", // Untuk seluruh modal
-                    title: "custom-title", // Untuk judul
+                    popup: "custom-popup",
+                    title: "custom-title",
                     cancelButton: "custom-cancel-button",
                     confirmButton: "custom-confirm-button",
                 },

@@ -19,7 +19,7 @@
                         <img src="./icon/total proyek.svg" alt="icon" />
                     </div>
                     <p class="card-text mt-3">150</p>
-                    <a href="#" class="w-100 d-flex justify-content-start align-items-center btn-card">
+                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
                         Lihat Proyek
                         <i class="bx bx-chevron-right ms-2"></i>
                     </a>
@@ -35,7 +35,7 @@
                         <img src="./icon/Total Pendapatan.svg" alt="icon" />
                     </div>
                     <p class="card-text mt-3">Rp 20,000,000</p>
-                    <a href="#" class="w-100 d-flex justify-content-start align-items-center btn-card">
+                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
                         Lihat Pendapatan
                         <i class="bx bx-chevron-right ms-2"></i>
                     </a>
@@ -51,7 +51,7 @@
                         <img src="./icon/Total Klien.svg" alt="icon" />
                     </div>
                     <p class="card-text">110</p>
-                    <a href="#" class="w-100 d-flex justify-content-start align-items-center btn-card">
+                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
                         Lihat Klien
                         <i class="bx bx-chevron-right ms-2"></i>
                     </a>
@@ -67,7 +67,7 @@
                         <img src="./icon/Proyek Berjalan.svg" alt="icon" />
                     </div>
                     <p class="card-text">10</p>
-                    <a href="#" class="w-100 d-flex justify-content-start align-items-center btn-card">
+                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card">
                         Lihat Progres
                         <i class="bx bx-chevron-right ms-2"></i>
                     </a>

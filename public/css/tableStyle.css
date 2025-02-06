@@ -17,27 +17,34 @@ thead {
     background-color: var(--edit);
     color: var(--sidebar);
 }
-thead th {
-    text-align: center;
-    font-size: 0.9rem;
-    font-weight: bold;
+
+.header-link {
+    display: flex; /* Gunakan Flexbox untuk mengatur tata letak */
+    align-items: center; /* Pusatkan secara vertikal */
+    justify-content: space-between; /* Pusatkan secara horizontal */
+    color: white; /* Warna putih untuk teks dan ikon */
+    text-decoration: none; /* Hapus garis bawah */
+    font-size: 0.8rem;
 }
 
-/* Ikon Sorting */
-/* .bx.bxs-up-arrow,
-.bx.bxs-down-arrow {
-    display: block;
+.sort-icons {
+    display: flex;
+    flex-direction: column; /* Atur ikon dalam kolom vertikal */
+    justify-content: center; /* Pusatkan ikon secara vertikal */
+    align-items: center;
+    line-height: 1; /* Pastikan ikon saling berdekatan */
     font-size: 0.8rem;
-    transition: color 0.3s ease;
+    cursor: pointer;
+    transition: color 0.3s ease; /* Animasi untuk perubahan warna */
 }
-.bx.bxs-up-arrow.active,
-.bx.bxs-down-arrow.active {
-    color: #fff;
+
+.bx.active {
+    color: #fff; /* Warna ikon aktif */
 }
-.bx.bxs-up-arrow.inactive,
-.bx.bxs-down-arrow.inactive {
-    color: rgba(255, 255, 255, 0.6);
-} */
+
+.bx.inactive {
+    color: rgba(255, 255, 255, 0.6); /* Warna ikon tidak aktif */
+}
 
 /* ========================== Search Input & Entries ========================== */
 .form-select-entries {
@@ -67,7 +74,6 @@ thead th {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 1rem;
     color: var(--secondary);
     border: none;
     background: none;
@@ -85,7 +91,7 @@ thead th {
     border-color: var(--secondary);
 }
 
-/* ========================== Tombol Tambah ========================== */
+/* ========================== Tombol Tambah & EXPORT ========================== */
 .btn-add {
     background-color: var(--primary);
     border-radius: 0.5rem;
@@ -94,12 +100,39 @@ thead th {
     border: none;
     transition: transform 0.1s ease-in-out;
 }
+.btn-add:hover {
+    color: var(--sidebar);
+}
 .btn-add:active {
     background-color: #d2593b;
     color: var(--sidebar);
     transform: scale(0.95);
 }
 
+.btn-export {
+    background-color: var(--primary);
+    border-radius: 0.5rem;
+    color: var(--sidebar);
+    padding: 1rem 2rem;
+    font-size: 0.875rem;
+    border: none;
+    transition: transform 0.1s ease-in-out;
+}
+.btn-export:hover {
+    color: var(--sidebar);
+}
+.btn-export:active {
+    background-color: #d2593b;
+    color: var(--sidebar);
+    transform: scale(0.95);
+}
+/* ICON CALENDER TGL AWAL & AKHIR */
+.form-control {
+    border-right: none;
+}
+.form-select option:first-child {
+    color: #6c757d;
+}
 /* ========================== Isi Tabel ========================== */
 table {
     width: 100%;
@@ -112,7 +145,7 @@ tbody td {
     vertical-align: middle;
     padding: 1px;
     word-wrap: break-word; /* Membungkus kata panjang agar sesuai dengan kolom */
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 /* Warna baris ganjil dan genap */
 tbody tr:nth-child(odd) {
@@ -121,14 +154,13 @@ tbody tr:nth-child(odd) {
 tbody tr:nth-child(even) {
     background-color: var(--lightblue);
 }
-
 /* ========================== Pagination ========================== */
 .pagination {
     margin: 0;
 }
 .pagination li a {
     font-size: 0.875rem;
-    color: var(--text-clr);
+    color: var(--edit);
 }
 .pagination li a:focus {
     box-shadow: none;
@@ -180,40 +212,5 @@ tbody tr:nth-child(even) {
 }
 .btn-delete:active {
     background-color: var(--hover);
-    color: var(--sidebar);
     transform: scale(0.95);
-}
-
-/* Header kolom khusus untuk Luas (m²) dan Jumlah Lantai */
-.header-link {
-    display: flex; /* Gunakan Flexbox untuk mengatur tata letak */
-    align-items: center; /* Pusatkan secara vertikal */
-    justify-content: space-between; /* Jarak antara teks dan ikon */
-    color: white; /* Warna putih untuk teks dan ikon */
-    text-decoration: none; /* Hapus garis bawah */
-    padding: 10px; /* Tambahkan padding agar lebih rapi */
-    gap: 5px; /* Atur jarak antar elemen */
-}
-
-.sort-icons {
-    display: flex;
-    flex-direction: column; /* Atur ikon dalam kolom vertikal */
-    justify-content: center; /* Pusatkan ikon */
-    align-items: center;
-    gap: 2px; /* Tambahkan jarak antar ikon */
-    line-height: 1; /* Pastikan ikon saling berdekatan */
-}
-
-.bx {
-    font-size: 1rem; /* Sesuaikan ukuran ikon */
-    cursor: pointer;
-    transition: color 0.3s ease; /* Animasi untuk perubahan warna */
-}
-
-.bx.active {
-    color: #fff; /* Warna ikon aktif */
-}
-
-.bx.inactive {
-    color: rgba(255, 255, 255, 0.6); /* Warna ikon tidak aktif */
 }

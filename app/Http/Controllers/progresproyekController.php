@@ -7,23 +7,21 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
-class furnitureController extends Controller
+class progresproyekController extends Controller
 {
-    public function furniture(Request $request)
+    public function progresproyek(Request $request)
     {
         // Ambil data dari API Dummy
         $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
     
         // Mapping data dummy agar sesuai dengan kebutuhan
-        $mappedProjects = collect($projects)->map(function ($project, $furniture) {
+        $mappedProjects = collect($projects)->map(function ($project, $progresproyek) {
             return [
-                'id_furniture' => 'AFB' . str_pad($furniture + 1, 4, '0', STR_PAD_LEFT),
-                'tgl_pembuatan' => now()->subDays($furniture)->format('d/m/Y'),          
-                'nama_furniture' => 'Furniture ' . ($furniture + 1),
-                'jumlah_unit' => 3,
-                'harga_unit' => 1000000,
-                'lokasi' => 'Jl. Tukad Pakerisan',
-                'tgl_selesai' => now()->addDays(30)->format('d/m/Y'),
+                'id_proyek' => 'ASB' . str_pad($progresproyek + 1, 4, '0', STR_PAD_LEFT),
+                'tgl_proyek' => now()->subDays($progresproyek)->format('d/m/Y'),
+                'progres' => '70% ',
+                'keterangan' => 'Sketsa Awal Desain',
+                'dokumen' => 'Dokumen_TahapAwal_Proyek.zip',
             ];
         });
     
@@ -31,13 +29,13 @@ class furnitureController extends Controller
         $search = $request->query('search');
         if ($search) {
             $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-                return str_contains(strtolower($project['nama_furniture']), strtolower($search)) ||
-                    str_contains(strtolower($project['jumlah_unit']), strtolower($search));
+                return str_contains(strtolower($project['nama_progresproyek']), strtolower($search)) ||
+                    str_contains(strtolower($project['kategori']), strtolower($search));
             });
         }
     
         // Sorting
-        $sortField = $request->query('sort', 'id_furniture'); // Default sort by 'id_proyek'
+        $sortField = $request->query('sort', 'id_progresproyek'); // Default sort by 'id_progresproyek'
         $sortDirection = $request->query('direction', 'asc'); // Default direction 'asc'
     
         $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
@@ -57,7 +55,7 @@ class furnitureController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('tables.furniture', [
+        return view('tables.progresproyek', [
             'projects' => $projectsPaginator,
             'total' => $total,
             'perPage' => $perPage,
