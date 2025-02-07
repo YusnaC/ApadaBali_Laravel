@@ -3,6 +3,7 @@
 @section('title', 'Data Pemasukan Keuangan')
 
 @section('content')
+<!-- Section utama untuk tampilan data pemasukan keuangan -->
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-keuangan-content">
         <div class="row">
@@ -11,7 +12,7 @@
                 <hr style="background-color:#c4c4c4; height: 1px; border: none;">
                 <div class="container mt-2 mb-3 p-0">
                     <div class="row">
-                        <!-- Card 1 -->
+                        <!-- Card 1: Menampilkan Sisa Kas -->
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #496FDE;">
                                 <div class="card-body p-4">
@@ -23,7 +24,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Card 2 -->
+                        <!-- Card 2: Menampilkan Total Pemasukan -->
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #1CC588;">
                                 <div class="card-body p-4">
@@ -35,7 +36,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Card 3 -->
+                        <!-- Card 3: Menampilkan Total Pengeluaran -->
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #E74A3B;">
                                 <div class="card-body p-4">
@@ -50,10 +51,11 @@
                     </div>
                 </div>
 
-                <!-- Tombol Tambah dan Search -->
+                <!-- Form Pencarian dan Filter Entires per page -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <form method="GET" id="entriesForm">
                         <div class="d-flex align-items-center">
+                            <!-- Dropdown untuk memilih jumlah entri per halaman -->
                             <select class="form-select-entries entries-dropdown me-3" name="entries" onchange="document.getElementById('entriesForm').submit()">
                                 <option value="10" {{ request('entries') == 10 ? 'selected' : '' }}>10</option>
                                 <option value="20" {{ request('entries') == 20 ? 'selected' : '' }}>20</option>
@@ -62,11 +64,13 @@
                             </select>
                             <span class="entries-label text-secondary">entries per page</span>
                         </div>
+                        <!-- Hidden Inputs untuk menjaga query parameter search dan sorting -->
                         <input type="hidden" name="search" value="{{ request('search') }}">
                         <input type="hidden" name="sort" value="{{ request('sort') }}">
                         <input type="hidden" name="direction" value="{{ request('direction') }}">
                     </form>
 
+                    <!-- Form untuk Pencarian -->
                     <div class="form-add d-flex">
                         <form method="GET" action="{{ route('tables.pemasukanKeuangan') }}" class="d-flex search-form">
                             <div class="input-group me-2">
@@ -76,14 +80,16 @@
                                 <input type="text" name="search" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
                             </div>
                         </form>
+                        <!-- Tombol untuk menambah data pemasukan -->
                         <a href="/Tambah-Data-Pemasukan" class="btn-add fw-bold py-3 px-4">+ Tambah</a>
                     </div>
                 </div>
 
-                <!-- Tabel Data -->
+                <!-- Tabel Data Pemasukan Keuangan -->
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <!-- Kolom Header untuk No (dengan fungsi sorting) -->
                             <th class="py-3 px-3" style="width: 7%;">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'no', 'direction' => $sortField === 'no' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     No
@@ -93,6 +99,7 @@
                                     </div>
                                 </a>
                             </th>
+                            <!-- Kolom Header untuk Jenis Order -->
                             <th class="py-3 px-3">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'jenis_order', 'direction' => $sortField === 'jenis_order' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Jenis Order
@@ -102,6 +109,7 @@
                                     </div>
                                 </a>
                             </th>
+                            <!-- Kolom Header untuk ID Order -->
                             <th class="py-3 px-3" style="width: 10%;">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'id_order', 'direction' => $sortField === 'id_order' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     ID Order
@@ -111,6 +119,7 @@
                                     </div>
                                 </a>
                             </th>
+                            <!-- Kolom Header untuk Tanggal Transaksi -->
                             <th class="py-3 px-3">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'tgl_transaksi', 'direction' => $sortField === 'tgl_transaksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Tgl Transaksi
@@ -120,6 +129,7 @@
                                     </div>
                                 </a>
                             </th>
+                            <!-- Kolom Header untuk Jumlah -->
                             <th class="py-3 px-3" style="width: 10%;">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'jumlah', 'direction' => $sortField === 'jumlah' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Jumlah
@@ -129,6 +139,7 @@
                                     </div>
                                 </a>
                             </th>
+                            <!-- Kolom Header untuk Termin -->
                             <th class="py-3 px-3" style="width: 10%;">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'termin', 'direction' => $sortField === 'termin' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Termin
@@ -138,6 +149,7 @@
                                     </div>
                                 </a>
                             </th>
+                            <!-- Kolom Header untuk Keterangan -->
                             <th class="py-3 px-3">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'keterangan', 'direction' => $sortField === 'keterangan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Keterangan
@@ -147,6 +159,7 @@
                                     </div>
                                 </a>
                             </th>
+                            <!-- Kolom Header untuk Aksi -->
                             <th class="py-3 px-3" style="width: 10%;">
                                 <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'aksi', 'direction' => $sortField === 'aksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Aksi
@@ -159,6 +172,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Loop untuk menampilkan setiap data pemasukan keuangan -->
                         @forelse($projects as $pemasukanKeuangan)
                             <tr>
                                 <td>{{ $pemasukanKeuangan['no'] }}</td>
@@ -170,9 +184,11 @@
                                 <td>{{ $pemasukanKeuangan['keterangan'] }}</td>
                                 <td>
                                     <div class="button-container">
+                                        <!-- Tombol Edit -->
                                         <button class="btn btn-edit">
                                             <i class="bx bx-edit"></i> Edit
                                         </button>
+                                        <!-- Tombol Hapus -->
                                         <button class="btn btn-delete" data-id="{{ $pemasukanKeuangan['id_order'] }}">
                                             <i class="bx bx-trash"></i>
                                         </button>
@@ -180,6 +196,7 @@
                                 </td>
                             </tr>
                         @empty
+                            <!-- Menampilkan pesan jika data tidak ditemukan -->
                             <tr>
                                 <td colspan="8" class="text-center">Data tidak ditemukan.</td>
                             </tr>
@@ -187,7 +204,7 @@
                     </tbody>
                 </table>
 
-                <!-- Pagination -->
+                <!-- Navigasi Halaman (Pagination) -->
                 <div class="d-flex justify-content-between align-items-center text-secondary">
                     <div>
                         Showing {{ $projects->count() }} of {{ $total }} entries

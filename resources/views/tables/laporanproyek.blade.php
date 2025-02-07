@@ -3,12 +3,13 @@
 @section('title', 'Laporan Proyek')
 
 @section('content')
+<!-- Section utama untuk menampilkan laporan proyek -->
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-proyek-content">
         <div class="row">
             <div class="card shadow-sm rounded-0 py-4 px-3">
             <h4 class="mb-4 fw-bold">Laporan Proyek</h4>
-            
+    
             <div class="input-form-keuangan mb-3">
                     <div class="d-flex align-items-center gap-2">
                         <select class="form-select" style="max-width: 200px;">
@@ -123,7 +124,7 @@
                     </thead>
 
                     <tbody>
-                        <!-- Loop untuk menampilkan data laporanproyek -->
+                        <!-- Loop untuk menampilkan data laporan proyek -->
                         @forelse($projects as $project)
                             <tr>
                                 <td>{{ $project['id_proyek'] }}</td>

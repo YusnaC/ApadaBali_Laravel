@@ -3,6 +3,7 @@
 @section('title', 'Managemen Klien')
 
 @section('content')
+<!-- Section utama untuk menampilan data klien -->
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-klien-content">
         <div class="row">

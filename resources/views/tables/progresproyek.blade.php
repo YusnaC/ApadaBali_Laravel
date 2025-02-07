@@ -9,9 +9,9 @@
             <div class="card shadow-sm rounded-0 py-4 px-3">
             <h4 class="mb-4 fw-bold">Progres Proyek</h4>
             
-                <!-- Tombol Tambah dan Search  -->
+                <!-- Tombol Tambah dan Pencarian -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <!-- Dropdown dan label -->
+                    <!-- Dropdown untuk memilih jumlah entri per halaman dan label -->
                     <form method="GET" id="entriesForm">
                         <div class="d-flex align-items-center">
                             <select class="form-select-entries entries-dropdown me-3" name="entries" onchange="document.getElementById('entriesForm').submit()">
@@ -20,31 +20,31 @@
                                 <option value="50" {{ request('entries') == 50 ? 'selected' : '' }}>50</option>
                                 <option value="100" {{ request('entries') == 100 ? 'selected' : '' }}>100</option>
                             </select>
-                            <span class="entries-label text-secondary">entries per page</span>
+                            <span class="entries-label text-secondary">entri per halaman</span>
                         </div>
 
-                        <!-- Menjaga query string lain -->
+                        <!-- Menjaga query string lainnya tetap terjaga -->
                         <input type="hidden" name="search" value="{{ request('search') }}">
                         <input type="hidden" name="sort" value="{{ request('sort') }}">
                         <input type="hidden" name="direction" value="{{ request('direction') }}">
                     </form>
 
                     <div class="form-add d-flex">
-                        <!-- Form pencarian -->
+                        <!-- Form untuk pencarian data -->
                         <form method="GET" action="{{ route('tables.progresproyek') }}" class="d-flex search-form">
                             <div class="input-group me-2">
                                 <span class="input-group-text">
                                     <i class="bx bx-search"></i>
                                 </span>
-                                <input type="text" name="search" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
+                                <input type="text" name="search" class="form-control search-input" placeholder="Cari..." value="{{ request('search') }}" />
                             </div>
                         </form>
-                         <!-- Tombol tambah -->
+                         <!-- Tombol untuk menambah data -->
                          <a href="/Tambah-Data-Progres" class="btn-add fw-bold py-3 px-4">+ Tambah</a>
                     </div>
                 </div>
 
-                <!-- Tabel Data -->
+                <!-- Tabel Data Progres Proyek -->
                 <table class="table table-bordered">
                     <thead style="background-color: #800000;">
                         <tr>
@@ -106,7 +106,7 @@
                     </thead>
 
                     <tbody class="drafter-table">
-                        <!-- Loop untuk menampilkan data progresproyek -->
+                        <!-- Loop untuk menampilkan data progres proyek -->
                         @forelse($projects as $progresproyek)
                             <tr>
                                 <td>{{ $progresproyek['id_proyek'] }}</td>
@@ -133,10 +133,10 @@
                     </tbody>
                 </table>
 
-                    <!-- Pagination -->
+                    <!-- Navigasi Halaman -->
                     <div class="d-flex justify-content-between align-items-center text-secondary">
                         <div>
-                            Showing {{ $projects->count() }} of {{ $total }} entries
+                            Menampilkan {{ $projects->count() }} dari {{ $total }} entri
                         </div>
                         <nav>
                             <ul class="pagination">
@@ -150,7 +150,6 @@
                             </ul>
                         </nav>
                     </div>
-  
                 </div>
             </div>
         </div>

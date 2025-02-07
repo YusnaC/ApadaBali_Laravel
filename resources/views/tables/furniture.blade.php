@@ -3,6 +3,7 @@
 @section('title', 'Pencatatan Proyek')
 
 @section('content')
+<!-- Section utama untuk menampilkan pencatatan furniture -->
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-furniture-content">
         <div class="row">

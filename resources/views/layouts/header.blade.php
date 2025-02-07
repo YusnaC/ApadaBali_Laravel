@@ -32,7 +32,7 @@
           <!-- Daftar item dropdown -->
           <ul class="dropdown-menu mt-3">
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="/Profile">
+              <a class="dropdown-item d-flex align-items-center" href="/Admin-Profile">
                 <i class="bx bx-user-circle"></i> Profile
               </a>
             </li>

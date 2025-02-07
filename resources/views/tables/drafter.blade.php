@@ -3,6 +3,7 @@
 @section('title', 'Data Drafter')
 
 @section('content')
+<!-- Section utama untuk menampilkan data drafter -->
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-drafter-content">
         <div class="row">

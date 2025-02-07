@@ -11,16 +11,17 @@
         </a>
     </div>
 
-    <!-- Card -->
+    <!-- Main Content -->
     <div class="row justify-content-center">
         <div class="col-lg-11">
             <div class="card shadow-sm rounded-0 p-5">
                 <div class="card-body px-5">
                     <h4 class="text-center mb-5 fw-bold">Tambah Data Progres</h4>
-                    <form>
-                        <div class="row mb-4">
 
-                            <!-- Baris 1 -->
+                    <!-- Form Section -->
+                    <form>
+                        <!-- Row 1 -->
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="id-order" class="form-label">Id Proyek</label>
                                 <select id="id-order" class="form-select">
@@ -29,35 +30,36 @@
                                     <option value="2">ASB0002</option>
                                 </select>
                             </div>
+                            
                             <div class="col-md-6">
-                                <label for="tgl-transaksi" class="form-label">Tgl Progres</label>
+                                <label for="tgl-progres" class="form-label">Tgl Progres</label>
                                 <input type="date" id="tgl-progres" class="form-control">
                             </div>
                         </div>
 
+                        
                         <div class="row mb-4">
-
-                            <!-- Baris 2 -->
-                        <div class="mb-4">
-                            <label for="termin" class="form-label">Progres</label>
-                            <input type="number" id="termin" class="form-control">
+                            <!-- Row 2 -->
+                            <div class="mb-4">
+                                <label for="termin" class="form-label">Progres</label>
+                                <input type="number" id="termin" class="form-control">
+                            </div>
+                            <!-- Row 3 -->
+                            <div class="mb-4">
+                                <label for="keterangan" class="form-label">Keterangan</label>
+                                <textarea id="keterangan" class="form-control custom-textarea" rows="3"></textarea>
+                            </div>
+                            <!-- row 4 -->
+                            <div class="mb-4">
+                                <label for="upload" class="form-label">Upload Dokumen</label>
+                                <input type="file" id="upload" class="form-control">
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="keterangan" class="form-label">Keterangan</label>
-                            <textarea id="keterangan" class="form-control custom-textarea" rows="3"></textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="upload" class="form-label">Upload Dokumen</label>
-                            <input type="file" id="upload" class="form-control" />
-                        </div>
-
-                        <!-- Tombol Simpan -->
+                        <!-- Save Button -->
                         <div class="d-flex justify-content-center mt-5">
                             <button type="submit" class="btn-save">Simpan</button>
                         </div>
-
                     </form>
                 </div>
             </div>

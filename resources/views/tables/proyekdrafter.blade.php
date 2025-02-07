@@ -7,11 +7,11 @@
     <div class="Daftar-Proyek-content">
         <div class="row">
             <div class="card shadow-sm rounded-0 py-4 px-3">
-            <h4 class="mb-4 fw-bold">Daftar Proyek</h4>
-            
-                <!-- Tombol Tambah dan Search  -->
+                <h4 class="mb-4 fw-bold">Daftar Proyek</h4>
+                
+                <!-- Tombol untuk menambah dan mencari -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <!-- Dropdown dan label -->
+                    <!-- Dropdown untuk menentukan jumlah entri per halaman dan label -->
                     <form method="GET" id="entriesForm">
                         <div class="d-flex align-items-center">
                             <select class="form-select-entries entries-dropdown me-3" name="entries" onchange="document.getElementById('entriesForm').submit()">
@@ -20,10 +20,10 @@
                                 <option value="50" {{ request('entries') == 50 ? 'selected' : '' }}>50</option>
                                 <option value="100" {{ request('entries') == 100 ? 'selected' : '' }}>100</option>
                             </select>
-                            <span class="entries-label text-secondary">entries per page</span>
+                            <span class="entries-label text-secondary">entri per halaman</span>
                         </div>
 
-                        <!-- Menjaga query string lain -->
+                        <!-- Menyertakan parameter query lainnya -->
                         <input type="hidden" name="search" value="{{ request('search') }}">
                         <input type="hidden" name="sort" value="{{ request('sort') }}">
                         <input type="hidden" name="direction" value="{{ request('direction') }}">
@@ -36,7 +36,7 @@
                                 <span class="input-group-text">
                                     <i class="bx bx-search"></i>
                                 </span>
-                                <input type="text" name="search" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
+                                <input type="text" name="search" class="form-control search-input" placeholder="Cari..." value="{{ request('search') }}" />
                             </div>
                         </form>
                     </div>
@@ -46,6 +46,7 @@
                 <table class="table table-bordered">
                     <thead style="background-color: #800000;">
                         <tr>
+                            <!-- Header tabel dengan link untuk sorting -->
                             <th class="py-3 px-3" style="width: 10%;">
                                 <a href="{{ route('tables.proyekdrafter', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_proyekdrafter' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Id Proyek
@@ -113,7 +114,7 @@
                     </thead>
 
                     <tbody class="drafter-table">
-                        <!-- Loop untuk menampilkan data proyekdrafter -->
+                        <!-- Loop untuk menampilkan proyek -->
                         @forelse($projects as $proyekdrafter)
                             <tr>
                                 <td>{{ $proyekdrafter['id_proyek'] }}</td>
@@ -125,6 +126,7 @@
                                 <td>{{ $proyekdrafter['tgl_deadline'] }}</td>
                             </tr>
                         @empty
+                            <!-- Pesan jika tidak ada data ditemukan -->
                             <tr>
                                 <td colspan="11" class="text-center">Data tidak ditemukan.</td>
                             </tr>
@@ -132,29 +134,26 @@
                     </tbody>
                 </table>
 
-                    <!-- Pagination -->
-                    <div class="d-flex justify-content-between align-items-center text-secondary">
-                        <div>
-                            Showing {{ $projects->count() }} of {{ $total }} entries
-                        </div>
-                        <nav>
-                            <ul class="pagination">
-                                @for ($i = 1; $i <= ceil($total / $perPage); $i++)
-                                    <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                        <a class="page-link" href="{{ route('tables.proyekdrafter', array_merge(request()->all(), ['page' => $i])) }}">
-                                            {{ $i }}
-                                        </a>
-                                    </li>
-                                @endfor
-                            </ul>
-                        </nav>
+                <!-- Navigasi Halaman -->
+                <div class="d-flex justify-content-between align-items-center text-secondary">
+                    <div>
+                        Menampilkan {{ $projects->count() }} dari {{ $total }} entri
                     </div>
-  
+                    <nav>
+                        <ul class="pagination">
+                            @for ($i = 1; $i <= ceil($total / $perPage); $i++)
+                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ route('tables.proyekdrafter', array_merge(request()->all(), ['page' => $i])) }}">
+                                        {{ $i }}
+                                    </a>
+                                </li>
+                            @endfor
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
         
 @endsection

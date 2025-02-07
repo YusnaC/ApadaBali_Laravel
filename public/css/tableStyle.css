@@ -13,40 +13,46 @@
 }
 
 /* ========================== Header Tabel ========================== */
+/* Menetapkan styling untuk header tabel (thead) */
 thead {
     background-color: var(--edit);
     color: var(--sidebar);
 }
 
+/* Menetapkan styling untuk link header */
 .header-link {
-    display: flex; /* Gunakan Flexbox untuk mengatur tata letak */
-    align-items: center; /* Pusatkan secara vertikal */
-    justify-content: space-between; /* Pusatkan secara horizontal */
-    color: white; /* Warna putih untuk teks dan ikon */
-    text-decoration: none; /* Hapus garis bawah */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    text-decoration: none;
     font-size: 0.8rem;
 }
 
+/* Menetapkan styling untuk ikon urutkan */
 .sort-icons {
     display: flex;
-    flex-direction: column; /* Atur ikon dalam kolom vertikal */
-    justify-content: center; /* Pusatkan ikon secara vertikal */
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    line-height: 1; /* Pastikan ikon saling berdekatan */
+    line-height: 1;
     font-size: 0.8rem;
     cursor: pointer;
-    transition: color 0.3s ease; /* Animasi untuk perubahan warna */
+    transition: color 0.3s ease;
 }
 
+/* Menetapkan warna untuk ikon yang aktif */
 .bx.active {
-    color: #fff; /* Warna ikon aktif */
+    color: #fff;
 }
 
+/* Menetapkan warna untuk ikon yang tidak aktif */
 .bx.inactive {
-    color: rgba(255, 255, 255, 0.6); /* Warna ikon tidak aktif */
+    color: rgba(255, 255, 255, 0.6);
 }
 
 /* ========================== Search Input & Entries ========================== */
+/* Menetapkan styling untuk form select entries */
 .form-select-entries {
     padding: 0.5rem 0.8rem;
     font-size: 1rem;
@@ -55,9 +61,13 @@ thead {
     align-items: center;
     text-align: center;
 }
+
+/* Menetapkan styling untuk label entries */
 .entries-label {
     font-size: 1rem;
 }
+
+/* Menetapkan styling untuk input group di dalam search form */
 .search-form .input-group {
     display: flex;
     align-items: center;
@@ -66,10 +76,14 @@ thead {
     overflow: hidden;
     width: 250px;
 }
+
+/* Menetapkan styling untuk ikon dalam input group text */
 .input-group-text i {
     font-size: 1.3rem;
     color: var(--secondary);
 }
+
+/* Menetapkan styling untuk input group text */
 .input-group-text {
     display: flex;
     align-items: center;
@@ -78,20 +92,27 @@ thead {
     border: none;
     background: none;
 }
+
+/* Menetapkan styling untuk search input */
 .search-input {
     border: none;
     font-size: 0.875rem;
     flex: 1;
 }
+
+/* Menghilangkan outline dan box shadow saat search input di fokus */
 .search-input:focus {
     outline: none;
     box-shadow: none;
 }
+
+/* Menetapkan styling untuk input group saat hover */
 .input-group:hover {
     border-color: var(--secondary);
 }
 
 /* ========================== Tombol Tambah & EXPORT ========================== */
+/* Menetapkan styling untuk tombol add */
 .btn-add {
     background-color: var(--primary);
     border-radius: 0.5rem;
@@ -100,15 +121,20 @@ thead {
     border: none;
     transition: transform 0.1s ease-in-out;
 }
+
+/* Menetapkan styling hover untuk tombol add */
 .btn-add:hover {
     color: var(--sidebar);
 }
+
+/* Menetapkan styling aktif untuk tombol add */
 .btn-add:active {
     background-color: #d2593b;
     color: var(--sidebar);
     transform: scale(0.95);
 }
 
+/* Menetapkan styling untuk tombol export */
 .btn-export {
     background-color: var(--primary);
     border-radius: 0.5rem;
@@ -118,54 +144,65 @@ thead {
     border: none;
     transition: transform 0.1s ease-in-out;
 }
+
+/* Menetapkan styling hover untuk tombol export */
 .btn-export:hover {
     color: var(--sidebar);
 }
+
+/* Menetapkan styling aktif untuk tombol export */
 .btn-export:active {
     background-color: #d2593b;
     color: var(--sidebar);
     transform: scale(0.95);
 }
-/* ICON CALENDER TGL AWAL & AKHIR */
-.form-control {
-    border-right: none;
-}
-.form-select option:first-child {
-    color: #6c757d;
-}
+
 /* ========================== Isi Tabel ========================== */
+/* Menetapkan styling untuk isi tabel */
 table {
     width: 100%;
-    table-layout: fixed; /* Tetapkan ukuran kolom secara otomatis */
+    table-layout: fixed;
     border-collapse: collapse;
 }
+
+/* Menetapkan styling untuk thead dan td dalam tbody */
 thead,
 tbody td {
     text-align: center;
     vertical-align: middle;
     padding: 1px;
-    word-wrap: break-word; /* Membungkus kata panjang agar sesuai dengan kolom */
+    word-wrap: break-word;
     font-size: 0.8rem;
 }
-/* Warna baris ganjil dan genap */
+
+/* Menetapkan styling untuk baris ganjil dalam tbody */
 tbody tr:nth-child(odd) {
     background-color: var(--sidebar);
 }
+
+/* Menetapkan styling untuk baris genap dalam tbody */
 tbody tr:nth-child(even) {
     background-color: var(--lightblue);
 }
 /* ========================== Pagination ========================== */
+/* Menetapkan styling untuk pagination */
 .pagination {
     margin: 0;
 }
+
+/* Menetapkan styling untuk link di dalam pagination */
 .pagination li a {
     font-size: 0.875rem;
     color: var(--edit);
 }
+
+/* Menetapkan styling saat link pagination dalam fokus */
 .pagination li a:focus {
     box-shadow: none;
     border: none;
 }
+
+/* Menetapkan styling untuk link pagination yang aktif */
 .pagination li.active a {
     background-color: var(--edit);
     border-color: var(--edit);
@@ -173,11 +210,14 @@ tbody tr:nth-child(even) {
 }
 
 /* ========================== Tombol Edit & Hapus ========================== */
+/* Menetapkan styling untuk container tombol */
 .button-container {
     display: flex;
     gap: 8px;
     justify-content: center;
 }
+
+/* Menetapkan styling umum untuk tombol */
 .btn {
     display: flex;
     align-items: center;
@@ -190,26 +230,38 @@ tbody tr:nth-child(even) {
     cursor: pointer;
     transition: transform 0.1s ease-in-out;
 }
+
+/* Menetapkan styling untuk tombol edit */
 .btn-edit {
     background-color: var(--edit);
     color: var(--sidebar);
 }
+
+/* Menetapkan styling hover untuk tombol edit */
 .btn-edit:hover {
     color: var(--sidebar);
 }
+
+/* Menetapkan styling aktif untuk tombol edit */
 .btn-edit:active {
     background-color: #0654c7;
     color: var(--sidebar);
     transform: scale(0.95);
 }
+
+/* Menetapkan styling untuk tombol delete */
 .btn-delete {
     background-color: var(--sidebar);
     border: 1px solid var(--hover);
     color: var(--delete);
 }
+
+/* Menetapkan styling hover untuk tombol delete */
 .btn-delete:hover {
     color: var(--delete);
 }
+
+/* Menetapkan styling aktif untuk tombol delete */
 .btn-delete:active {
     background-color: var(--hover);
     transform: scale(0.95);

@@ -11,16 +11,17 @@
         </a>
     </div>
 
-    <!-- Card -->
+   <!-- Main Content -->
     <div class="row justify-content-center">
         <div class="col-lg-11">
             <div class="card shadow-sm rounded-0 p-5">
                 <div class="card-body">
                     <h4 class="text-center mb-5 fw-bold">Tambah Data Furniture</h4>
+
+                    <!-- Form Section -->
                     <form>
                         <div class="row g-4 px-5">
-
-                            <!-- Baris 1 -->
+                            <!-- Row 1 -->
                             <div class="col-md-6">
                                 <label for="idFurniture" class="form-label">Id Furniture</label>
                                 <input type="text" class="form-control text-secondary" id="idFurniture" value="AFB0001" disabled>
@@ -30,7 +31,7 @@
                                 <input type="date" class="form-control" id="tglPembuatan">
                             </div>
 
-                            <!-- Baris 2 -->
+                            <!-- Row 2 -->
                             <div class="col-md-6">
                                 <label for="namaFurniture" class="form-label">Nama Furniture</label>
                                 <input type="text" class="form-control" id="namaFurniture">
@@ -40,7 +41,7 @@
                                 <input type="number" class="form-control" id="jumlahUnit">
                             </div>
 
-                            <!-- Baris 3 -->
+                            <!-- Row 3 -->
                             <div class="col-md-6">
                                 <label for="hargaUnit" class="form-label">Harga Unit</label>
                                 <input type="text" class="form-control" id="hargaUnit">
@@ -50,15 +51,14 @@
                                 <input type="text" class="form-control" id="lokasi">
                             </div>
 
-                            <!-- Baris 4 -->
+                            <!-- Row 4 -->
                             <div class="col-md-6">
                                 <label for="tglSelesai" class="form-label">Tgl Selesai</label>
                                 <input type="date" class="form-control" id="tglSelesai">
                             </div>
-
                         </div>
 
-                        <!-- Tombol Simpan -->
+                        <!-- Save Button -->
                         <div class="d-flex justify-content-center mt-5">
                             <button type="submit" class="btn-save">Simpan</button>
                         </div>

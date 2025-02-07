@@ -1,12 +1,15 @@
 /* import google font poppins */
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 
+/* Menetapkan box-sizing, margin, padding, dan font default untuk semua elemen */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: "Poppins", sans-serif;
 }
+
+/* Mendeklarasikan variabel warna untuk tema */
 :root {
     --primary: #ff6842;
     --secondary: #797a7c;
@@ -20,13 +23,19 @@
     --hover: #ffd9d0;
     --lightblue: #e6f2ff;
 }
+
+/* Menetapkan warna latar belakang dan cursor untuk body */
 body {
     background: var(--body-clr);
     cursor: default;
 }
+
+/* Menghilangkan garis bawah pada link */
 a {
     text-decoration: none;
 }
+
+/* Menghilangkan bullet points dari daftar */
 li {
     list-style: none;
 }
@@ -38,42 +47,64 @@ li {
   z-index: 1200;
   background-color: var(--sidebar);
 } */
+
+/* Menghilangkan scrollbar */
 .scrollbar-none {
     scrollbar-width: none;
 }
+
+/* Menyembunyikan scrollbar di webkit browsers */
 .sidebar::-webkit-scrollbar {
     display: none;
 }
+
+/* Penataan logo perusahaan di sidebar */
 #sidebar .company-logo {
     margin: 1.5rem 0 2rem 0;
     cursor: default;
 }
+
+/* Mengatur ukuran gambar logo perusahaan */
 #sidebar .company-logo .logo-img {
     width: 3rem;
 }
+
+/* Mengatur warna teks logo perusahaan */
 #sidebar .company-logo .text-span {
     color: var(--primary);
 }
+
+/* Penataan pembatas teks di sidebar */
 #sidebar .text-divider {
     margin: 1rem 0 0 0.5rem;
     font-size: 0.8rem;
     color: var(--secondary);
 }
+
+/* Penataan ikon di sidebar */
 #sidebar .sidebar-icon {
     width: 20px;
     height: 20px;
     object-fit: contain;
     transition: filter 0s;
 }
+
+/* Penataan posisi ikon kanan */
 #sidebar .icon-right {
     margin: 0 0.5rem 0 auto;
 }
+
+/* Mengatur rotasi ikon kanan saat sidebar berputar */
 #sidebar.icon-right.rotate {
     transform: rotate(90deg);
 }
+
+/* Penataan padding menu di sidebar */
 #sidebar .side-menu {
     padding: 0 20px;
 }
+
+/* Penataan tautan menu di sidebar */
 #sidebar .side-menu a {
     display: flex;
     align-items: center;
@@ -84,25 +115,34 @@ li {
     border-radius: 0.5rem;
     margin: 0.4rem 0 0 0;
 }
+
+/* Efek hover pada menu sidebar */
 #sidebar .side-menu > li > a:hover {
     background: var(--hover);
     color: var(--text-clr);
     transition: background-color 0.05s ease, color 0.05s ease;
 }
+
+/* Rotasi ikon kanan saat item menu aktif */
 #sidebar .side-menu > li > a.active .icon-right {
     transform: rotateZ(90deg);
 }
+
+/* Penataan item menu yang aktif */
 #sidebar .side-menu > li > a.active,
 #sidebar .side-menu > li > a.active:hover {
     background-color: var(--primary);
     color: var(--sidebar);
     transition: background-color 0.1s ease, color 0.1s ease;
 }
+
+/* Mengubah warna ikon menu aktif */
 #sidebar .side-menu a.active .sidebar-icon {
     filter: brightness(0) invert(1);
 }
 
 /* ============================ LOGOUT BUTTON ============================*/
+/* Penataan tombol logout di sidebar */
 #sidebar .side-menu .logout {
     color: var(--primary);
     font-size: 0.9rem;
@@ -115,34 +155,46 @@ li {
     width: 100%;
     cursor: pointer;
 }
+
+/* Efek hover pada ikon logout */
 #sidebar .side-menu .logout-icon:hover {
     color: var(--sidebar);
     background-color: var(--primary);
 }
+
+/* Mengubah warna ikon logout saat hover */
 #sidebar .side-menu .logout-icon:hover .logout-icon {
     filter: brightness(0) invert(1);
 }
+
+/* Penataan ukuran dan tampilan ikon logout */
 #sidebar .side-menu .logout-icon {
     width: 20px;
     height: 20px;
     object-fit: contain;
 }
+
+/* Mengubah warna ikon logout saat tombol aktif */
 #sidebar .side-menu button.active .logout-icon {
     filter: brightness(0) invert(1);
 }
 
-/* ============================ SWEET ALERT LOGOUT ============================*/
+/* Penataan popup kustom */
 .custom-popup {
     background-color: var(--sidebar);
     border-radius: 1rem;
     padding: 0 1rem 2rem 1rem;
     font-family: "Poppins", sans-serif;
 }
+
+/* Penataan judul popup */
 .custom-title {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--text-clr);
 }
+
+/* Penataan tombol konfirmasi di popup */
 .custom-confirm-button {
     background-color: var(--sidebar);
     color: var(--sidebar);
@@ -151,6 +203,8 @@ li {
     padding: 1rem 1.5rem;
     font-size: 1rem;
 }
+
+/* Penataan tombol pembatalan di popup */
 .custom-cancel-button {
     background-color: var(--primary);
     color: var(--secondary);
@@ -161,34 +215,42 @@ li {
 }
 
 /* ============================ SIDEBAR DROPDOWN MENU ============================*/
+/* Menyembunyikan dropdown sidebar dan mengatur animasi */
 #sidebar .slide-dropdown {
     padding-left: 2.3rem;
     max-height: 0;
     overflow-y: hidden;
-    will-change: max-height, opacity;
-    /* transition: max-height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
     opacity: 0;
+    /* transition: max-height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
 }
+
+/* Menampilkan dropdown dengan animasi */
 #sidebar .slide-dropdown.show {
     max-height: 1000px;
     opacity: 1;
-    will-change: max-height, opacity;
-    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    transition: max-height 0.4s, opacity 0.4s;
 }
+
+/* Efek hover pada tautan di dalam dropdown */
 #sidebar .slide-dropdown a:hover {
     background: var(--hover);
     color: var(--text-clr);
-    transition: background-color 0.05s ease, color 0.05s ease;
 }
+
+/* Mengatur tampilan tautan aktif dalam dropdown */
 #sidebar .slide-dropdown a.active {
     background-color: var(--primary);
     color: var(--sidebar);
 }
+
+/* Penataan pembatas garis di sidebar */
 .line-divider {
-    margin: 0.8rem auto 0.8rem auto;
+    margin: 0.8rem auto;
     width: 100%;
     color: #c4c4c4;
 }
+
+/* Menempatkan elemen sidebar di tengah */
 .element-sidebar {
     position: absolute;
     left: 50%;
@@ -197,74 +259,104 @@ li {
 }
 
 /* ============================ HEADER ============================*/
+/* Menetapkan latar belakang untuk header */
 #header {
     background-color: var(--sidebar);
 }
+
+/* Mengatur margin kiri untuk elemen dengan kelas wrap di dalam header */
 #header .wrap {
     margin-left: 20%;
 }
+
+/* Penataan pembatas vertikal di sidebar */
 .vertical-divider {
     width: 1px;
     height: 1.5rem;
     background-color: var(--secondary);
     margin-right: 1rem;
 }
+
+/* Penataan tombol admin di dropdown */
 .dropdown .btn-admin {
     border: none;
     font-size: 1rem;
     background-color: transparent;
 }
+
+/* Menghilangkan efek fokus pada tombol admin */
 .dropdown .btn-admin:focus {
     box-shadow: none;
     border: none;
 }
+
+/* Efek transisi pada item di dalam dropdown menu */
 .dropdown-menu .dropdown-item {
     transition: transform 0.1s ease-in-out;
 }
+
+/* Efek hover pada item dropdown menu */
 .dropdown-menu .dropdown-item:hover {
     background-color: var(--primary);
     color: var(--sidebar);
 }
+
+/* Efek aktif pada item dropdown menu */
 .dropdown-menu .dropdown-item:active {
     background-color: #d2593b;
     color: var(--sidebar);
     transform: scale(0.95);
 }
+
+/* Penataan warna teks item di dropdown menu */
 .dropdown-menu .dropdown-item {
     color: var(--secondary);
 }
+
+/* Penataan ikon di dalam item dropdown menu */
 .dropdown-menu .dropdown-item i {
     font-size: 1.3rem;
     margin-right: 10px;
     transition: none;
 }
+
+/* Mengubah kursor saat hover pada ikon bell */
 .bx.bx-bell {
     cursor: pointer;
 }
 
 /* ============================ HAMBURGER TOGGLE ============================*/
+/* Menghilangkan outline dan box-shadow saat tombol dalam fokus */
 .btn:focus {
     outline: none;
     box-shadow: none;
 }
-
 /* ============================ MAIN CONTENT ============================*/
+/* Menetapkan sudut membulat pada elemen dengan kelas .card */
 .card {
     border-radius: 1rem;
 }
+
+/* Mengatur warna dan ukuran font untuk teks sekunder */
 .text-secondary {
     color: var(--secondary);
     font-size: 1rem;
 }
+
+/* Menentukan ukuran gambar ikon di dalam kartu */
 .card-icon img {
     width: 50px;
     height: 50px;
 }
+
+/* Menetapkan gaya teks dalam kartu */
 .card-text {
     font-weight: bold;
     font-size: 1.5rem;
     margin: 1rem 0;
 }
+
+/* Penataan tombol dalam kartu */
 .btn-card {
     background-color: var(--hover);
     color: var(--primary);
@@ -273,20 +365,27 @@ li {
     border-radius: 0.5rem;
     border: none;
 }
+
+/* Efek hover pada tombol dalam kartu */
 .btn-card:hover {
     background-color: var(--primary);
     color: var(--sidebar);
 }
+
+/* Efek aktif pada tombol saat di klik */
 .btn-card:hover:active {
     outline: none;
     box-shadow: none;
     background-color: #d2593b;
     color: var(--sidebar);
 }
+
+/* Penataan ukuran ikon dalam tombol */
 .btn-card i {
     font-size: 1.2rem;
 }
 
+/* Penataan tombol drafter */
 .btn-card-drafter {
     background-color: #ffe5db;
     color: var(--primary);
@@ -295,10 +394,14 @@ li {
     border-radius: 0.5rem;
     border: none;
 }
+
+/* Efek hover pada tombol drafter */
 .btn-card-drafter:hover {
     background-color: var(--primary);
     color: var(--sidebar);
 }
+
+/* Efek aktif pada tombol drafter saat di klik */
 .btn-card-drafter:hover:active {
     outline: none;
     box-shadow: none;
@@ -324,6 +427,8 @@ li {
 canvas {
     margin-top: 2rem;
 }*/
+
+/* Menetapkan gaya latar belakang dan border untuk header */
 .bg-header {
     background-color: #f5f5f5;
     border-bottom: 1px solid #dfdfdf;
@@ -334,10 +439,13 @@ canvas {
     margin: -1rem -1rem 0 -1rem;
     text-align: left;
 }
+
+/* Menetapkan gaya untuk grafik batang (barchart) */
 .barchart {
     border: 1px solid #dfdfdf;
     border-radius: 20px;
 }
+
 /* select.form-select-sm {
     border-radius: 10px;
 } */
@@ -350,6 +458,7 @@ button:focus {
     box-shadow: none;
 } */
 
+/* Menetapkan gaya untuk tombol simpan */
 .btn-save {
     background-color: var(--primary);
     color: var(--sidebar);
@@ -358,11 +467,15 @@ button:focus {
     border: none;
     transition: transform 0.1s ease-in-out;
 }
+
+/* Efek saat tombol simpan di klik */
 .btn-save:active {
     background-color: #d2593b;
     color: var(--sidebar);
     transform: scale(0.95);
 }
+
+/* Menetapkan gaya untuk sidebar */
 #sidebar {
     position: fixed;
     left: 0;
@@ -374,10 +487,13 @@ button:focus {
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
 }
+
+/* Menetapkan gaya saat sidebar terbuka */
 #sidebar.open {
     transform: translateX(0); /* Sidebar terbuka */
 }
 
+/* Penataan untuk tampilan layar lebih besar (tablet dan di atasnya) */
 @media (min-width: 768px) {
     #sidebar {
         transform: translateX(0);
@@ -396,17 +512,24 @@ button:focus {
 } */
 
 /* ============================ FORM STYLING ============================*/
+/* Menetapkan padding pada elemen form-control dan form-select */
 .form-control,
 .form-select {
     padding: 0.7rem;
 }
+
+/* Menonaktifkan resize pada textarea khusus */
 .custom-textarea {
     resize: none;
 }
+
 /* ============================ FOOTER ============================*/
+/* Menetapkan teks di footer agar rata kanan */
 .footer {
     text-align: right;
 }
+
+/* Menetapkan warna dan ukuran font untuk teks di footer */
 .footer-text {
     color: var(--secondary);
     font-size: 0.9rem;

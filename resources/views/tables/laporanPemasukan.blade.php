@@ -3,6 +3,7 @@
 @section('title', 'Laporan Pemasukan')
 
 @section('content')
+<!-- Section utama untuk menampilkan laporan keuangan -->
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-pemasukan-content">
         <div class="row">

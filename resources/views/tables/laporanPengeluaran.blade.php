@@ -3,6 +3,7 @@
 @section('title', 'laporan Pengeluaran')
 
 @section('content')
+<!-- Section utama untuk menampilkan laporan keuangan -->
 <section id="main-content" class="col-md-12 ms-md-7">
     <div class="pencatatan-pengeluaran-content">
         <div class="row">
@@ -36,72 +37,72 @@
 
                 <table class="table table-bordered">
                 <thead>
-                <tr>
-                    <th class="py-3 px-3" style="width: 7%;">
-                        <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'no', 'direction' => $sortField === 'no' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                            No
-                            <div class="sort-icons">
-                                <i class="bx bxs-up-arrow {{ $sortField === 'no' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                <i class="bx bxs-down-arrow {{ $sortField === 'no' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                            </div>
-                        </a>
-                    </th>
-                    <th class="py-3 px-3" style="width: 12%;">
-                        <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'tanggal_transaksi', 'direction' => $sortField === 'tanggal_transaksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                            Tgl Transaksi
-                            <div class="sort-icons">
-                                <i class="bx bxs-up-arrow {{ $sortField === 'tanggal_transaksi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                <i class="bx bxs-down-arrow {{ $sortField === 'tanggal_transaksi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                            </div>
-                        </a>
-                    </th>
-                    <th class="py-3 px-3">
-                        <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'nama_barang', 'direction' => $sortField === 'nama_barang' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                            Nama Barang
-                            <div class="sort-icons">
-                                <i class="bx bxs-up-arrow {{ $sortField === 'nama_barang' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                <i class="bx bxs-down-arrow {{ $sortField === 'nama_barang' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                            </div>
-                        </a>
-                    </th>
-                    <th class="py-3 px-3" style="width: 10%;">
-                        <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'jumlah', 'direction' => $sortField === 'jumlah' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                            Jumlah
-                            <div class="sort-icons">
-                                <i class="bx bxs-up-arrow {{ $sortField === 'jumlah' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                <i class="bx bxs-down-arrow {{ $sortField === 'jumlah' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                            </div>
-                        </a>
-                    </th>
-                    <th class="py-3 px-3" style="width: 14%;">
-                        <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'harga_satuan', 'direction' => $sortField === 'harga_satuan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                            Harga Satuan
-                            <div class="sort-icons">
-                                <i class="bx bxs-up-arrow {{ $sortField === 'harga_satuan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                <i class="bx bxs-down-arrow {{ $sortField === 'harga_satuan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                            </div>
-                        </a>
-                    </th>
-                    <th class="py-3 px-3">
-                        <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'total_harga', 'direction' => $sortField === 'total_harga' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                            Total Harga
-                            <div class="sort-icons">
-                                <i class="bx bxs-up-arrow {{ $sortField === 'total_harga' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                <i class="bx bxs-down-arrow {{ $sortField === 'total_harga' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                            </div>
-                        </a>
-                    </th>
-                    <th class="py-3 px-3">
-                        <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'keterangan', 'direction' => $sortField === 'keterangan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                            Keterangan
-                            <div class="sort-icons">
-                                <i class="bx bxs-up-arrow {{ $sortField === 'keterangan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                <i class="bx bxs-down-arrow {{ $sortField === 'keterangan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                            </div>
-                        </a>
-                    </th>
-                </tr>
-            </thead>
+                        <tr>
+                            <th class="py-3 px-3" style="width: 7%;">
+                                <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'no', 'direction' => $sortField === 'no' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    No
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'no' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'no' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3" style="width: 12%;">
+                                <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'tanggal_transaksi', 'direction' => $sortField === 'tanggal_transaksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Tgl Transaksi
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'tanggal_transaksi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'tanggal_transaksi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'nama_barang', 'direction' => $sortField === 'nama_barang' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Nama Barang
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'nama_barang' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'nama_barang' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3" style="width: 10%;">
+                                <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'jumlah', 'direction' => $sortField === 'jumlah' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Jumlah
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'jumlah' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'jumlah' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3" style="width: 14%;">
+                                <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'harga_satuan', 'direction' => $sortField === 'harga_satuan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Harga Satuan
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'harga_satuan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'harga_satuan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'total_harga', 'direction' => $sortField === 'total_harga' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Total Harga
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'total_harga' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'total_harga' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanPengeluaran', array_merge(request()->query(), ['sort' => 'keterangan', 'direction' => $sortField === 'keterangan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Keterangan
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'keterangan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'keterangan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
 
                     <tbody>
                     @forelse($projects as $laporanPengeluaran)

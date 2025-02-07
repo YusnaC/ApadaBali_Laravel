@@ -11,15 +11,17 @@
         </a>
     </div>
 
-    <!-- Card -->
+    <!-- Main Content -->
     <div class="row justify-content-center">
         <div class="col-lg-11">
             <div class="card shadow-sm rounded-0 p-5">
                 <div class="card-body">
                     <h4 class="text-center mb-5 fw-bold">Tambah Data Proyek</h4>
+
+                    <!-- Form Section -->
                     <form>
                         <div class="row g-3">
-                            <!-- Baris 1 -->
+                            <!-- Row 1 -->
                             <div class="col-md-4 mb-3">
                                 <label for="idProyek" class="form-label">Id Proyek</label>
                                 <input type="text" class="form-control text-secondary" id="idProyek" value="ASB0001" disabled>
@@ -37,7 +39,7 @@
                                 <input type="date" class="form-control" id="tglProyek">
                             </div>
 
-                            <!-- Baris 2 -->
+                            <!-- Row 2 -->
                             <div class="col-md-4 mb-3">
                                 <label for="namaProyek" class="form-label">Nama Proyek</label>
                                 <input type="text" class="form-control" id="namaProyek">
@@ -51,7 +53,7 @@
                                 <input type="number" class="form-control" id="luas">
                             </div>
 
-                            <!-- Baris 3 -->
+                            <!-- Row 3 -->
                             <div class="col-md-4 mb-3">
                                 <label for="jumlahLantai" class="form-label">Jumlah Lantai</label>
                                 <input type="number" class="form-control" id="jumlahLantai">
@@ -70,6 +72,7 @@
                             </div>
                         </div>
 
+                        <!-- Save Button -->
                         <div class="d-flex justify-content-center mt-3">
                             <button type="submit" class="btn-save">Simpan</button>
                         </div>
@@ -78,5 +81,4 @@
             </div>
         </div>
     </div>
-
 @endsection
