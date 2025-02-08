@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
-class projectController extends Controller
+class proyekController extends Controller
 {
     public function proyek(Request $request)
     {

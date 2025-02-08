@@ -49,41 +49,120 @@
 
                     <!-- Tabel Data Proyek -->
                     <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <!-- Kolom dengan fitur sorting untuk setiap atribut proyek -->
-                                <th class="py-3 px-3">
-                                    <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                        Id Proyek
-                                        <!-- Ikon untuk menunjukkan urutan sorting -->
-                                        <div class="sort-icons">    
-                                            <i class="bx bxs-up-arrow {{ $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                            <i class="bx bxs-down-arrow {{ $sortField === 'id_proyek' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                        </div>
-                                    </a>
-                                </th>
-                            </tr>
-                        </thead>
+                    <thead>
+                    <tr>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Id Proyek
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'id_proyek' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'kategori', 'direction' => $sortField === 'kategori' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Kategori
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'kategori' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'kategori' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'tgl_proyek', 'direction' => $sortField === 'tgl_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Tgl Proyek
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'tgl_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'tgl_proyek' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'nama_proyek', 'direction' => $sortField === 'nama_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Nama Proyek
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'nama_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'nama_proyek' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'lokasi', 'direction' => $sortField === 'lokasi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Lokasi
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'lokasi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'lokasi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'luas', 'direction' => $sortField === 'luas' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Luas (m²)
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'luas' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'luas' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'jumlah_lantai', 'direction' => $sortField === 'jumlah_lantai' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Jumlah Lantai
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'jumlah_lantai' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'jumlah_lantai' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'tgl_deadline', 'direction' => $sortField === 'tgl_deadline' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Tgl Deadline
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'tgl_deadline' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'tgl_deadline' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'id_drafter', 'direction' => $sortField === 'id_drafter' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Id Drafter
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'id_drafter' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'id_drafter' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                        <th>
+                        <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'aksi', 'direction' => $sortField === 'aksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                Aksi
+                                <div class="sort-icons">
+                                    <i class="bx bxs-up-arrow {{ $sortField === 'aksi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                    <i class="bx bxs-down-arrow {{ $sortField === 'aksi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                </div>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
 
                         <tbody>
                             <!-- Loop untuk menampilkan data proyek -->
-                            @forelse($projects as $project)
+                            @forelse($projects as $proyek)
                                 <tr>
-                                    <td>{{ $project['id_proyek'] }}</td>
-                                    <td>{{ $project['kategori'] }}</td>
-                                    <td>{{ $project['tgl_proyek'] }}</td>
-                                    <td>{{ $project['nama_proyek'] }}</td>
-                                    <td>{{ $project['lokasi'] }}</td>
-                                    <td>{{ $project['luas'] }}</td>
-                                    <td>{{ $project['jumlah_lantai'] }}</td>
-                                    <td>{{ $project['tgl_deadline'] }}</td>
-                                    <td>{{ $project['id_drafter'] }}</td>
+                                    <td>{{ $proyek['id_proyek'] }}</td>
+                                    <td>{{ $proyek['kategori'] }}</td>
+                                    <td>{{ $proyek['tgl_proyek'] }}</td>
+                                    <td>{{ $proyek['nama_proyek'] }}</td>
+                                    <td>{{ $proyek['lokasi'] }}</td>
+                                    <td>{{ $proyek['luas'] }}</td>
+                                    <td>{{ $proyek['jumlah_lantai'] }}</td>
+                                    <td>{{ $proyek['tgl_deadline'] }}</td>
+                                    <td>{{ $proyek['id_drafter'] }}</td>
                                     <td>
                                         <div class="button-container">
                                             <button class="btn btn-edit">
                                                 <i class="bx bx-edit"></i> Edit  <!-- Tombol Edit -->
                                             </button>
-                                            <button class="btn btn-delete" data-id="{{ $project['id_proyek'] }}">
+                                            <button class="btn btn-delete" data-id="{{ $proyek['id_proyek'] }}">
                                                 <i class="bx bx-trash"></i> <!-- Tombol Delete -->
                                             </button>
                                         </div>

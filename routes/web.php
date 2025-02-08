@@ -29,7 +29,7 @@ Route::get('/Sign In', function () { //sign in (login)
 Route::get('/dashboard-admin', function () { //tampilan dashboard admin
     return view('dashboard');
 });
-Route::get('/Pencatatan-Proyek', [App\Http\Controllers\projectController::class, 'proyek'])->name('tables.proyek'); //Tabel pencatatan proyek
+Route::get('/Pencatatan-Proyek', [App\Http\Controllers\proyekController::class, 'proyek'])->name('tables.proyek'); //Tabel pencatatan proyek
 Route::get('/Pencatatan-Furniture', [App\Http\Controllers\furnitureController::class, 'furniture'])->name('tables.furniture'); //Tabel pencatatan furniture
 Route::get('/Data-Pemasukan-Keuangan', [App\Http\Controllers\pemasukanController::class, 'pemasukan'])->name('tables.pemasukanKeuangan'); //Tabel pencatatan pemasukan keuangan
 Route::get('/Data-Pengeluaran-Keuangan', [App\Http\Controllers\pengeluaranController::class, 'pengeluaran'])->name('tables.pengeluaranKeuangan'); //Tabel pencatatan pengeluaran keuangan

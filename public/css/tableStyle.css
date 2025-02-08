@@ -176,14 +176,14 @@ tbody td {
 }
 
 /* Menetapkan styling untuk baris ganjil dalam tbody */
-tbody tr:nth-child(odd) {
+/* tbody tr:nth-child(odd) {
     background-color: var(--sidebar);
-}
+} */
 
 /* Menetapkan styling untuk baris genap dalam tbody */
-tbody tr:nth-child(even) {
+/* tbody tr:nth-child(even) {
     background-color: var(--lightblue);
-}
+} */
 /* ========================== Pagination ========================== */
 /* Menetapkan styling untuk pagination */
 .pagination {
