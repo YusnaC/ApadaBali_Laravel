@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 
 //import controller
 use App\Http\Controllers\ProjectController;
+use App\Http\Livewire\Login;
+use App\Http\Livewire\Dashboard;  
+use App\Http\Controllers\Auth\AuthenticatedSessionController;  
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\furnitureController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes

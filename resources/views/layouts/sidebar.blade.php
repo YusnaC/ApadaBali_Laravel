@@ -10,10 +10,11 @@
   
   <!-- Daftar menu navigasi sidebar -->
   <ul class="side-menu">
-    <!-- Menu Dashboard -->
-    <li><a href="/dashboard-admin">
-      <img src="{{ asset('icon/dashboard.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />
-      Dashboard</a>
+    <li>
+      <a href="{{ route('dashboard.admin') }}">
+        <img src="{{ asset('icon/dashboard.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />
+          Dashboard
+      </a>
     </li>
     <hr class="line-divider" />
     
@@ -35,7 +36,7 @@
     
     <!-- Menu Progres Proyek -->
     <li>
-      <a href="#">
+      <a href="{{ route('dashboard.admin') }}">
         <img src="{{ asset('icon/progres proyek.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />
         Progres Proyek
       </a>
@@ -84,11 +85,14 @@
     </li>
     
     <hr class="line-divider" />
-    
-    <!-- Tombol Logout -->
-    <button type="button" class="logout d-flex align-items-center">
-      <img src="{{ asset('icon/logout.svg') }}" alt="icon" class="logout-icon me-4" />
-      Log Out
+
+    <!-- Other Sidebar Links -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+      @csrf
+    </form>
+    <button type="submit" class="logout d-flex align-items-center hover:to-blue-600">
+        <img src="{{ asset('icon/logout.svg') }}" alt="icon" class="logout-icon me-4" />
+        Log Out
     </button>
   </ul>
   

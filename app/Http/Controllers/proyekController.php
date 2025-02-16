@@ -69,6 +69,29 @@ class proyekController extends Controller
             'sortDirection' => $sortDirection,
         ]);
     }
+    public function create()
+    {
+        return view('proyek');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'project_id' => 'required',
+            'category' => 'required',
+            'project_date' => 'required|date',
+            'project_name' => 'required',
+            'location' => 'required',
+            'area' => 'required|numeric',
+            'floor_count' => 'required|integer',
+            'deadline' => 'required|date',
+            'drafter_id' => 'required',
+        ]);
+
+        Project::create($request->all());
+
+        return redirect()->route('projects.index')->with('success', 'Project created successfully.');
+    }
     
 
 }

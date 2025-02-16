@@ -17,9 +17,8 @@
             <div class="card shadow-sm rounded-0 p-5">
                 <div class="card-body">
                     <h4 class="text-center mb-5 fw-bold">Tambah Data Proyek</h4>
-
-                    <!-- Form Section -->
-                    <form>
+                    <form method="POST" action="{{ route('projects.store') }}">
+                        @csrf
                         <div class="row g-3">
                             <!-- Row 1 -->
                             <div class="col-md-4 mb-3">

@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Redirect ke route logout
-                    window.location.href = "{{ route('logout') }}";
+                    document.getElementById('logout-form').submit();
                 }
             });
         });

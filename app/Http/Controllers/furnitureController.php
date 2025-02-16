@@ -67,7 +67,15 @@ class furnitureController extends Controller
             'sortDirection' => $sortDirection,
         ]);
     }
+    public function create()
+    {
+        return view('furniture');
+    }
     
+
+    public function store($request){
+        
+    }
 
 }
 
