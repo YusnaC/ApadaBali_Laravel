@@ -11,7 +11,7 @@
   <!-- Daftar menu navigasi sidebar -->
   <ul class="side-menu">
     <li>
-      <a href="{{ route('dashboard.admin') }}">
+      <a href="">
         <img src="{{ asset('icon/dashboard.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />
           Dashboard
       </a>
@@ -36,7 +36,7 @@
     
     <!-- Menu Progres Proyek -->
     <li>
-      <a href="{{ route('dashboard.admin') }}">
+      <a href="">
         <img src="{{ asset('icon/progres proyek.svg') }}" alt="icon" class="sidebar-icon d-flex justify-content-center align-items-center me-4" />
         Progres Proyek
       </a>
