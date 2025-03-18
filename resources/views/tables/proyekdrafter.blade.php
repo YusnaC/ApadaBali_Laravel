@@ -114,43 +114,60 @@
                     </thead>
 
                     <tbody class="drafter-table">
-                        <!-- Loop untuk menampilkan proyek -->
-                        @forelse($projects as $proyekdrafter)
+                        @forelse($projects as $project)
                             <tr>
-                                <td>{{ $proyekdrafter['id_proyek'] }}</td>
-                                <td>{{ $proyekdrafter['tgl_proyek'] }}</td>
-                                <td>{{ $proyekdrafter['nama_proyek'] }}</td>
-                                <td>{{ $proyekdrafter['lokasi'] }}</td>
-                                <td>{{ $proyekdrafter['luas'] }}</td>
-                                <td>{{ $proyekdrafter['jumlah_lantai'] }}</td>
-                                <td>{{ $proyekdrafter['tgl_deadline'] }}</td>
+                                <td>{{ $project->id_proyek }}</td>
+                                <td>{{ \Carbon\Carbon::parse($project->tgl_proyek)->format('d/m/Y') }}</td>
+                                <td>{{ $project->nama_proyek }}</td>
+                                <td>{{ $project->lokasi }}</td>
+                                <td>{{ $project->luas }}</td>
+                                <td>{{ $project->jumlah_lantai }}</td>
+                                <td>{{ \Carbon\Carbon::parse($project->tgl_deadline)->format('d/m/Y') }}</td>
                             </tr>
                         @empty
-                            <!-- Pesan jika tidak ada data ditemukan -->
                             <tr>
-                                <td colspan="11" class="text-center">Data tidak ditemukan.</td>
+                                <td colspan="7" class="text-center">Data tidak ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
 
                 <!-- Navigasi Halaman -->
-                <div class="d-flex justify-content-between align-items-center text-secondary">
-                    <div>
-                        Menampilkan {{ $projects->count() }} dari {{ $total }} entri
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-secondary">
+                            @if($projects->count() > 0)
+                                Showing {{ $projects->firstItem() ?? 1 }} to {{ $projects->lastItem() ?? $projects->count() }} of {{ $projects->total() }} entries
+                            @else
+                                Showing 0 entries
+                            @endif
+                        </div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0">
+                                <!-- Previous Page Link -->
+                                @if ($projects->onFirstPage())
+                                    <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
+                                @else
+                                    <li class="page-item"><a class="page-link" href="{{ $projects->previousPageUrl() }}">&lsaquo;</a></li>
+                                @endif
+
+                                <!-- Pagination Elements -->
+                                @foreach ($projects->getUrlRange(1, $projects->lastPage()) as $page => $url)
+                                    @if ($page == $projects->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                                    @else
+                                        <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                                    @endif
+                                @endforeach
+
+                                <!-- Next Page Link -->
+                                @if ($projects->hasMorePages())
+                                    <li class="page-item"><a class="page-link" href="{{ $projects->nextPageUrl() }}">&rsaquo;</a></li>
+                                @else
+                                    <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
+                                @endif
+                            </ul>
+                        </nav>
                     </div>
-                    <nav>
-                        <ul class="pagination">
-                            @for ($i = 1; $i <= ceil($total / $perPage); $i++)
-                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ route('tables.proyekdrafter', array_merge(request()->all(), ['page' => $i])) }}">
-                                        {{ $i }}
-                                    </a>
-                                </li>
-                            @endfor
-                        </ul>
-                    </nav>
-                </div>
             </div>
         </div>
     </div>

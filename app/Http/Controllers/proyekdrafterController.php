@@ -11,59 +11,32 @@ class proyekdrafterController extends Controller
 {
     public function proyekdrafter(Request $request)
     {
-        // Ambil data dari API Dummy
-        $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
-    
-        // Mapping data dummy agar sesuai dengan kebutuhan
-        $mappedProjects = collect($projects)->map(function ($project, $proyekdrafter) {
-            return [
-                'id_proyek' => 'ASB' . str_pad($proyekdrafter + 1, 4, '0', STR_PAD_LEFT),
-                'kategori' => $proyekdrafter % 2 === 0 ? 'Proyek Arsitektur' : 'Jasa',
-                'tgl_proyek' => now()->subDays($proyekdrafter)->format('d/m/Y'),
-                'nama_proyek' => 'Proyek ' . ($proyekdrafter + 1),
-                'lokasi' => 'Jl. Tukad Pakerisan',
-                'luas' => 500,
-                'jumlah_lantai' => 3,
-                'tgl_deadline' => now()->addDays(30)->format('d/m/Y'),
-                'id_drafter' => 'D000' . ($proyekdrafter + 1),
-            ];
-        });
-    
-        // Filter berdasarkan pencarian
+        // Get projects from database
+        $query = \App\Models\Project::query();
+
+        // Filter based on search
         $search = $request->query('search');
         if ($search) {
-            $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-                return str_contains(strtolower($project['nama_proyek']), strtolower($search)) ||
-                    str_contains(strtolower($project['kategori']), strtolower($search));
+            $query->where(function($q) use ($search) {
+                $q->where('nama_proyek', 'like', "%{$search}%")
+                  ->orWhere('kategori', 'like', "%{$search}%");
             });
         }
-    
-        // Sorting
-        $sortField = $request->query('sort', 'id_proyek'); // Default sort by 'id_proyekdrafter'
-        $sortDirection = $request->query('direction', 'asc'); // Default direction 'asc'
-    
-        $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
-    
-        // Pagination
-        $perPage = $request->query('entries', 10); // Ambil nilai 'entries' dari query string
-        $currentPage = $request->query('page', 1);
-        $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-        $total = $mappedProjects->count();
 
-        // Manually create a paginator object
-        $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $pagedProjects, 
-            $total, 
-            $perPage, 
-            $currentPage, 
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
+        // Sorting
+        $sortField = $request->query('sort', 'id_proyek');
+        $sortDirection = $request->query('direction', 'asc');
+        $query->orderBy($sortField, $sortDirection);
+
+        // Pagination
+        $perPage = $request->query('entries', 10);
+        $projects = $query->paginate($perPage);
 
         return view('tables.proyekdrafter', [
-            'projects' => $projectsPaginator,
-            'total' => $total,
+            'projects' => $projects,
+            'total' => $projects->total(),
             'perPage' => $perPage,
-            'currentPage' => $currentPage,
+            'currentPage' => $projects->currentPage(),
             'search' => $search,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,

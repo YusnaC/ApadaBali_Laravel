@@ -2,70 +2,140 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http; 
+use App\Models\Progres;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Project;
 
 class progresproyekController extends Controller
 {
-    public function progresproyek(Request $request)
+    public function index(Request $request)
     {
-        // Ambil data dari API Dummy
-        $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
-    
-        // Mapping data dummy agar sesuai dengan kebutuhan
-        $mappedProjects = collect($projects)->map(function ($project, $progresproyek) {
-            return [
-                'id_proyek' => 'ASB' . str_pad($progresproyek + 1, 4, '0', STR_PAD_LEFT),
-                'tgl_proyek' => now()->subDays($progresproyek)->format('d/m/Y'),
-                'progres' => '70% ',
-                'keterangan' => 'Sketsa Awal Desain',
-                'dokumen' => 'Dokumen_TahapAwal_Proyek.zip',
-            ];
-        });
-    
-        // Filter berdasarkan pencarian
+        $query = Progres::query();
+        // dd($query);
+        // Search functionality
         $search = $request->query('search');
         if ($search) {
-            $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-                return str_contains(strtolower($project['nama_progresproyek']), strtolower($search)) ||
-                    str_contains(strtolower($project['kategori']), strtolower($search));
+            $query->where(function($q) use ($search) {
+                $q->where('id_proyek', 'like', "%{$search}%")
+                  ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
-    
-        // Sorting
-        $sortField = $request->query('sort', 'id_progresproyek'); // Default sort by 'id_progresproyek'
-        $sortDirection = $request->query('direction', 'asc'); // Default direction 'asc'
-    
-        $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
-    
-        // Pagination
-        $perPage = $request->query('entries', 10); // Ambil nilai 'entries' dari query string
-        $currentPage = $request->query('page', 1);
-        $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-        $total = $mappedProjects->count();
 
-        // Manually create a paginator object
-        $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $pagedProjects, 
-            $total, 
-            $perPage, 
-            $currentPage, 
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
+        // Sorting
+        $sortField = $request->query('sort', 'id_proyek');
+        $sortDirection = $request->query('direction', 'asc');
+        $query->orderBy($sortField, $sortDirection);
+
+        // Filter for drafter
+        // if (Auth::user()->role === 'drafter') {
+        //     $query->where('id_drafter', Auth::id());
+        // }
+
+        // Pagination
+        $perPage = $request->query('entries', 10);
+        $projects = $query->paginate($perPage);
 
         return view('tables.progresproyek', [
-            'projects' => $projectsPaginator,
-            'total' => $total,
+            'projects' => $projects,
+            'total' => $projects->total(),
             'perPage' => $perPage,
-            'currentPage' => $currentPage,
+            'currentPage' => $projects->currentPage(),
             'search' => $search,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
         ]);
     }
-    
 
+    public function create()
+    {
+        $projects = Project::all();
+        $project = null; // Initialize project as null for the create form
+        return view('createProgres', compact('projects', 'project'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'id_proyek' => 'required|string',
+            'tgl_proyek' => 'required|date',
+            'progres' => 'required|numeric|min:0|max:100',
+            'keterangan' => 'required|string',
+            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,zip|max:2048',
+        ]);
+
+        if ($request->hasFile('dokumen')) {
+            $path = $request->file('dokumen')->store('dokumen-progres', 'public');
+            $validated['dokumen'] = $path;
+        }
+
+        $validated['id_drafter'] = Auth::id();
+        
+        ProgresProyek::create($validated);
+
+        return redirect()->route('tables.progresproyek')
+                        ->with('success', 'Progress proyek berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $progres = Progres::findOrFail($id);
+        $projects = Project::all();
+        
+        // if (Auth::user()->role !== 'admin' && $progres->id_drafter !== Auth::id()) {
+        //     abort(403);
+        // }
+
+        return view('createProgres', compact('projects', 'progres'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $progres = Progres::findOrFail($id);
+        // dd($id);
+        // if (Auth::user()->role !== 'admin' && $progres->id_drafter !== Auth::id()) {
+        //     abort(404);
+        // }
+
+        $validated = $request->validate([
+            'tgl_proyek' => 'required|date',
+            'progres' => 'required|numeric|min:0|max:100',
+            'keterangan' => 'required|string',
+            'dokumen' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        if ($request->hasFile('dokumen')) {
+            // Delete old file if exists
+            if ($progres->dokumen) {
+                Storage::disk('public')->delete($progres->dokumen);
+            }
+            $path = $request->file('dokumen')->store('dokumen-progres', 'public');
+            $validated['dokumen'] = $path;
+        }
+
+        $progres->update($validated);
+
+        return redirect()->route('tables.progresproyek')
+                        ->with('success', 'Progress proyek berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $progres = Progres::findOrFail($id);
+        
+        if (Auth::user()->role !== 'admin' && $progres->id_drafter !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($progres->dokumen) {
+            Storage::disk('public')->delete($progres->dokumen);
+        }
+
+        $progres->delete();
+
+        return redirect()->route('tables.progresproyek')
+                        ->with('success', 'Progress proyek berhasil dihapus');
+    }
 }
 

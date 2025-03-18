@@ -11,28 +11,40 @@
                 <h4 class="mb-5 fw-bold">Laporan Keuangan</h4>
 
                 <div class="input-form-keuangan mb-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <select class="form-select" style="max-width: 200px;">
-                            <option selected class="text-secondary" disabled>Pilih Jenis</option>
-                            <option value="1">Pemasukan</option>
-                            <option value="2">Pengeluaran</option>
-                        </select>
-                        
-                        <div class="input-group" style="max-width: 150px;"> 
-                            <input type="text" class="form-control" placeholder="Tgl awal" onfocus="(this.type='date')" onblur="(this.type='text')">
-                            <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                    <form action="{{ route('tables.laporanPemasukan') }}" method="GET" id="filterForm">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <select name="jenis" class="form-select" style="width: 200px;" id="jenisSelect" onchange="this.form.submit()">
+                                <option value="" class="text-secondary">Pilih Jenis</option>
+                                <option value="1" {{ request('jenis') == '1' ? 'selected' : '' }}>Pemasukan</option>
+                                <option value="2" {{ request('jenis') == '2' ? 'selected' : '' }}>Pengeluaran</option>
+                            </select>
+                            
+                            <div class="input-group" style="width: 150px;"> 
+                                <input type="text" name="tgl_awal" class="form-control" 
+                                    placeholder="Tgl awal" onfocus="(this.type='date')" 
+                                    onblur="(this.type='text')" value="{{ request('tgl_awal') }}">
+                                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                            </div>
+
+                            <div class="input-group" style="width: 150px;">
+                                <input type="text" name="tgl_akhir" class="form-control" 
+                                    placeholder="Tgl akhir" onfocus="(this.type='date')" 
+                                    onblur="(this.type='text')" value="{{ request('tgl_akhir') }}">
+                                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                            </div>
+
+                            <div class="dropdown">
+                                <button class="btn-export dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
+                                    <i class='bx bx-export'></i>
+                                    Export
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ route('pemasukan.export', request()->all()) }}">Excel</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('pemasukan.export.pdf', request()->all()) }}">PDF</a></li>
+                                </ul>
+                            </div>
                         </div>
-            
-                        <div class="input-group" style="max-width: 150px;">
-                            <input type="text" class="form-control" placeholder="Tgl akhir" onfocus="(this.type='date')" onblur="(this.type='text')">
-                            <span class="input-group-text"><i class='bx bx-calendar'></i></span>
-                        </div>
-                        
-                        <button class="btn-export d-flex align-items-center gap-1">
-                            <i class='bx bx-export'></i>
-                            Export
-                        </button>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Tabel Data -->
@@ -107,13 +119,13 @@
                     <tbody>
                         @forelse($projects as $laporanPemasukan)
                             <tr>
-                                <td>{{ $laporanPemasukan['no'] }}</td>
-                                <td>{{ $laporanPemasukan['jenis_order'] }}</td>
-                                <td>{{ $laporanPemasukan['id_order'] }}</td>
-                                <td>{{ $laporanPemasukan['tgl_transaksi'] }}</td>
-                                <td>{{ $laporanPemasukan['jumlah'] }}</td>
-                                <td>{{ $laporanPemasukan['termin'] }}</td>
-                                <td>{{ $laporanPemasukan['keterangan'] }}</td>
+                                <td>{{ $laporanPemasukan->id }}</td>
+                                <td>{{ $laporanPemasukan->jenis_order }}</td>
+                                <td>{{ $laporanPemasukan->id_order }}</td>
+                                <td>{{ $laporanPemasukan->tgl_transaksi ? $laporanPemasukan->tgl_transaksi : $laporanPemasukan->tanggal_transaksi  }}</td>
+                                <td>{{ $laporanPemasukan->jumlah }}</td>
+                                <td>{{ $laporanPemasukan->termin }}</td>
+                                <td>{{ $laporanPemasukan->keterangan }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -143,3 +155,31 @@
     </div>
 </section>
 @endsection
+
+<script>
+document.getElementById('jenisSelect').addEventListener('change', function() {
+    document.getElementById('filterForm').submit();
+});
+</script>
+
+<style>
+.input-form-keuangan form {
+    width: 100%;
+}
+.input-form-keuangan .form-select,
+.input-form-keuangan .input-group {
+    min-width: 150px;
+}
+.btn-export {
+    white-space: nowrap;
+    padding: 6px 12px;
+    background-color: #4285f4;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.btn-export:hover {
+    background-color: #357abd;
+    color: white;
+}
+</style>

@@ -127,13 +127,17 @@
                                 <td>{{ $klien['no_whatsapp'] }}</td>
                                 <td>
                                 <div class="button-container">
-                                        <button class="btn btn-edit">
-                                            <i class="bx bx-edit"></i> Edit
-                                        </button>
-                                        <button class="btn btn-delete" data-id="{{ $klien['id_klien'] }}">
+                                    <a href="{{ route('klien.edit', $klien['id_klien']) }}" class="btn btn-edit">
+                                        <i class="bx bx-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ route('klien.destroy', $klien['id_klien']) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-delete">
                                             <i class="bx bx-trash"></i>
                                         </button>
-                                    </div>
+                                    </form>
+                                </div>
                                 </td>
                             </tr>
                         @empty

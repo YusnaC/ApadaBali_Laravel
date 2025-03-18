@@ -20,9 +20,12 @@
               'password' => 'required',  
           ]);  
  
-          if (Auth::attempt($request->only('email', 'password'))) {  
-              return redirect()->intended('/dashboard-admin'); // Redirect to intended page  
-          }  
+        if (Auth::attempt($request->only('email', 'password'))) {  
+            if (Auth::user()->role === 'admin') {
+                return redirect()->intended('/dashboard-admin');
+            }
+            return redirect()->intended('/dashboard-drafter');
+        }  
  
           return back()->withErrors([  
               'email' => 'The provided credentials do not match our records.',  

@@ -2,68 +2,111 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
+use App\Models\Drafter;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 
-class drafterController extends Controller
+class DrafterController extends Controller
 {
-    public function drafter(Request $request)
+    public function index(Request $request)
     {
-        // Ambil data dari API Dummy untuk proyek
-        $project = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
+        $query = Drafter::query();
 
-        // Mapping data proyek
-        $mappedProjects = collect($project)->map(function ($projects, $drafter) use ($project) {
-            // Pastikan kita mengambil data drafter dengan benar menggunakan modulus jika jumlah proyek lebih besar dari jumlah drafter
-            $projects = $project[$drafter % count($project)];
-
-            return [
-                'id_drafter' => 'D' . str_pad($drafter + 1, 4, '0', STR_PAD_LEFT), // ID Klien
-                'nama_drafter' => 'Klien ' . ($drafter + 1), // Nama Klien
-                'alamat_drafter' => 'Jl. Tukad Pakerisan ' . ($drafter + 1), // Alamat Klien
-                'no_whatsapp' => '081234567890', // Nomor WhatsApp
-            ];
-        });
-
-        // Filter berdasarkan pencarian
+        // Filter pencarian
         $search = $request->query('search');
         if ($search) {
-            $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-                return str_contains(strtolower($project['nama_proyek']), strtolower($search)) ||
-                    str_contains(strtolower($project['kategori']), strtolower($search));
-            });
+            $query->where('nama_drafter', 'like', "%{$search}%")
+                  ->orWhere('id_drafter', 'like', "%{$search}%");
         }
 
         // Sorting
-        $sortField = $request->query('sort', 'id_proyek');
+        $sortField = $request->query('sort', 'id_drafter');
         $sortDirection = $request->query('direction', 'asc');
-        $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
+        $query->orderBy($sortField, $sortDirection);
 
         // Pagination
         $perPage = $request->query('entries', 10);
-        $currentPage = $request->query('page', 1);
-        $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-        $total = $mappedProjects->count();
-
-        // Paginator
-        $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $pagedProjects,
-            $total,
-            $perPage,
-            $currentPage,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
+        $drafters = $query->paginate($perPage);
+        
         return view('tables.drafter', [
-            'projects' => $projectsPaginator,
-            'total' => $total,
+            'projects' => $drafters,
+            'total' => $drafters->total(),
             'perPage' => $perPage,
-            'currentPage' => $currentPage,
+            'currentPage' => $drafters->currentPage(),
             'search' => $search,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
         ]);
+    }
+
+    public function create()
+    {
+        $lastDrafter = Drafter::orderByRaw("CAST(SUBSTRING(id_drafter, 2) AS UNSIGNED) DESC")->first();
+
+        if (!$lastDrafter) {
+            $newId = 'D0001';
+        } else {
+            $lastNumber = intval(substr($lastDrafter->id_drafter, 1));
+            $newId = 'D' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        }
+        $drafter = null;
+        return view('dataDrafter', compact('newId', 'drafter'));
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nama_drafter' => 'required|string|max:255',
+            'alamat_drafter' => 'required|string',
+            'no_whatsapp' => 'required|string|max:15'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        Drafter::create($request->all());
+
+        return redirect()->route('tables.drafter')
+            ->with('success', 'Data drafter berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $drafter = Drafter::where('id_drafter', $id)->firstOrFail();
+        return view('drafter', compact('drafter'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $drafter = Drafter::where('id_drafter', $id)->firstOrFail();
+
+        $validator = Validator::make($request->all(), [
+            'nama_drafter' => 'required|string|max:255',
+            'alamat_drafter' => 'required|string',
+            'no_whatsapp' => 'required|string|max:15'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $drafter->update($request->all());
+
+        return redirect()->route('tables.drafter')
+            ->with('success', 'Data drafter berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $drafter = Drafter::where('id_drafter', $id)->firstOrFail();
+        $drafter->delete();
+
+        return redirect()->route('tables.drafter')
+            ->with('success', 'Data drafter berhasil dihapus');
     }
 }

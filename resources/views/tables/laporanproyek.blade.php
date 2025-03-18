@@ -11,29 +11,38 @@
             <h4 class="mb-4 fw-bold">Laporan Proyek</h4>
     
             <div class="input-form-keuangan mb-3">
+                <form action="{{ route('tables.laporanproyek') }}" method="GET">
                     <div class="d-flex align-items-center gap-2">
-                        <select class="form-select" style="max-width: 200px;">
-                            <option selected class="text-secondary" disabled>Pilih Jenis</option>
-                            <option value="1">Proyek</option>
-                            <option value="2">Furniture</option>
+                        <select name="jenis" class="form-select" style="max-width: 200px;" onchange="this.form.submit()">
+                            <option value="1" {{ !$selectedJenis || $selectedJenis == '1' ? 'selected' : '' }}>Proyek</option>
+                            <option value="2" {{ $selectedJenis == '2' ? 'selected' : '' }}>Furniture</option>
                         </select>
-                        
+                            
                         <div class="input-group" style="max-width: 150px;"> 
-                            <input type="text" class="form-control" placeholder="Tgl awal" onfocus="(this.type='date')" onblur="(this.type='text')">
+                            <input type="text" name="tgl_awal" class="form-control" placeholder="Tgl awal" 
+                                   value="{{ request('tgl_awal') }}" onfocus="(this.type='date')" onblur="(this.type='text')">
                             <span class="input-group-text"><i class='bx bx-calendar'></i></span>
                         </div>
-            
+                
                         <div class="input-group" style="max-width: 150px;">
-                            <input type="text" class="form-control" placeholder="Tgl akhir" onfocus="(this.type='date')" onblur="(this.type='text')">
+                            <input type="text" name="tgl_akhir" class="form-control" placeholder="Tgl akhir"
+                                   value="{{ request('tgl_akhir') }}" onfocus="(this.type='date')" onblur="(this.type='text')">
                             <span class="input-group-text"><i class='bx bx-calendar'></i></span>
                         </div>
                         
-                        <button class="btn-export d-flex align-items-center gap-1">
-                            <i class='bx bx-export'></i>
-                            Export
-                        </button>
+                        <div class="dropdown">
+                                        <button class="btn-export dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
+                                            <i class='bx bx-export'></i>
+                                            Export
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ route('proyek.export', request()->all()) }}">Excel</a></li>
+                                            <li><a class="dropdown-item" href="{{ route('proyek.export.pdf', request()->all()) }}">PDF</a></li>
+                                        </ul>
+                                    </div>
                     </div>
-                </div>
+                </form>
+            </div>
 
                 <!-- Table data -->
                 <table class="table table-bordered">

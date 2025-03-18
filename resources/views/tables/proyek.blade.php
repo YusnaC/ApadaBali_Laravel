@@ -33,12 +33,10 @@
 
                         <div class="form-add d-flex">
                             <!-- Form pencarian -->
-                            <form method="GET" action="{{ route('tables.proyek') }}" class="d-flex search-form">
+                            <form method="GET" action="{{ route('tables.proyek') }}" id="search-form" class="d-flex search-form">
                                 <div class="input-group me-2">
-                                    <span class="input-group-text">
-                                        <i class="bx bx-search"></i> <!-- Ikon pencarian -->
-                                    </span>
-                                    <input type="text" name="search" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
+                                    <span class="input-group-text"><i class="bx bx-search"></i></span>
+                                    <input type="text" name="search" id="search-input" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
                                 </div>
                             </form>
 
@@ -159,12 +157,16 @@
                                     <td>{{ $proyek['id_drafter'] }}</td>
                                     <td>
                                         <div class="button-container">
-                                            <button class="btn btn-edit">
-                                                <i class="bx bx-edit"></i> Edit  <!-- Tombol Edit -->
+                                        <a href="{{ route('proyek.edit', $proyek->id_proyek) }}" class="btn btn-edit">
+                                            <i class="bx bx-edit"></i> Edit
+                                        </a>
+                                        <form action="{{ route('proyek.destroy', $proyek->id_proyek) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus proyek ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-delete">
+                                                <i class="bx bx-trash"></i>
                                             </button>
-                                            <button class="btn btn-delete" data-id="{{ $proyek['id_proyek'] }}">
-                                                <i class="bx bx-trash"></i> <!-- Tombol Delete -->
-                                            </button>
+                                        </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -200,3 +202,25 @@
 </section>
         
 @endsection
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let searchInput = document.getElementById("search-input");
+        let searchForm = document.getElementById("search-form");
+
+        // console.log("Search Input:", searchInput);
+        // console.log("Search Form:", searchForm);
+
+        if (searchInput && searchForm) {
+            searchInput.addEventListener("input", function() {
+                clearTimeout(searchInput.dataset.timer);
+                searchInput.dataset.timer = setTimeout(() => {
+                    searchForm.submit();
+                }, 500);
+            });
+        } else {
+            console.error("Error: Form atau input tidak ditemukan!");
+        }
+    });
+</script>
+

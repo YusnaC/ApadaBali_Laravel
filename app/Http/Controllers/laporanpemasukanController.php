@@ -2,72 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pemasukan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use App\Models\Pengeluaran;
+use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class laporanpemasukanController extends Controller
 {
     public function laporanpemasukan(Request $request)
+{
+    $jenis = $request->input('jenis');
+
+    if ($jenis == '2') {
+        $query = DB::table('pengeluarans')
+            ->select('id', 'tanggal_transaksi AS tgl_transaksi', 'nama_barang AS jenis_order', DB::raw("NULL AS id_order"), 'jumlah', DB::raw("NULL AS termin"), 'keterangan'); 
+    } else {
+        $query = DB::table('pemasukan')
+            ->select('id', 'tgl_transaksi', 'jenis_order', 'id_order', 'jumlah', 'termin', 'keterangan');
+    }
+
+    // Filter berdasarkan tanggal (gunakan alias `tgl_transaksi`)
+    if ($request->filled(['tgl_awal', 'tgl_akhir'])) {
+        $query->whereBetween('tgl_transaksi', [$request->tgl_awal, $request->tgl_akhir]);
+    }
+
+    // Inisialisasi $sortField dan $sortDirection
+    $sortField = 'tgl_transaksi'; // Default kolom yang digunakan untuk sorting
+    $sortDirection = $request->query('direction', 'desc');
+
+    // Pastikan sorting menggunakan `tgl_transaksi`
+    $query->orderBy($sortField, $sortDirection);
+
+    // Pagination
+    $perPage = $request->query('entries', 10);
+    $projects = $query->paginate($perPage);
+
+    return view('tables.laporanPemasukan', [
+        'projects' => $projects,
+        'total' => $projects->total(),
+        'perPage' => $perPage,
+        'currentPage' => $projects->currentPage(),
+        'sortField' => $sortField,
+        'sortDirection' => $sortDirection,
+        'selectedJenis' => $jenis
+    ]);
+}
+
+    // Method to handle export
+    public function exportPDF(Request $request)
     {
-        // Ambil data dari API atau database, sesuaikan dengan kebutuhan
-        $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
+        $jenis = $request->input('jenis');
         
-       // Mapping data agar sesuai dengan tabel yang diinginkan
-       $mappedProjects = collect($projects)->map(function ($project, $laporanpemasukan) {
-        // Tentukan jenis order berdasarkan $laporanpemasukan (even: 'Proyek Arsitektur', odd: 'Furniture')
-        $jenisOrder = $laporanpemasukan % 2 === 0 ? 'Proyek Arsitektur' : 'Furniture';
-        
-        // Tentukan prefix 'id_order' berdasarkan jenis order
-        $idOrderPrefix = ($jenisOrder === 'Proyek Arsitektur') ? 'ASB' : 'AFB'; // Prefix 'ASB' untuk 'Proyek Arsitektur', 'AFB' untuk 'Furniture'
-        
-        return [
-            'no' => $laporanpemasukan + 1,  // Nomor urut
-            'jenis_order' => $jenisOrder,  // Jenis order ('Proyek Arsitektur' atau 'Furniture')
-            'id_order' => $idOrderPrefix . str_pad($laporanpemasukan + 1, 4, '0', STR_PAD_LEFT),  // ID Order dengan prefix 'ASB' atau 'AFB'
-            'tgl_transaksi' => now()->subDays($laporanpemasukan)->format('d/m/Y'),  // Tanggal transaksi (dihitung mundur dari hari ini)
-            'jumlah' => 100000,  // Jumlah acak (misalnya 1 juta)
-            'termin' => rand(1, 3),  // Termin acak antara 1-3
-            'keterangan' => 'Keterangan ' . ($laporanpemasukan + 1),  // Keterangan order
-        ];
-    });
-
-
-        // Filter pencarian
-        $search = $request->query('search');
-        if ($search) {
-            $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-                return str_contains(strtolower($project['jenis_order']), strtolower($search)) ||
-                       str_contains(strtolower($project['id_order']), strtolower($search));
-            });
+        if ($jenis == '2') {
+            $query = DB::table('pengeluarans')
+            ->select('id', 'tanggal_transaksi AS tgl_transaksi', 'nama_barang AS jenis_order', DB::raw("NULL AS id_order"), 'jumlah', DB::raw("NULL AS termin"), 'keterangan'); 
+        } else {
+            $query = DB::table('pemasukan');
         }
 
-        // Sorting
-        $sortField = $request->query('sort', 'no');
-        $sortDirection = $request->query('direction', 'asc');
-        $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
+        if ($request->filled('tgl_awal') && $request->filled('tgl_akhir')) {
+            $query->whereBetween('tgl_transaksi', [$request->tgl_awal, $request->tgl_akhir]);
+        }
 
-        // Pagination
-        $perPage = $request->query('entries', 10);
-        $currentPage = $request->query('page', 1);
-        $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-        $total = $mappedProjects->count();
-
-        $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $pagedProjects,
-            $total,
-            $perPage,
-            $currentPage,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        return view('tables.laporanpemasukan', [
-            'projects' => $projectsPaginator,
-            'total' => $total,
-            'perPage' => $perPage,
-            'currentPage' => $currentPage,
-            'search' => $search,
-            'sortField' => $sortField,
-            'sortDirection' => $sortDirection,
+        $data = $query->get();
+        
+        $pdf = PDF::loadView('exports.laporan-pdf', [
+            'data' => $data,
+            'jenis' => $jenis == '2' ? 'Pengeluaran' : 'Pemasukan',
+            'tgl_awal' => $request->tgl_awal,
+            'tgl_akhir' => $request->tgl_akhir
         ]);
+
+        return $pdf->download('laporan-keuangan.pdf');
     }
 }

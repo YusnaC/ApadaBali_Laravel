@@ -27,25 +27,20 @@
                     <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />  
                 </div>  
   
-                <div class="block mt-4">  
-                    <label for="remember_me" class="flex items-center">  
-                        <x-checkbox id="remember_me" name="remember" />  
-                        <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>  
-                    </label>  
-                </div>  
-  
-                <div class="flex items-center justify-between mt-4">  
-                    @if (Route::has('password.request'))  
-                        <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">  
+                @if (Route::has('password.request'))  
+                    <div class="mt-2 text-right">
+                        <a class="text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">  
                             {{ __('Forgot your password?') }}  
                         </a>  
-                    @endif  
-  
-                    <x-button class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">  
+                    </div>
+                @endif  
+
+                <div class="mt-6 text-right">  
+                    <x-button class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline">  
                         {{ __('Log in') }}  
                     </x-button>  
                 </div>  
             </form>  
         </div>    
     </div>    
-</x-guest-layout>  
+</x-guest-layout>

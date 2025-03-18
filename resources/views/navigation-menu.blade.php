@@ -12,8 +12,16 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link href="" :active="request()->routeIs('dashboard')">
+                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" class="{{ request()->routeIs('dashboard') ? 'border-b-2 border-orange-500 text-orange-500' : '' }}">
                         {{ __('Dashboard') }}
+                    </x-nav-link>
+                    
+                    <!-- <x-nav-link href="{{ route('tables.proyek') }}" :active="request()->routeIs('tables.proyek')" class="{{ request()->routeIs('tables.proyek') ? 'border-b-2 border-orange-500 text-orange-500' : '' }}">
+                        {{ __('Proyek') }}
+                    </x-nav-link> -->
+
+                    <x-nav-link href="{{ route('tables.progresproyek') }}" :active="request()->routeIs('tables.progresproyek')" class="{{ request()->routeIs('tables.progresproyek') ? 'border-b-2 border-orange-500 text-orange-500' : '' }}">
+                        {{ __('Progress') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -137,8 +145,16 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" class="{{ request()->routeIs('dashboard') ? 'border-l-4 border-orange-500 text-orange-500 bg-orange-50' : '' }}">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link href="{{ route('tables.proyek') }}" :active="request()->routeIs('tables.proyek')" class="{{ request()->routeIs('tables.proyek') ? 'border-l-4 border-orange-500 text-orange-500 bg-orange-50' : '' }}">
+                {{ __('Proyek') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link href="{{ route('tables.progresproyek') }}" :active="request()->routeIs('tables.progresproyek')" class="{{ request()->routeIs('tables.progresproyek') ? 'border-l-4 border-orange-500 text-orange-500 bg-orange-50' : '' }}">
+                {{ __('Progress') }}
             </x-responsive-nav-link>
         </div>
 

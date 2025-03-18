@@ -106,6 +106,7 @@ li {
 
 /* Penataan tautan menu di sidebar */
 #sidebar .side-menu a {
+    all: unset;
     display: flex;
     align-items: center;
     color: var(--text-clr);
@@ -114,6 +115,7 @@ li {
     transition: background-color 0.1s ease, color 0.1s ease;
     border-radius: 0.5rem;
     margin: 0.4rem 0 0 0;
+    pointer-events: auto !important;
 }
 
 /* Efek hover pada menu sidebar */
@@ -122,7 +124,11 @@ li {
     color: var(--text-clr);
     transition: background-color 0.05s ease, color 0.05s ease;
 }
-
+.sidebar-link:hover {
+    background: var(--hover);
+    color: var(--text-clr);
+    transition: background-color 0.05s ease, color 0.05s ease;
+}
 /* Rotasi ikon kanan saat item menu aktif */
 #sidebar .side-menu > li > a.active .icon-right {
     transform: rotateZ(90deg);
@@ -140,6 +146,25 @@ li {
 #sidebar .side-menu a.active .sidebar-icon {
     filter: brightness(0) invert(1);
 }
+
+.sidebar-link {
+    display: flex; /* Agar a mengambil seluruh area */
+    width: 100%; /* Pastikan selebar parent */
+    text-decoration: none; /* Hilangkan underline */
+    color: inherit; /* Warna teks mengikuti default */
+}
+
+.sidebar-link li {
+    width: 100%; /* Pastikan hover bekerja di seluruh area */
+    border-radius: 10px; /* Sesuai tampilan gambar */
+    padding: 12px 0px; /* Sesuaikan dengan desain */
+}
+
+.sidebar-link:hover li {
+    background-color: #fce1db; /* Warna sesuai gambar */
+    transition: background 0.3s ease-in-out; /* Animasi halus */
+}
+
 
 /* ============================ LOGOUT BUTTON ============================*/
 /* Penataan tombol logout di sidebar */
@@ -538,4 +563,12 @@ button:focus {
 .footer-text {
     color: var(--secondary);
     font-size: 0.9rem;
+}
+.sidebar-link.active,
+.sidebar-link.active li,
+.slide-dropdown li a.active {
+  background-color: #f97316 !important; /* Tambahkan ini */
+  color: white !important;
+  border-radius: 0.375rem; /* Membuat sudut lebih lembut */
+  padding: 0.5rem 1rem; /* Menyesuaikan padding */
 }

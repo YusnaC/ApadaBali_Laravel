@@ -106,47 +106,77 @@
                     </thead>
 
                     <tbody class="drafter-table">
-                        <!-- Loop untuk menampilkan data progres proyek -->
                         @forelse($projects as $progresproyek)
                             <tr>
-                                <td>{{ $progresproyek['id_proyek'] }}</td>
-                                <td>{{ $progresproyek['tgl_proyek'] }}</td>
-                                <td>{{ $progresproyek['progres'] }}</td>
-                                <td>{{ $progresproyek['keterangan'] }}</td>
-                                <td>{{ $progresproyek['dokumen'] }}</td>
+                                <td>{{ $progresproyek->id_proyek }}</td>
+                                <td>{{ \Carbon\Carbon::parse($progresproyek->tgl_proyek)->format('d/m/Y') }}</td>
+                                <td>{{ $progresproyek->progres }}%</td>
+                                <td>{{ $progresproyek->keterangan }}</td>
+                                <td>
+                                    @if($progresproyek->dokumen)
+                                        <a href="{{ Storage::url($progresproyek->dokumen) }}" target="_blank" class="text-primary">
+                                            <i class="bx bx-file"></i> {{$progresproyek->dokumen}}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Tidak ada dokumen</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <div class="button-container">
-                                        <button class="btn btn-edit">
+                                        <a href="{{ route('proyek.progress.edit', $progresproyek->id_progres) }}" class="btn btn-edit">
                                             <i class="bx bx-edit"></i> Edit
-                                        </button>
-                                        <button class="btn btn-delete" data-id="{{ $progresproyek['id_proyek'] }}">
-                                            <i class="bx bx-trash"></i>
-                                        </button>
+                                        </a>
+                                        <form action="{{ route('proyek.progress.destroy', $progresproyek->id_progres) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-delete">
+                                                <i class="bx bx-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="11" class="text-center">Data tidak ditemukan.</td>
+                                <td colspan="6" class="text-center">Data tidak ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
 
                     <!-- Navigasi Halaman -->
-                    <div class="d-flex justify-content-between align-items-center text-secondary">
-                        <div>
-                            Menampilkan {{ $projects->count() }} dari {{ $total }} entri
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-secondary">
+                            @if($projects->count() > 0)
+                                Showing {{ $projects->firstItem() ?? 1 }} to {{ $projects->lastItem() ?? $projects->count() }} of {{ $projects->total() }} entries
+                            @else
+                                Showing 0 entries
+                            @endif
                         </div>
-                        <nav>
-                            <ul class="pagination">
-                                @for ($i = 1; $i <= ceil($total / $perPage); $i++)
-                                    <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                        <a class="page-link" href="{{ route('tables.progresproyek', array_merge(request()->all(), ['page' => $i])) }}">
-                                            {{ $i }}
-                                        </a>
-                                    </li>
-                                @endfor
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0">
+                                <!-- Previous Page Link -->
+                                @if ($projects->onFirstPage())
+                                    <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
+                                @else
+                                    <li class="page-item"><a class="page-link" href="{{ $projects->previousPageUrl() }}">&lsaquo;</a></li>
+                                @endif
+
+                                <!-- Pagination Elements -->
+                                @foreach ($projects->getUrlRange(1, $projects->lastPage()) as $page => $url)
+                                    @if ($page == $projects->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                                    @else
+                                        <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                                    @endif
+                                @endforeach
+
+                                <!-- Next Page Link -->
+                                @if ($projects->hasMorePages())
+                                    <li class="page-item"><a class="page-link" href="{{ $projects->nextPageUrl() }}">&rsaquo;</a></li>
+                                @else
+                                    <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
+                                @endif
                             </ul>
                         </nav>
                     </div>

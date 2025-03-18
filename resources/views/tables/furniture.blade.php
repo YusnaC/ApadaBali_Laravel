@@ -138,38 +138,42 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($projects as $furniture)
-                            <tr>
-                                <td>{{ $furniture['id_furniture'] }}</td>
-                                <td>{{ $furniture['tgl_pembuatan'] }}</td>
-                                <td>{{ $furniture['nama_furniture'] }}</td>
-                                <td>{{ $furniture['jumlah_unit'] }}</td>
-                                <td>{{ $furniture['harga_unit'] }}</td>
-                                <td>{{ $furniture['lokasi'] }}</td>
-                                <td>{{ $furniture['tgl_selesai'] }}</td>
-                                <td>
-                                    <div class="button-container">
-                                        <button class="btn btn-edit">
-                                            <i class="bx bx-edit"></i> Edit
-                                        </button>
-                                        <button class="btn btn-delete" data-id="{{ $furniture['id_furniture'] }}">
+                    @forelse($furnitures as $furniture)
+                        <tr>
+                            <td>{{ $furniture->id_furniture }}</td>
+                            <td>{{ \Carbon\Carbon::parse($furniture->tgl_pembuatan)->format('d/m/Y') }}</td>
+                            <td>{{ $furniture->nama_furniture }}</td>
+                            <td>{{ $furniture->jumlah_unit }}</td>
+                            <td>Rp {{ number_format($furniture->harga_unit, 0, ',', '.') }}</td>
+                            <td>{{ $furniture->lokasi }}</td>
+                            <td>{{ \Carbon\Carbon::parse($furniture->tgl_selesai)->format('d/m/Y') }}</td>
+                            <td>
+                                <div class="button-container">
+                                    <a href="{{ route('furniture.edit', $furniture->id) }}" class="btn btn-edit">
+                                        <i class="bx bx-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ route('furniture.destroy', $furniture->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-delete">
                                             <i class="bx bx-trash"></i>
                                         </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="11" class="text-center">Data tidak ditemukan.</td>
-                            </tr>
-                        @endforelse
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center">Data tidak ditemukan.</td>
+                        </tr>
+                    @endforelse
                     </tbody>
                 </table>
 
                 <!-- Pagination -->
                 <div class="d-flex justify-content-between align-items-center text-secondary">
                     <div>
-                        Showing {{ $projects->count() }} of {{ $total }} entries
+                    Showing {{ $furnitures->firstItem() ?? 0 }} to {{ $furnitures->lastItem() ?? 0 }} of {{ $furnitures->total() }} entries
                     </div>
                     <nav>
                         <ul class="pagination">

@@ -2,69 +2,114 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengeluaran;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
-class pengeluaranController extends Controller
+class PengeluaranController extends Controller
 {
-    public function pengeluaran(Request $request)
+    public function index(Request $request)
     {
-        // Ambil data dari API atau database, sesuaikan dengan kebutuhan
-        $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
-        
-        // Mapping data agar sesuai dengan tabel pengeluaran yang diinginkan
-        $mappedProjects = collect($projects)->map(function ($project, $pengeluaran) {
-            // Anggap data yang didapatkan adalah data barang dan pengeluaran terkait
-            $jumlah = rand(1, 5); // Angka acak untuk jumlah
-            $hargaSatuan = rand(100000, 1000000); // Angka acak untuk harga satuan
-
-            return [
-                'no' => $pengeluaran + 1,
-                'tanggal_transaksi' => now()->subDays($pengeluaran)->format('d/m/Y'), // Tanggal transaksi
-                'nama_barang' => 'Barang ' . ($pengeluaran + 1), // Nama barang
-                'jumlah' => $jumlah,
-                'harga_satuan' => 100000, 
-                'total_harga' => 100000,
-                'keterangan' => 'Keterangan ' . ($pengeluaran + 1),
-            ];
-        });
+        $query = Pengeluaran::query();
 
         // Filter pencarian
         $search = $request->query('search');
         if ($search) {
-            $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-                return str_contains(strtolower($project['nama_barang']), strtolower($search)) ||
-                       str_contains(strtolower($project['keterangan']), strtolower($search));
-            });
+            $query->where('nama_barang', 'like', "%{$search}%")
+                  ->orWhere('keterangan', 'like', "%{$search}%");
         }
 
         // Sorting
-        $sortField = $request->query('sort', 'no');
+        $sortField = $request->query('sort', 'id');
         $sortDirection = $request->query('direction', 'asc');
-        $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
+        $query->orderBy($sortField, $sortDirection);
 
         // Pagination
         $perPage = $request->query('entries', 10);
-        $currentPage = $request->query('page', 1);
-        $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-        $total = $mappedProjects->count();
-
-        $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $pagedProjects,
-            $total,
-            $perPage,
-            $currentPage,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
+        $pengeluarans = $query->paginate($perPage);
+        
+        // Calculate totals
+        $total = $pengeluarans->total();
+        $currentPage = $pengeluarans->currentPage();
+        
+        // Calculate summary
+        $totalPengeluaran = Pengeluaran::sum('total_harga');
 
         return view('tables.pengeluaranKeuangan', [
-            'projects' => $projectsPaginator,
+            'projects' => $pengeluarans,
             'total' => $total,
             'perPage' => $perPage,
             'currentPage' => $currentPage,
             'search' => $search,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
+            'totalPengeluaran' => $totalPengeluaran
         ]);
+    }
+
+    public function create()
+    {
+        return view('pengeluaran');
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tanggal_transaksi' => 'required|date',
+            'nama_barang' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:1',
+            'harga_satuan' => 'required|numeric|min:0',
+            'keterangan' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        Pengeluaran::create($request->all());
+
+        return redirect()->route('tables.pengeluaranKeuangan')
+            ->with('success', 'Data pengeluaran berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $pengeluaran = Pengeluaran::findOrFail($id);
+        return view('pengeluaran', compact('pengeluaran'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $pengeluaran = Pengeluaran::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'tanggal_transaksi' => 'required|date',
+            'nama_barang' => 'required|string|max:255',
+            'jumlah' => 'required|integer|min:1',
+            'harga_satuan' => 'required|numeric|min:0',
+            'keterangan' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $pengeluaran->update($request->all());
+
+        return redirect()->route('tables.pengeluaranKeuangan')
+            ->with('success', 'Data pengeluaran berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $pengeluaran = Pengeluaran::findOrFail($id);
+        $pengeluaran->delete();
+
+        return redirect()->route('tables.pengeluaranKeuangan')
+            ->with('success', 'Data pengeluaran berhasil dihapus');
     }
 }

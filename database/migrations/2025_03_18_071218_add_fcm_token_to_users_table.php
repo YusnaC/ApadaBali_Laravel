@@ -11,13 +11,12 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()  
-    {  
-        Schema::table('users', function (Blueprint $table) {  
-            $table->string('role')->default('drafter'); // Default role  
-        });  
-    }  
-    
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('fcm_token')->nullable();
+        });
+    }
 
     /**
      * Reverse the migrations.
@@ -27,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            
+            //
         });
     }
 };

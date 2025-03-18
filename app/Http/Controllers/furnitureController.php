@@ -2,80 +2,117 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http; 
+use App\Models\Furniture;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
-class furnitureController extends Controller
+class FurnitureController extends Controller
 {
-    public function furniture(Request $request)
+    public function index(Request $request)
     {
-        // Ambil data dari API Dummy
-        $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
-    
-        // Mapping data dummy agar sesuai dengan kebutuhan
-        $mappedProjects = collect($projects)->map(function ($project, $furniture) {
-            return [
-                'id_furniture' => 'AFB' . str_pad($furniture + 1, 4, '0', STR_PAD_LEFT),
-                'tgl_pembuatan' => now()->subDays($furniture)->format('d/m/Y'),          
-                'nama_furniture' => 'Furniture ' . ($furniture + 1),
-                'jumlah_unit' => 3,
-                'harga_unit' => 1000000,
-                'lokasi' => 'Jl. Tukad Pakerisan',
-                'tgl_selesai' => now()->addDays(30)->format('d/m/Y'),
-            ];
-        });
-    
-        // Filter berdasarkan pencarian
+        $query = Furniture::query();
+
+        // Search functionality
         $search = $request->query('search');
         if ($search) {
-            $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-                return str_contains(strtolower($project['nama_furniture']), strtolower($search)) ||
-                    str_contains(strtolower($project['jumlah_unit']), strtolower($search));
-            });
+            $query->where('nama_furniture', 'LIKE', "%{$search}%")
+                  ->orWhere('jumlah_unit', 'LIKE', "%{$search}%");
         }
-    
-        // Sorting
-        $sortField = $request->query('sort', 'id_furniture'); // Default sort by 'id_proyek'
-        $sortDirection = $request->query('direction', 'asc'); // Default direction 'asc'
-    
-        $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
-    
-        // Pagination
-        $perPage = $request->query('entries', 10); // Ambil nilai 'entries' dari query string
-        $currentPage = $request->query('page', 1);
-        $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-        $total = $mappedProjects->count();
 
-        // Manually create a paginator object
-        $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-            $pagedProjects, 
-            $total, 
-            $perPage, 
-            $currentPage, 
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
+        // Sorting
+        $sortField = $request->query('sort', 'id_furniture');
+        $sortDirection = $request->query('direction', 'asc');
+        $query->orderBy($sortField, $sortDirection);
+
+        // Pagination
+        $perPage = $request->query('entries', 10);
+        $furnitures = $query->paginate($perPage);
 
         return view('tables.furniture', [
-            'projects' => $projectsPaginator,
-            'total' => $total,
+            'furnitures' => $furnitures,
+            'total' => $furnitures->total(),
             'perPage' => $perPage,
-            'currentPage' => $currentPage,
+            'currentPage' => $furnitures->currentPage(),
             'search' => $search,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
         ]);
     }
+
     public function create()
-    {
-        return view('furniture');
-    }
-    
+{
+    $lastFurniture = Furniture::orderByRaw("CAST(SUBSTRING(id_furniture, 4) AS UNSIGNED) DESC")->first();
 
-    public function store($request){
-        
+    if (!$lastFurniture) {
+        $newId = 'AFB001';
+    } else {
+        $lastNumber = intval(substr($lastFurniture->id_furniture, 3));
+        $newId = 'AFB' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
     }
-
+    // dd($newId);
+    // Kirimkan juga furniture = null agar form tetap bisa digunakan
+    return view('furniture', compact('newId'))->with('furniture', null);
 }
 
+
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'id_furniture' => 'required|string|unique:furnitures,id_furniture',
+            'nama_furniture' => 'required|string|max:255',
+            'jumlah_unit' => 'required|integer|min:1',
+            'harga_unit' => 'required|numeric|min:0',
+            'lokasi' => 'required|string|max:255',
+            'tgl_selesai' => 'required|date',
+        ]);
+
+        $furniture = Furniture::create([
+            'id_furniture' => $validated['id_furniture'],
+            'tgl_pembuatan' => now(),
+            'nama_furniture' => $validated['nama_furniture'],
+            'jumlah_unit' => $validated['jumlah_unit'],
+            'harga_unit' => $validated['harga_unit'],
+            'lokasi' => $validated['lokasi'],
+            'tgl_selesai' => $validated['tgl_selesai'],
+        ]);
+
+        return redirect()->route('furniture.index')
+            ->with('success', 'Furniture created successfully.');
+    }
+
+    public function show(Furniture $furniture)
+    {
+        return view('furniture.show', compact('furniture'));
+    }
+
+    public function edit(Furniture $furniture)
+    {
+        return view('furniture', ['furniture' => $furniture]);
+
+    }
+
+    public function update(Request $request, Furniture $furniture)
+    {
+        $validated = $request->validate([
+            'nama_furniture' => 'required|string|max:255',
+            'jumlah_unit' => 'required|integer|min:1',
+            'harga_unit' => 'required|numeric|min:0',
+            'lokasi' => 'required|string|max:255',
+            'tgl_selesai' => 'required|date',
+        ]);
+
+        $furniture->update($validated);
+
+        return redirect()->route('furniture.index')
+            ->with('success', 'Furniture updated successfully.');
+    }
+
+    public function destroy(Furniture $furniture)
+    {
+        $furniture->delete();
+
+        return redirect()->route('furniture.index')
+            ->with('success', 'Furniture deleted successfully.');
+    }
+}

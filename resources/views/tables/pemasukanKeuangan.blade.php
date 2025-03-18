@@ -173,9 +173,9 @@
                     </thead>
                     <tbody>
                         <!-- Loop untuk menampilkan setiap data pemasukan keuangan -->
-                        @forelse($projects as $pemasukanKeuangan)
+                        @forelse($pemasukan as $pemasukanKeuangan)
                             <tr>
-                                <td>{{ $pemasukanKeuangan['no'] }}</td>
+                                <td>{{ $pemasukanKeuangan['id'] }}</td>
                                 <td>{{ $pemasukanKeuangan['jenis_order'] }}</td>
                                 <td>{{ $pemasukanKeuangan['id_order'] }}</td>
                                 <td>{{ $pemasukanKeuangan['tgl_transaksi'] }}</td>
@@ -183,11 +183,11 @@
                                 <td>{{ $pemasukanKeuangan['termin'] }}</td>
                                 <td>{{ $pemasukanKeuangan['keterangan'] }}</td>
                                 <td>
-                                    <div class="button-container">
+                                <div class="button-container">
                                         <!-- Tombol Edit -->
-                                        <button class="btn btn-edit">
+                                        <a href="{{ route('pemasukan.edit', $pemasukanKeuangan['id']) }}" class="btn btn-edit">
                                             <i class="bx bx-edit"></i> Edit
-                                        </button>
+                                        </a>
                                         <!-- Tombol Hapus -->
                                         <button class="btn btn-delete" data-id="{{ $pemasukanKeuangan['id_order'] }}">
                                             <i class="bx bx-trash"></i>
@@ -207,7 +207,7 @@
                 <!-- Navigasi Halaman (Pagination) -->
                 <div class="d-flex justify-content-between align-items-center text-secondary">
                     <div>
-                        Showing {{ $projects->count() }} of {{ $total }} entries
+                        Showing {{ $pemasukan->count() }} of {{ $total }} entries
                     </div>
                     <nav>
                         <ul class="pagination">

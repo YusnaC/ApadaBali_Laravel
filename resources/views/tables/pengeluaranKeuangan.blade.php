@@ -172,7 +172,7 @@
                         <!-- Loop untuk menampilkan data pengeluaran -->
                         @forelse($projects as $pengeluaranKeuangan)
                             <tr>
-                                <td>{{ $pengeluaranKeuangan['no'] }}</td>
+                                <td>{{ $pengeluaranKeuangan['id'] }}</td>
                                 <td>{{ $pengeluaranKeuangan['tanggal_transaksi'] }}</td>
                                 <td>{{ $pengeluaranKeuangan['nama_barang'] }}</td>
                                 <td>{{ $pengeluaranKeuangan['jumlah'] }}</td>

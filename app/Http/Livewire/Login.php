@@ -28,7 +28,7 @@ class Login extends Component
   
         session()->regenerate();  
   
-        return redirect()->intended('/dashboard-admin'); // Change this to your intended route  
+        return redirect()->intended('/dashboard'); // Change this to your intended route  
     }  
   
     public function render()  

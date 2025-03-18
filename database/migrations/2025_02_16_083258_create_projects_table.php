@@ -14,16 +14,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('projects', function (Blueprint $table) {
-            $table->id();
-            $table->string('project_id');
-            $table->string('category');
-            $table->date('project_date');
-            $table->string('project_name');
-            $table->string('location');
-            $table->float('area');
-            $table->integer('floor_count');
-            $table->date('deadline');
-            $table->string('drafter_id');
+            $table->string('id_proyek'); // Primary key dengan auto-increment
+            $table->string('nama_proyek');
+            $table->string('kategori');
+            $table->date('tgl_proyek');
+            $table->string('lokasi');
+            $table->decimal('luas', 10, 2);
+            $table->integer('jumlah_lantai');
+            $table->date('tgl_deadline');
+            $table->unsignedBigInteger('id_drafter'); // Foreign key
+
             $table->timestamps();
         });
     }
