@@ -17,6 +17,8 @@ use App\Http\Controllers\klienController;
 use App\Http\Controllers\laporanpemasukanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LaporanProyekController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -176,7 +178,7 @@ Route::delete('/klien/{id}', [klienController::class, 'destroy'])->name('klien.d
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+    // Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 });
 
 // Import the controller
@@ -194,6 +196,44 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/laporan/export-pdf', [LaporanPemasukanController::class, 'exportPDF'])->name('pemasukan.export.pdf');
 Route::get('/laporan-proyek/export-pdf', [LaporanProyekController::class, 'exportPDF'])->name('proyek.export.pdf');
 Route::get('/laporan-proyek/export', [LaporanProyekController::class, 'export'])->name('proyek.export');
+Route::get('/api/get-latest-project-id', [proyekController::class, 'getLatestProjectId']);
+Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('dashboard.admin');
+// Remove these duplicate routes
+// Route::get('/forgot-password', function () {
+//     return view('auth.forgot-password');
+// })->middleware('guest')->name('password.request');
+
+// Route::get('/forgot-password', [App\Http\Livewire\ForgotPassword::class, '__invoke'])
+//     ->middleware('guest')
+//     ->name('password.request');
+
+// Keep only these password reset routes
+Route::middleware('guest')->group(function () {
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
+        ->name('password.request');
+
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])
+        ->name('password.update');
+});
+
+// Update the profile password route to use PUT method
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+});
+use App\Http\Controllers\DashboardDrafterController;
+
+// Fix the middleware namespace
+Route::get('/dashboard-drafter', [DashboardDrafterController::class, 'index'])
+    ->middleware(['auth'])  // Updated middleware
+    ->name('dashboard.drafter');
 
 
 

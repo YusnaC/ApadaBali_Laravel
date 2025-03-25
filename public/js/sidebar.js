@@ -4,89 +4,83 @@ const sidebar = document.getElementById("sidebar");
 const toggleButton = document.getElementById("burgerButton");
 const mainContent = document.querySelector(".dashboard-content");
 const maincontent = document.getElementById("mainContent");
+const header = document.getElementById("header");
+const mainContentElements = document.querySelectorAll('.main-content');
+
 // Menangani klik pada side menu links
 sideMenuLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
-        e.preventDefault(); // Mencegah aksi default link
+        e.preventDefault();
 
-        // Menemukan dropdown yang terkait dengan link
         const dropdown = link.nextElementSibling;
 
-        // Jika link memiliki dropdown
         if (dropdown && dropdown.classList.contains("slide-dropdown")) {
-            // Tutup dropdown jika sudah terbuka
             if (dropdown.classList.contains("show")) {
                 dropdown.classList.remove("show");
-                link.classList.remove("active"); // Hilangkan active dari link
+                link.classList.remove("active", "no-hover");
             } else {
-                // Tutup semua dropdown lain
                 allDropdown.forEach((otherDropdown) => {
                     otherDropdown.classList.remove("show");
                 });
                 sideMenuLinks.forEach((otherLink) => {
-                    otherLink.classList.remove("active"); // Reset semua link active
+                    otherLink.classList.remove("active", "no-hover");
                 });
 
-                // Buka dropdown yang diklik
                 dropdown.classList.add("show");
-                link.classList.add("active"); // Tambahkan active pada link
+                link.classList.add("active", "no-hover");
             }
         } else {
-            // Jika tidak ada dropdown, reset semua
             allDropdown.forEach((dropdown) => {
                 dropdown.classList.remove("show");
             });
             sideMenuLinks.forEach((link) => {
-                link.classList.remove("active");
+                link.classList.remove("active", "no-hover");
             });
         }
     });
 });
 
+// Single click event listener for handling outside clicks
 document.addEventListener("click", (event) => {
-    if (
-        !sidebar.contains(event.target) &&
-        !toggleButton.contains(event.target) &&
-        window.innerWidth <= 767 // Batasan untuk mobile
-    ) {
-        console.log("masuk 1?");
+    if (window.innerWidth <= 767 && 
+        sidebar.classList.contains("open") && 
+        !sidebar.contains(event.target) && 
+        !toggleButton.contains(event.target)) {
         sidebar.classList.remove("open");
     }
 });
 
+// Single toggle button click handler
 toggleButton.addEventListener("click", () => {
-    // Menangani aksi untuk membuka/tutup sidebar
     if (window.innerWidth < 768) {
-        // Untuk tampilan mobile, toggle status open
         sidebar.classList.toggle("open");
+        // No transform manipulation for mobile, use CSS instead
     } else {
-        // Pada layar besar, toggle sidebar dengan transformasi
-        const isSidebarVisible = sidebar.style.transform === "translateX(0%)";
+        const isSidebarVisible = getComputedStyle(sidebar).transform !== 'matrix(1, 0, 0, 1, 0, 0)';
+        sidebar.style.transform = isSidebarVisible ? "translateX(0%)" : "translateX(-100%)";
+        
+        mainContentElements.forEach(element => {
+            element.style.marginLeft = isSidebarVisible ? '18rem' : '0';
+        });
 
-        sidebar.style.transform =
-            sidebar.style.transform === "translateX(0%)"
-                ? "translateX(-100%)"
-                : "translateX(0%)";
-
-        if (isSidebarVisible) {
-            mainContent.classList.remove("dashboard-content"); // Hilangkan class
+        if (!isSidebarVisible) {
+            mainContent.classList.remove("dashboard-content");
             maincontent.classList.remove("dashboard-content");
+            header.querySelector('.wrap').style.marginLeft = '0';
         } else {
-            mainContent.classList.add("dashboard-content"); // Tambahkan class
-            maincontent.classList.add("dashboard-content"); // Tambahkan class
+            mainContent.classList.add("dashboard-content");
+            maincontent.classList.add("dashboard-content");
+            header.querySelector('.wrap').style.marginLeft = '20%';
         }
     }
 });
 
-// Menambahkan listener untuk resize, untuk memastikan perubahan pada sidebar ketika ukuran layar berubah
+// Simplified resize handler
 window.addEventListener("resize", () => {
     if (window.innerWidth >= 768) {
-        // Pada layar besar, pastikan sidebar selalu tampil
-        sidebar.style.transform = "translateX(0)";
+        sidebar.style.transform = "translateX(0%)";
+        header.querySelector('.wrap').style.marginLeft = '20%';
     } else {
-        // Pada layar kecil, sembunyikan sidebar secara default
-        sidebar.style.transform = sidebar.classList.contains("open")
-            ? "translateX(0)"
-            : "translateX(-100%)";
+        sidebar.style.transform = "";  // Let CSS handle mobile view
     }
 });

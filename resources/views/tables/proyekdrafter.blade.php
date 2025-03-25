@@ -118,8 +118,8 @@
                             <tr>
                                 <td>{{ $project->id_proyek }}</td>
                                 <td>{{ \Carbon\Carbon::parse($project->tgl_proyek)->format('d/m/Y') }}</td>
-                                <td>{{ $project->nama_proyek }}</td>
-                                <td>{{ $project->lokasi }}</td>
+                                <td class="text-start">{{ $project->nama_proyek }}</td>
+                                <td class="text-start">{{ $project->lokasi }}</td>
                                 <td>{{ $project->luas }}</td>
                                 <td>{{ $project->jumlah_lantai }}</td>
                                 <td>{{ \Carbon\Carbon::parse($project->tgl_deadline)->format('d/m/Y') }}</td>

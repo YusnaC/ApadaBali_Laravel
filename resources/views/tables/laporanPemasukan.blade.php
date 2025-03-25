@@ -8,7 +8,7 @@
     <div class="pencatatan-pemasukan-content">
         <div class="row">
             <div class="card shadow-sm rounded-0 py-4 px-3">
-                <h4 class="mb-5 fw-bold">Laporan Keuangan</h4>
+                <h4 class="mb-5 fw-bold">Laporan {{ request('jenis') == '2' ? 'Pengeluaran' : 'Pemasukan' }}</h4>
 
                 <div class="input-form-keuangan mb-3">
                     <form action="{{ route('tables.laporanPemasukan') }}" method="GET" id="filterForm">
@@ -21,20 +21,20 @@
                             
                             <div class="input-group" style="width: 150px;"> 
                                 <input type="text" name="tgl_awal" class="form-control" 
-                                    placeholder="Tgl awal" onfocus="(this.type='date')" 
+                                    placeholder="Tgl awal" onfocus="(this.type='date'); this.showPicker()"
                                     onblur="(this.type='text')" value="{{ request('tgl_awal') }}">
                                 <span class="input-group-text"><i class='bx bx-calendar'></i></span>
                             </div>
 
                             <div class="input-group" style="width: 150px;">
                                 <input type="text" name="tgl_akhir" class="form-control" 
-                                    placeholder="Tgl akhir" onfocus="(this.type='date')" 
+                                    placeholder="Tgl akhir" onfocus="(this.type='date'); this.showPicker()"
                                     onblur="(this.type='text')" value="{{ request('tgl_akhir') }}">
                                 <span class="input-group-text"><i class='bx bx-calendar'></i></span>
                             </div>
 
                             <div class="dropdown">
-                                <button class="btn-export dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
+                                <button class="btn-export  d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
                                     <i class='bx bx-export'></i>
                                     Export
                                 </button>
@@ -120,7 +120,7 @@
                         @forelse($projects as $laporanPemasukan)
                             <tr>
                                 <td>{{ $laporanPemasukan->id }}</td>
-                                <td>{{ $laporanPemasukan->jenis_order }}</td>
+                                <td class="text-start">{{ $laporanPemasukan->jenis_order }}</td>
                                 <td>{{ $laporanPemasukan->id_order }}</td>
                                 <td>{{ $laporanPemasukan->tgl_transaksi ? $laporanPemasukan->tgl_transaksi : $laporanPemasukan->tanggal_transaksi  }}</td>
                                 <td>{{ $laporanPemasukan->jumlah }}</td>
@@ -136,20 +136,41 @@
                 </table>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-between align-items-center text-secondary">
-                    <div>
-                        Showing {{ $projects->count() }} of {{ $total }} entries
-                    </div>
-                    <nav>
-                        <ul class="pagination">
-                            @for ($i = 1; $i <= ceil($total / $perPage); $i++)
-                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ route('tables.laporanPemasukan', array_merge(request()->query(), ['page' => $i])) }}">{{ $i }}</a>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-muted">
+                            Showing {{ ($currentPage - 1) * $perPage + 1 }} to 
+                            {{ min($currentPage * $perPage, $total) }} from {{ $total }} entries
+                        </span>
+                        <nav>
+                            <ul class="pagination">
+                                {{-- Tombol "Previous" --}}
+                                <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                        &#x276E;
+                                    </a>
                                 </li>
-                            @endfor
-                        </ul>
-                    </nav>
-                </div>
+
+                                {{-- Loop Halaman --}}
+                                @for ($i = 1; $i <= ceil($total / $perPage); $i++)
+                                    <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                        <a class="page-link"
+                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                            {{ $i }}
+                                        </a>
+                                    </li>
+                                @endfor
+
+                                {{-- Tombol "Next" --}}
+                                <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                        &#x276F;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
             </div>
         </div>
     </div>
@@ -178,8 +199,5 @@ document.getElementById('jenisSelect').addEventListener('change', function() {
     border-radius: 4px;
     text-decoration: none;
 }
-.btn-export:hover {
-    background-color: #357abd;
-    color: white;
-}
+
 </style>

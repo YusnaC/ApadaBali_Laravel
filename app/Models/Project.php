@@ -25,4 +25,9 @@ class Project extends Model
         'tgl_deadline',
         'id_drafter',
     ]; 
+    public function drafter()
+    {
+        return $this->belongsTo(Drafter::class, 'id_drafter', 'id');
+    }
+
 }

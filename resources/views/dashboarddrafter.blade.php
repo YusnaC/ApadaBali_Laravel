@@ -23,9 +23,9 @@
                         <img src="./icon/proyek selesai.svg" alt="icon" />
                     </div>
                     <!-- Card Text: Display the number of completed projects -->
-                    <p class="card-text">20</p>
+                    <p class="card-text">{{ $completedProjects }}</p>
                     <!-- Card Button: Link to view the completed projects -->
-                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card-drafter">
+                    <a href="{{ route('tables.proyekdrafter') }}" class="w-100 d-flex justify-content-between align-items-center btn-card-drafter">
                         View Projects
                         <i class="bx bx-chevron-right ms-2"></i>
                     </a>
@@ -43,9 +43,9 @@
                         <img src="./icon/Proyek Berjalan.svg" alt="icon" />
                     </div>
                     <!-- Card Text: Display the number of ongoing projects -->
-                    <p class="card-text">2</p>
+                    <p class="card-text">{{ $ongoingProjects }}</p>
                     <!-- Card Button: Link to view the ongoing project progress -->
-                    <a href="#" class="w-100 d-flex justify-content-between align-items-center btn-card-drafter">
+                    <a href="{{ route('tables.progresproyek') }}" class="w-100 d-flex justify-content-between align-items-center btn-card-drafter">
                         Lihat Progres
                         <i class="bx bx-chevron-right ms-2"></i>
                     </a>

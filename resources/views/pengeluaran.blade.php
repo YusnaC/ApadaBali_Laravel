@@ -31,7 +31,8 @@
                         <div class="row mb-4"> 
                             <div class="col-md-6">
                                 <label for="tanggal_transaksi" class="form-label">Tgl Transaksi</label>
-                                <input type="date" name="tanggal_transaksi" id="tanggal_transaksi" 
+                                <input type="date" name="tanggal_transaksi" id="tanggal_transaksi"
+                                       onfocus="this.showPicker()" 
                                        class="form-control @error('tanggal_transaksi') is-invalid @enderror"
                                        value="{{ isset($pengeluaran) ? $pengeluaran->tanggal_transaksi : old('tanggal_transaksi') }}">
                                 @error('tanggal_transaksi')

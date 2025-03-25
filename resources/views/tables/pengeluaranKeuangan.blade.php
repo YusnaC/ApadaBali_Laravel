@@ -17,7 +17,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #496FDE;">
                                 <div class="card-body p-4">
-                                    <h3 class="card-title fw-bold">Rp. 150.000.000</h3>
+                                    <h3 class="card-title fw-bold">Rp {{ number_format($sisaKas, 0, ',', '.') }}</h3>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Sisa Kas</p>
                                         <img src="./icon/sisa kas.svg" alt="icon" />
@@ -29,7 +29,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #1CC588;">
                                 <div class="card-body p-4">
-                                    <h3 class="card-title fw-bold">Rp. 200.000.000</h3>
+                                    <h3 class="card-title fw-bold">Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</h3>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Total Pemasukan</p>
                                         <img src="./icon/total pemasukan.svg" alt="icon" />
@@ -41,7 +41,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #E74A3B;">
                                 <div class="card-body p-4">
-                                    <h3 class="card-title fw-bold">Rp. 50.000.000</h3>
+                                    <h3 class="card-title fw-bold">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</h3>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Total Pengeluaran</p>
                                         <img src="./icon/total pengeluaran.svg" alt="icon" />
@@ -173,11 +173,11 @@
                         @forelse($projects as $pengeluaranKeuangan)
                             <tr>
                                 <td>{{ $pengeluaranKeuangan['id'] }}</td>
-                                <td>{{ $pengeluaranKeuangan['tanggal_transaksi'] }}</td>
+                                <td>{{ \Carbon\Carbon::parse($pengeluaranKeuangan['tgl_transaksi'])->format('d/m/Y') }}</td>
                                 <td>{{ $pengeluaranKeuangan['nama_barang'] }}</td>
                                 <td>{{ $pengeluaranKeuangan['jumlah'] }}</td>
-                                <td>{{ $pengeluaranKeuangan['harga_satuan'] }}</td>
-                                <td>{{ $pengeluaranKeuangan['total_harga'] }}</td>
+                                <td>Rp {{ number_format($pengeluaranKeuangan['harga_satuan'], 0, ',', '.') }}</td>
+                                <td>Rp {{ number_format($pengeluaranKeuangan['total_harga'], 0, ',', '.') }}</td>
                                 <td>{{ $pengeluaranKeuangan['keterangan'] }}</td>
                                 <!-- Tombol aksi (Edit/Hapus) untuk setiap entri -->
                                 <td>
@@ -201,20 +201,41 @@
                 </table>
 
                 <!-- Kontrol pagination -->
-                <div class="d-flex justify-content-between align-items-center text-secondary">
-                    <div>
-                        Menampilkan {{ $projects->count() }} dari {{ $total }} entri
-                    </div>
-                    <nav>
-                        <ul class="pagination">
-                            @for ($i = 1; $i <= ceil($total / $perPage); $i++)
-                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ route('tables.pengeluaranKeuangan', array_merge(request()->query(), ['page' => $i])) }}">{{ $i }}</a>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-muted">
+                            Showing {{ ($currentPage - 1) * $perPage + 1 }} to 
+                            {{ min($currentPage * $perPage, $total) }} from {{ $total }} entries
+                        </span>
+                        <nav>
+                            <ul class="pagination">
+                                {{-- Tombol "Previous" --}}
+                                <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                        &#x276E;
+                                    </a>
                                 </li>
-                            @endfor
-                        </ul>
-                    </nav>
-                </div>
+
+                                {{-- Loop Halaman --}}
+                                @for ($i = 1; $i <= ceil($total / $perPage); $i++)
+                                    <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                        <a class="page-link"
+                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                            {{ $i }}
+                                        </a>
+                                    </li>
+                                @endfor
+
+                                {{-- Tombol "Next" --}}
+                                <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                        &#x276F;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
             </div>
         </div>
     </div>

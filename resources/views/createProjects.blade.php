@@ -10,7 +10,7 @@
                 <div class="card shadow-sm rounded-0 py-4">
                     <div class="card-body">
                         <h4 class="mb-4 fw-bold">Tambah Proyek</h4>
-                        <form action="{{ route('projects.store') }}" method="POST">
+                        <form action="{{ route('projects.store') }}" method="POST" id="projectForm">
                             @csrf
                             <div class="row">
                                 <div class="col-md-6">
@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -64,4 +64,41 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+    // Get form element
+    const projectForm = document.getElementById('projectForm');
+    const submitButton = document.getElementById('submitBtn');
+
+    // Handle form submission
+    submitButton.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const projectName = document.getElementById('project_name').value;
+            console.log('Sending notification for project:', projectName);
+            
+            // First send the notification
+            const response = await fetch('/api/send-notification?' + new URLSearchParams({
+                project_name: projectName
+            }), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+            console.log('Notification sent:', result);
+
+        } catch (error) {
+            console.error('Failed to send notification:', error);
+        } finally {
+            // Submit the form regardless of notification status
+            projectForm.submit();
+        }
+    });
+</script>
+@endpush
 @endsection

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Drafter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class DrafterController extends Controller
 {
@@ -58,7 +61,9 @@ class DrafterController extends Controller
         $validator = Validator::make($request->all(), [
             'nama_drafter' => 'required|string|max:255',
             'alamat_drafter' => 'required|string',
-            'no_whatsapp' => 'required|string|max:15'
+            'no_whatsapp' => 'required|string|max:15',
+            'username' => 'required|string|unique:users',
+            'password' => 'required|string|min:6'
         ]);
 
         if ($validator->fails()) {
@@ -67,10 +72,37 @@ class DrafterController extends Controller
                 ->withInput();
         }
 
-        Drafter::create($request->all());
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('tables.drafter')
-            ->with('success', 'Data drafter berhasil ditambahkan');
+            // Create drafter record
+            $drafter = Drafter::create([
+                'id_drafter' => $request->id_drafter,
+                'nama_drafter' => $request->nama_drafter,
+                'alamat_drafter' => $request->alamat_drafter,
+                'no_whatsapp' => $request->no_whatsapp,
+            ]);
+
+            // Create user account
+            User::create([
+                'username' => $request->username,
+                'name' => $request->nama_drafter,
+                'email' => $request->username . '@apadabali.com',
+                'password' => Hash::make($request->password),
+                'role' => 'drafter'
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('tables.drafter')
+                ->with('success', 'Data drafter dan akun berhasil ditambahkan');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     public function edit($id)
@@ -103,10 +135,26 @@ class DrafterController extends Controller
 
     public function destroy($id)
     {
-        $drafter = Drafter::where('id_drafter', $id)->firstOrFail();
-        $drafter->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('tables.drafter')
-            ->with('success', 'Data drafter berhasil dihapus');
+            // Find and delete drafter
+            $drafter = Drafter::where('id_drafter', $id)->firstOrFail();
+            
+            // Find and delete associated user account
+            User::where('username', $drafter->id_drafter)->delete();
+            
+            // Delete drafter record
+            $drafter->delete();
+
+            DB::commit();
+            return redirect()->route('tables.drafter')
+                ->with('success', 'Data drafter dan akun berhasil dihapus');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
     }
 }

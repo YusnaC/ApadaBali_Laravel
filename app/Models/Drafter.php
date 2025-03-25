@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Drafter extends Model
 {
+    protected $table = 'drafters';
+
     protected $fillable = [
         'id_drafter',
         'nama_drafter',

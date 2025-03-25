@@ -16,19 +16,25 @@
       public function store(Request $request)  
       {  
           $request->validate([  
-              'email' => 'required|email',  
+              'login' => 'required', // Field for either username or email
               'password' => 'required',  
           ]);  
  
-        if (Auth::attempt($request->only('email', 'password'))) {  
-            if (Auth::user()->role === 'admin') {
-                return redirect()->intended('/dashboard-admin');
-            }
-            return redirect()->intended('/dashboard-drafter');
-        }  
+          $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+          $credentials = [
+              $loginField => $request->login,
+              'password' => $request->password
+          ];
+       
+          if (Auth::attempt($credentials)) {  
+              if (Auth::user()->role === 'admin') {
+                  return redirect()->intended('/dashboard-admin');
+              }
+              return redirect()->intended('/dashboard-drafter');
+          }  
  
           return back()->withErrors([  
-              'email' => 'The provided credentials do not match our records.',  
+              'login' => 'The provided credentials do not match our records.',  
           ]);  
       }  
  
@@ -37,4 +43,4 @@
           Auth::logout();  
           return redirect('/login');  
       }  
-  }  
+  }

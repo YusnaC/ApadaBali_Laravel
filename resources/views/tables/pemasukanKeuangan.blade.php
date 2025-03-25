@@ -16,7 +16,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #496FDE;">
                                 <div class="card-body p-4">
-                                    <h3 class="card-title fw-bold">Rp. 150.000.000</h3>
+                                    <h3 class="card-title fw-bold">Rp {{ number_format($sisaKas, 0, ',', '.') }}</h3>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Sisa Kas</p>
                                         <img src="./icon/sisa kas.svg" alt="icon" />
@@ -28,7 +28,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #1CC588;">
                                 <div class="card-body p-4">
-                                    <h3 class="card-title fw-bold">Rp. 200.000.000</h3>
+                                    <h3 class="card-title fw-bold">Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</h3>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Total Pemasukan</p>
                                         <img src="./icon/total pemasukan.svg" alt="icon" />
@@ -40,7 +40,7 @@
                         <div class="col-md-4 mb-3">
                             <div class="card rounded-2 text-white" style="background-color: #E74A3B;">
                                 <div class="card-body p-4">
-                                    <h3 class="card-title fw-bold">Rp. 50.000.000</h3>
+                                    <h3 class="card-title fw-bold">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</h3>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="mb-0">Total Pengeluaran</p>
                                         <img src="./icon/total pengeluaran.svg" alt="icon" />
@@ -72,12 +72,20 @@
 
                     <!-- Form untuk Pencarian -->
                     <div class="form-add d-flex">
-                        <form method="GET" action="{{ route('tables.pemasukanKeuangan') }}" class="d-flex search-form">
+                        <form method="GET" action="{{ route('tables.pemasukanKeuangan') }}" class="d-flex search-form" id="searchForm">
                             <div class="input-group me-2">
                                 <span class="input-group-text">
                                     <i class="bx bx-search"></i>
                                 </span>
-                                <input type="text" name="search" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    class="form-control search-input" 
+                                    placeholder="Search..." 
+                                    value="{{ request('search') }}"
+                                    oninput="handleSearch(this.value)"
+                                    autocomplete="off"
+                                />
                             </div>
                         </form>
                         <!-- Tombol untuk menambah data pemasukan -->
@@ -176,10 +184,10 @@
                         @forelse($pemasukan as $pemasukanKeuangan)
                             <tr>
                                 <td>{{ $pemasukanKeuangan['id'] }}</td>
-                                <td>{{ $pemasukanKeuangan['jenis_order'] }}</td>
+                                <td class="text-start">{{ $pemasukanKeuangan['jenis_order'] }}</td>
                                 <td>{{ $pemasukanKeuangan['id_order'] }}</td>
-                                <td>{{ $pemasukanKeuangan['tgl_transaksi'] }}</td>
-                                <td>{{ $pemasukanKeuangan['jumlah'] }}</td>
+                                <td>{{ \Carbon\Carbon::parse($pemasukanKeuangan->tgl_transaksi)->format('d/m/Y') }}</td>
+                                <td>Rp {{ number_format($pemasukanKeuangan['jumlah'], 0, ',', '.') }}</td>
                                 <td>{{ $pemasukanKeuangan['termin'] }}</td>
                                 <td>{{ $pemasukanKeuangan['keterangan'] }}</td>
                                 <td>
@@ -205,22 +213,75 @@
                 </table>
 
                 <!-- Navigasi Halaman (Pagination) -->
-                <div class="d-flex justify-content-between align-items-center text-secondary">
-                    <div>
-                        Showing {{ $pemasukan->count() }} of {{ $total }} entries
-                    </div>
-                    <nav>
-                        <ul class="pagination">
-                            @for ($i = 1; $i <= ceil($total / $perPage); $i++)
-                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['page' => $i])) }}">{{ $i }}</a>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-muted">
+                            Showing {{ ($currentPage - 1) * $perPage + 1 }} to 
+                            {{ min($currentPage * $perPage, $total) }} from {{ $total }} entries
+                        </span>
+                        <nav>
+                            <ul class="pagination">
+                                {{-- Tombol "Previous" --}}
+                                <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                        &#x276E;
+                                    </a>
                                 </li>
-                            @endfor
-                        </ul>
-                    </nav>
-                </div>
+
+                                {{-- Loop Halaman --}}
+                                @for ($i = 1; $i <= ceil($total / $perPage); $i++)
+                                    <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                        <a class="page-link"
+                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                            {{ $i }}
+                                        </a>
+                                    </li>
+                                @endfor
+
+                                {{-- Tombol "Next" --}}
+                                <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                        &#x276F;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
             </div>
         </div>
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+let searchTimeout;
+
+function handleSearch(value) {
+    clearTimeout(searchTimeout);
+    
+    searchTimeout = setTimeout(() => {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('search', value);
+        
+        fetch(currentUrl.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTbody = doc.querySelector('tbody');
+            
+            if (newTbody) {
+                document.querySelector('tbody').innerHTML = newTbody.innerHTML;
+            }
+        })
+        .catch(error => console.error('Search error:', error));
+    }, 300);
+}
+</script>
+@endpush

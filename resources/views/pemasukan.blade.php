@@ -39,6 +39,9 @@
                                     <option value="Furniture" {{ (isset($pemasukan) && $pemasukan->jenis_order == 'Furniture') || old('jenis_order') == 'Furniture' ? 'selected' : '' }}>
                                         Furniture
                                     </option>
+                                    <option value="Furniture" {{ (isset($pemasukan) && $pemasukan->jenis_order == 'Jasa') || old('jenis_order') == 'Jasa' ? 'selected' : '' }}>
+                                        Jasa
+                                    </option>
                                 </select>
                                 @error('jenis_order')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -59,7 +62,7 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="tgl_transaksi" class="form-label">Tgl Transaksi</label>
-                                <input type="date" name="tgl_transaksi" id="tgl_transaksi" 
+                                <input type="date" name="tgl_transaksi" id="tgl_transaksi" onfocus="this.showPicker()"
                                        class="form-control @error('tgl_transaksi') is-invalid @enderror"
                                        value="{{ isset($pemasukan) ? $pemasukan->tgl_transaksi : old('tgl_transaksi') }}">
                                 @error('tgl_transaksi')

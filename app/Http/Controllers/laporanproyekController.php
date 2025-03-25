@@ -12,18 +12,19 @@ class laporanproyekController extends Controller
 {
     public function laporanproyek(Request $request)
     {
-        $jenis = $request->query('jenis', '1'); // Default to projects (1)
+        $jenis = $request->query('jenis', '1');
         
-        // Initialize query based on selected type
         if ($jenis == '1') {
             $query = Project::query();
+            $dateField = 'tgl_proyek';
         } else {
             $query = Furniture::query();
+            $dateField = 'tgl_pembuatan';  // Changed from tgl_furniture to tgl_pembuatan
         }
 
         // Filter by date range if provided
         if ($request->filled(['tgl_awal', 'tgl_akhir'])) {
-            $query->whereBetween($jenis == '1' ? 'tgl_proyek' : 'tgl_furniture', [
+            $query->whereBetween($dateField, [
                 $request->tgl_awal,
                 $request->tgl_akhir
             ]);
@@ -38,14 +39,23 @@ class laporanproyekController extends Controller
                       ->orWhere('lokasi', 'like', "%{$search}%");
                 } else {
                     $q->where('nama_furniture', 'like', "%{$search}%")
-                      ->orWhere('jenis_furniture', 'like', "%{$search}%");
+                      ->orWhere('lokasi', 'like', "%{$search}%");  // Changed jenis_furniture to lokasi
                 }
             });
         }
 
+        // Update the date field in the transformation
         // Sorting
         $sortField = $request->query('sort', $jenis == '1' ? 'id_proyek' : 'id_furniture');
         $sortDirection = $request->query('direction', 'asc');
+        
+        // Adjust sort field for furniture
+        if ($jenis == '2') {
+            $sortField = str_replace('_proyek', '_furniture', $sortField);
+            $sortField = str_replace('tgl_laporanproyek', 'tgl_pembuatan', $sortField);
+            $sortField = str_replace('nama_laporanproyek', 'nama_furniture', $sortField);
+        }
+        
         $query->orderBy($sortField, $sortDirection);
 
         // Pagination
@@ -70,17 +80,19 @@ class laporanproyekController extends Controller
                 return [
                     'id_proyek' => $item->id_furniture,
                     'kategori' => 'Furniture',
-                    'tgl_proyek' => $item->tgl_furniture ? date('d/m/Y', strtotime($item->tgl_furniture)) : '',
+                    'tgl_proyek' => $item->tgl_pembuatan ? date('d/m/Y', strtotime($item->tgl_pembuatan)) : '',
                     'nama_proyek' => $item->nama_furniture,
                     'lokasi' => $item->lokasi,
-                    'luas' => $item->ukuran ?? '-',
-                    'jumlah_lantai' => '-',
-                    'tgl_deadline' => $item->tgl_deadline ? date('d/m/Y', strtotime($item->tgl_deadline)) : '',
-                    'id_drafter' => $item->id_drafter,
+                    'luas' => $item->luas ?? '-',
+                    'jumlah' => $item->jumlah_unit,
+                    'harga' => $item->harga_unit,
+                    'jumlah_lantai' => $item->jumlah_lantai ?? '-',
+                    'tgl_deadline' => $item->tgl_selesai ? date('d/m/Y', strtotime($item->tgl_selesai)) : '',
+                    'id_drafter' => $item->id_drafter ?? '-',
                 ];
             }
         });
-
+        // dd($projects);
         return view('tables.laporanproyek', [
             'projects' => $projects,
             'total' => $items->total(),
@@ -109,7 +121,7 @@ class laporanproyekController extends Controller
 
         $data = $query->get();
         
-        $pdf = PDF::loadView('exports.laporan-proyek-pdf', [
+        $pdf = PDF::loadView('exports.lapocts-proyek-pdf', [
             'data' => $data,
             'jenis' => $jenis == '2' ? 'Furniture' : 'Proyek',
             'tgl_awal' => $request->tgl_awal,

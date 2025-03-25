@@ -11,8 +11,11 @@ class proyekdrafterController extends Controller
 {
     public function proyekdrafter(Request $request)
     {
-        // Get projects from database
+        // Get projects from database and filter by logged-in drafter
         $query = \App\Models\Project::query();
+        $loggedInDrafterId = auth()->user()->id -1 ;
+        // dd($loggedInDrafterId);
+        $query->where('id_drafter', $loggedInDrafterId);
 
         // Filter based on search
         $search = $request->query('search');
@@ -31,7 +34,7 @@ class proyekdrafterController extends Controller
         // Pagination
         $perPage = $request->query('entries', 10);
         $projects = $query->paginate($perPage);
-
+        // dd($projects);
         return view('tables.proyekdrafter', [
             'projects' => $projects,
             'total' => $projects->total(),

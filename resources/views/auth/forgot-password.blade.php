@@ -1,34 +1,24 @@
 <x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+    <div class="bg-gray-100 flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg shadow-md w-full max-w-md p-8">
+            <h2 class="text-center text-2xl font-bold mb-6">Reset Password</h2>
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+            <x-validation-errors class="mb-4" />
+
+            <form method="POST" action="{{ route('password.email') }}">
+                @csrf
+
+                <div>
+                    <x-label for="email" value="{{ __('Email') }}" />
+                    <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+                </div>
+
+                <div class="mt-6">
+                    <x-button class="bg-orange-500 custom-hover text-white font-bold py-2 px-6 rounded w-full flex justify-center">
+                        {{ __('Send Reset Link') }}
+                    </x-button>
+                </div>
+            </form>
         </div>
-
-        @if (session('status'))
-            <div class="mb-4 font-medium text-sm text-green-600">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        <x-validation-errors class="mb-4" />
-
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-
-            <div class="block">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-button>
-            </div>
-        </form>
-    </x-authentication-card>
+    </div>
 </x-guest-layout>

@@ -10,74 +10,16 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 use App\Models\Progres;
+use App\Models\Drafter;
+use App\Events\ProjectCreated; // Add this import
+use App\Jobs\SendProjectNotification; // Add this import
 
 class proyekController extends Controller
 {
-    // public function proyek(Request $request)
-    // {
-    //     // Ambil data dari API Dummy
-    //     $projects = Http::get('https://6753ad4cf3754fcea7bc363c.mockapi.io/api/v1/projects')->json();
-    
-    //     // Mapping data dummy agar sesuai dengan kebutuhan
-    //     $mappedProjects = collect($projects)->map(function ($project, $proyek) {
-    //         return [
-    //             'id_proyek' => 'ASB' . str_pad($proyek + 1, 4, '0', STR_PAD_LEFT),
-    //             'kategori' => $proyek % 2 === 0 ? 'Proyek Arsitektur' : 'Jasa',
-    //             'tgl_proyek' => now()->subDays($proyek)->format('d/m/Y'),
-    //             'nama_proyek' => 'Proyek ' . ($proyek + 1),
-    //             'lokasi' => 'Jl. Tukad Pakerisan',
-    //             'luas' => 500,
-    //             'jumlah_lantai' => 3,
-    //             'tgl_deadline' => now()->addDays(30)->format('d/m/Y'),
-    //             'id_drafter' => 'D000' . ($proyek + 1),
-    //         ];
-    //     });
-    
-    //     // Filter berdasarkan pencarian
-    //     $search = $request->query('search');
-    //     if ($search) {
-    //         $mappedProjects = $mappedProjects->filter(function ($project) use ($search) {
-    //             return str_contains(strtolower($project['nama_proyek']), strtolower($search)) ||
-    //                 str_contains(strtolower($project['kategori']), strtolower($search));
-    //         });
-    //     }
-    
-    //     // Sorting
-    //     $sortField = $request->query('sort', 'id_proyek'); // Default sort by 'id_proyek'
-    //     $sortDirection = $request->query('direction', 'asc'); // Default direction 'asc'
-    
-    //     $mappedProjects = $mappedProjects->sortBy($sortField, SORT_REGULAR, $sortDirection === 'desc');
-    
-    //     // Pagination
-    //     $perPage = $request->query('entries', 10); // Ambil nilai 'entries' dari query string
-    //     $currentPage = $request->query('page', 1);
-    //     $pagedProjects = $mappedProjects->slice(($currentPage - 1) * $perPage, $perPage);
-    //     $total = $mappedProjects->count();
-
-    //     // Manually create a paginator object
-    //     $projectsPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
-    //         $pagedProjects, 
-    //         $total, 
-    //         $perPage, 
-    //         $currentPage, 
-    //         ['path' => $request->url(), 'query' => $request->query()]
-    //     );
-
-    //     return view('tables.proyek', [
-    //         'projects' => $projectsPaginator,
-    //         'total' => $total,
-    //         'perPage' => $perPage,
-    //         'currentPage' => $currentPage,
-    //         'search' => $search,
-    //         'sortField' => $sortField,
-    //         'sortDirection' => $sortDirection,
-    //     ]);
-    // }
-
     public function proyek(Request $request)
 {
-    // Inisialisasi Query Eloquent
-    $query = Project::query();
+    // 🔹 Inisialisasi Query dengan Relasi Drafter
+    $query = Project::with('drafter');
 
     // 🔍 Filter berdasarkan pencarian
     $search = $request->query('search');
@@ -88,17 +30,23 @@ class proyekController extends Controller
         });
     }
 
-    // 🔄 Sorting
+    // 🔄 Sorting dengan Validasi
+    $allowedSortFields = ['id_proyek', 'nama_proyek', 'kategori', 'created_at'];
     $sortField = $request->query('sort', 'id_proyek');
-    $sortDirection = $request->query('direction', 'asc');
-    if (in_array($sortDirection, ['asc', 'desc'])) { 
-        $query->orderBy($sortField, $sortDirection);
+    if (!in_array($sortField, $allowedSortFields)) {
+        $sortField = 'id_proyek';
     }
 
-    // 📌 Paginasi
-    $perPage = $request->query('entries', 10);
+    $sortDirection = $request->query('direction', 'asc');
+    $sortDirection = in_array($sortDirection, ['asc', 'desc']) ? $sortDirection : 'asc';
+
+    $query->orderBy($sortField, $sortDirection);
+
+    // 📌 Paginasi dengan Validasi
+    $perPage = filter_var($request->query('entries', 10), FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]]) ?: 10;
     $projects = $query->paginate($perPage);
 
+    // 🔄 Return ke View
     return view('tables.proyek', [
         'projects' => $projects,
         'total' => $projects->total(),
@@ -110,62 +58,59 @@ class proyekController extends Controller
     ]);
 }
 
+
     public function create()
     {
-        $lastProject = Project::orderByRaw("CAST(SUBSTRING(id_proyek, 4) AS UNSIGNED) DESC")->first();
+        $kategori = $request->kategori ?? 1; // Default ke kategori 1 (Proyek Arsitektur)
 
+        // Tentukan prefix berdasarkan kategori
+        $prefix = ($kategori == 2) ? 'AJB' : 'ASB';
+
+        // Cari ID terakhir berdasarkan kategori
+        $lastProject = Project::where('id_proyek', 'LIKE', "{$prefix}%")
+            ->orderByRaw("CAST(SUBSTRING(id_proyek, 4) AS UNSIGNED) DESC")
+            ->first();
+
+        // Tentukan ID baru berdasarkan kategori
         if (!$lastProject) {
-            $newId = 'ASB001';
+            $newId = $prefix . '001';
         } else {
-            // Ambil angka dari ID terakhir, tambahkan 1, lalu format ulang
             $lastNumber = intval(substr($lastProject->id_proyek, 3));
-            $newId = 'ASB' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $newId = $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         }
-        $proyek = null;
-        return view('proyek', compact('newId'));
+
+        // Ambil daftar drafters
+        $drafters = Drafter::all();
+
+        return view('proyek', compact('newId', 'drafters', 'kategori'));
     }
 
     public function store(Request $request)
     {
-        // dd($request->all());
-        // Validasi input
-        // $request->validate([
-        //     'id_proyek' => 'required|string|unique:projects,id_proyek',
-        //     'kategori' => 'required|string',
-        //     'tgl_proyek' => 'required|date',
-        //     'nama_proyek' => 'required|string|max:255',
-        //     'lokasi' => 'required|string|max:255',
-        //     'luas' => 'required|numeric|min:1',
-        //     'jumlah_lantai' => 'required|integer|min:1',
-        //     'tgl_deadline' => 'required|date|after_or_equal:tgl_proyek',
-        //     'id_drafter' => 'required|string|max:10',
-        // ]);
+        try {
+            $project = Project::create([
+                'id_proyek' => $request->id_proyek,
+                'kategori' => $request->kategori,
+                'tgl_proyek' => $request->tgl_proyek,
+                'nama_proyek' => $request->nama_proyek,
+                'lokasi' => $request->lokasi,
+                'luas' => $request->luas,
+                'jumlah_lantai' => $request->jumlah_lantai,
+                'tgl_deadline' => $request->tgl_deadline,
+                'id_drafter' => $request->kategori == 2 ? '0' : $request->id_drafter,
+            ]);
 
-        $lastProject = Project::latest('id_proyek')->first();
+            // Dispatch notification with project data
+            SendProjectNotification::dispatch($project)->afterResponse();
 
-            // Jika tidak ada data, mulai dari ASB001
-            if (!$lastProject) {
-                $newId = 'ASB001';
-            } else {
-                // Ambil angka dari ID terakhir, tambahkan 1, lalu format ulang
-                $lastNumber = intval(substr($lastProject->id_proyek, 3));
-                $newId = 'ASB' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-            }
-        // Simpan data ke database
-        Project::create([
-            'id_proyek' => $request->id_proyek,
-            'kategori' => $request->kategori,
-            'tgl_proyek' => $request->tgl_proyek,
-            'nama_proyek' => $request->nama_proyek,
-            'lokasi' => $request->lokasi,
-            'luas' => $request->luas,
-            'jumlah_lantai' => $request->jumlah_lantai,
-            'tgl_deadline' => $request->tgl_deadline,
-            'id_drafter' => $request->id_drafter,
-        ]);
+            return redirect()->route('tables.proyek')
+                           ->with('success', 'Proyek berhasil dibuat.');
 
-        // return view('proyek', compact('newId'));
-        return redirect()->route('tables.proyek')->with('success', 'Proyek berhasil dibuat.');
+        } catch (\Exception $e) {
+            \Log::error('Project creation error: ' . $e->getMessage());
+            return redirect()->back()
+                           ->with('error', 'Gagal membuat proyek: ' . $e->getMessage());
+        }
     }
 
     public function destroy($id_proyek)
@@ -186,7 +131,8 @@ class proyekController extends Controller
     public function edit($id)
     {
         $proyek = Project::findOrFail($id);
-        return view('proyek', compact('proyek'));
+        $drafters = Drafter::all();
+        return view('proyek', compact('proyek', 'drafters'));
     }
     public function update(Request $request, $id)
     {
@@ -214,36 +160,48 @@ class proyekController extends Controller
 
     public function progressProyek(Request $request)
     {
-        $query = Progres::select('progres.*')
-            ->join(DB::raw('(SELECT id_proyek, MAX(tgl_progres) as max_tgl FROM progres GROUP BY id_proyek) as latest'), function ($join) {
-                $join->on('progres.id_proyek', '=', 'latest.id_proyek')
-                     ->on('progres.tgl_progres', '=', 'latest.max_tgl');
-            });
+        try {
+            $query = Progres::select('progres.*')
+                ->join(DB::raw('(SELECT id_proyek, MAX(tgl_progres) as max_tgl FROM progres GROUP BY id_proyek) as latest'), function ($join) {
+                    $join->on('progres.id_proyek', '=', 'latest.id_proyek')
+                         ->on('progres.tgl_progres', '=', 'latest.max_tgl');
+                });
     
-        // Search functionality
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where('progres.id_proyek', 'LIKE', "%{$search}%");
+            // Search functionality
+            if ($request->has('search') && $request->search !== '') {
+                $search = $request->search;
+                $query->where('progres.id_proyek', 'LIKE', "%{$search}%");
+            }
+    
+            // Sorting
+            $sortField = $request->get('sort', 'id_proyek');
+            $sortDirection = $request->get('direction', 'asc');
+            $query->orderBy($sortField, $sortDirection);
+    
+            // Pagination
+            $perPage = $request->get('entries', 10);
+            $projects = $query->paginate($perPage);
+    
+            if ($request->ajax()) {
+                return view('progressproyek', compact('projects'))->render();
+            }
+    
+            return view('progressproyek', [
+                'projects' => $projects,
+                'total' => $projects->total(),
+                'perPage' => $perPage,
+                'currentPage' => $projects->currentPage(),
+                'search' => $request->search,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Progress search error: ' . $e->getMessage());
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Search failed'], 500);
+            }
+            return back()->with('error', 'An error occurred while searching.');
         }
-    
-        // Sorting
-        $sortField = $request->get('sort', 'id_proyek');
-        $sortDirection = $request->get('direction', 'asc');
-        $query->orderBy($sortField, $sortDirection);
-    
-        // Pagination
-        $perPage = $request->get('entries', 10);
-        $projects = $query->paginate($perPage);
-    
-        return view('progressproyek', [
-            'projects' => $projects,
-            'total' => $projects->total(),
-            'perPage' => $perPage,
-            'currentPage' => $projects->currentPage(),
-            'search' => $request->search,
-            'sortField' => $sortField,
-            'sortDirection' => $sortDirection
-        ]);
     }
     
     public function show($id)
@@ -259,5 +217,28 @@ class proyekController extends Controller
     
         return view('detailproyek', compact('project'));
     }
+
+    public function getLatestProjectId(Request $request)
+{
+    $prefix = $request->query('prefix', 'ASB'); // Default ASB jika tidak ada parameter
+
+    // Cari ID proyek terakhir yang memiliki prefix sesuai kategori
+    $lastProject = Project::where('id_proyek', 'LIKE', "{$prefix}%")
+        ->orderByRaw("CAST(SUBSTRING(id_proyek, 4) AS UNSIGNED) DESC")
+        ->first();
+
+    // Tentukan ID proyek baru
+    if (!$lastProject) {
+        $newId = $prefix . '001';
+    } else {
+        $lastNumber = intval(substr($lastProject->id_proyek, 3));
+        $newId = $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+    }
+
+    return response()->json([
+        'success' => true,
+        'new_id' => $newId
+    ]);
+}
 }
 

@@ -36,7 +36,7 @@
                             <form method="GET" action="{{ route('tables.proyek') }}" id="search-form" class="d-flex search-form">
                                 <div class="input-group me-2">
                                     <span class="input-group-text"><i class="bx bx-search"></i></span>
-                                    <input type="text" name="search" id="search-input" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
+                                    <input type="text" name="search" id="search-input" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" onkeyup="handleSearch(event)"/>
                                 </div>
                             </form>
 
@@ -46,7 +46,7 @@
                     </div>
 
                     <!-- Tabel Data Proyek -->
-                    <table class="table table-bordered">
+                    <table class="table table-bordered ">
                     <thead>
                     <tr>
                         <th>
@@ -141,20 +141,29 @@
                         </th>
                     </tr>
                 </thead>
-
-                        <tbody>
-                            <!-- Loop untuk menampilkan data proyek -->
-                            @forelse($projects as $proyek)
-                                <tr>
+                <tbody>
+                    @if($projects->isEmpty())
+                        <tr>
+                            <td colspan="10" class="text-center text-muted">Tidak ada data proyek tersedia.</td>
+                        </tr>
+                    @else
+                    @php
+                        $kategoriList = [
+                            1 => 'Proyek Arsitektur',
+                            2 => 'Jasa'
+                        ];
+                    @endphp
+                        @forelse($projects as $proyek)
+                            <tr> 
                                     <td>{{ $proyek['id_proyek'] }}</td>
-                                    <td>{{ $proyek['kategori'] }}</td>
-                                    <td>{{ $proyek['tgl_proyek'] }}</td>
+                                    <td class="text-start">{{ $kategoriList[$proyek['kategori']] }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($proyek->tgl_proyek)->format('d/m/Y')  }}</td>
                                     <td>{{ $proyek['nama_proyek'] }}</td>
-                                    <td>{{ $proyek['lokasi'] }}</td>
-                                    <td>{{ $proyek['luas'] }}</td>
+                                    <td class="text-start">{{ $proyek['lokasi'] }}</td>
+                                    <td>{{ fmod($proyek['luas'], 1) == 0 ? number_format($proyek['luas'], 0) : rtrim(rtrim(number_format($proyek['luas'], 2, '.', ''), '0'), '.') }}</td>
                                     <td>{{ $proyek['jumlah_lantai'] }}</td>
-                                    <td>{{ $proyek['tgl_deadline'] }}</td>
-                                    <td>{{ $proyek['id_drafter'] }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($proyek->tgl_deadline)->format('d/m/Y')  }}</td>
+                                    <td>{{ $proyek->drafter->id_drafter ?? 'Tidak Ada Drafter' }}</td>
                                     <td>
                                         <div class="button-container">
                                         <a href="{{ route('proyek.edit', $proyek->id_proyek) }}" class="btn btn-edit">
@@ -169,32 +178,51 @@
                                         </form>
                                         </div>
                                     </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="11" class="text-center">Data tidak ditemukan.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+
                     </table>
 
                     <!-- Pagination untuk navigasi antar halaman -->
-                    <div class="d-flex justify-content-between align-items-center text-secondary">
-                        <div>
-                            Showing {{ $projects->count() }} of {{ $total }} entries
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-muted">
+                            Showing {{ ($currentPage - 1) * $perPage + 1 }} to 
+                            {{ min($currentPage * $perPage, $total) }} from {{ $total }} entries
+                        </span>
                         <nav>
                             <ul class="pagination">
+                                {{-- Tombol "Previous" --}}
+                                <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                        &#x276E;
+                                    </a>
+                                </li>
+
+                                {{-- Loop Halaman --}}
                                 @for ($i = 1; $i <= ceil($total / $perPage); $i++)
                                     <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                        <a class="page-link" href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                        <a class="page-link"
+                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
                                             {{ $i }}
                                         </a>
                                     </li>
                                 @endfor
+
+                                {{-- Tombol "Next" --}}
+                                <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                        &#x276F;
+                                    </a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
+
+
                 </div>
             </div>
         </div>
@@ -204,23 +232,21 @@
 @endsection
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let searchInput = document.getElementById("search-input");
-        let searchForm = document.getElementById("search-form");
+function handleSearch(event) {
+    event.preventDefault(); // Menghindari submit otomatis
+    let searchQuery = event.target.value;
+    let url = new URL(window.location.href);
+    url.searchParams.set('search', searchQuery);
+    history.pushState({}, '', url); // Memperbarui URL tanpa reload
 
-        // console.log("Search Input:", searchInput);
-        // console.log("Search Form:", searchForm);
-
-        if (searchInput && searchForm) {
-            searchInput.addEventListener("input", function() {
-                clearTimeout(searchInput.dataset.timer);
-                searchInput.dataset.timer = setTimeout(() => {
-                    searchForm.submit();
-                }, 500);
-            });
-        } else {
-            console.error("Error: Form atau input tidak ditemukan!");
-        }
-    });
+    // Panggil AJAX untuk mengambil hasil pencarian tanpa refresh
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(html, 'text/html');
+            let newTable = doc.querySelector('table');
+            document.querySelector('table').replaceWith(newTable);
+        });
+}
 </script>
-

@@ -32,7 +32,8 @@
 
                     <!-- Form untuk pencarian data -->
                     <div class="form-add d-flex">
-                        <form method="GET" action="{{ route('tables.furniture') }}" class="d-flex search-form">
+                        <!-- Form untuk pencarian data -->
+                        <form method="GET" action="{{ route('tables.furniture') }}" class="d-flex search-form" id="searchForm">
                             <div class="input-group me-2">
                                 <span class="input-group-text">
                                     <i class="bx bx-search"></i>
@@ -43,6 +44,7 @@
                                     class="form-control search-input" 
                                     placeholder="Search..." 
                                     value="{{ request('search') }}"
+                                    onkeyup="handleSearch(event)"
                                 />
                             </div>
                         </form>
@@ -145,7 +147,7 @@
                             <td>{{ $furniture->nama_furniture }}</td>
                             <td>{{ $furniture->jumlah_unit }}</td>
                             <td>Rp {{ number_format($furniture->harga_unit, 0, ',', '.') }}</td>
-                            <td>{{ $furniture->lokasi }}</td>
+                            <td class="text-start">{{ $furniture->lokasi }}</td>
                             <td>{{ \Carbon\Carbon::parse($furniture->tgl_selesai)->format('d/m/Y') }}</td>
                             <td>
                                 <div class="button-container">
@@ -171,24 +173,63 @@
                 </table>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-between align-items-center text-secondary">
-                    <div>
-                    Showing {{ $furnitures->firstItem() ?? 0 }} to {{ $furnitures->lastItem() ?? 0 }} of {{ $furnitures->total() }} entries
-                    </div>
-                    <nav>
-                        <ul class="pagination">
-                            @for ($i = 1; $i <= ceil($total / $perPage); $i++)
-                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ route('tables.furniture', array_merge(request()->all(), ['page' => $i])) }}">
-                                        {{ $i }}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-muted">
+                            Showing {{ ($currentPage - 1) * $perPage + 1 }} to 
+                            {{ min($currentPage * $perPage, $total) }} from {{ $total }} entries
+                        </span>
+                        <nav>
+                            <ul class="pagination">
+                                {{-- Tombol "Previous" --}}
+                                <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                        &#x276E;
                                     </a>
                                 </li>
-                            @endfor
-                        </ul>
-                    </nav>
-                </div>                                 
+
+                                {{-- Loop Halaman --}}
+                                @for ($i = 1; $i <= ceil($total / $perPage); $i++)
+                                    <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                        <a class="page-link"
+                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                            {{ $i }}
+                                        </a>
+                                    </li>
+                                @endfor
+
+                                {{-- Tombol "Next" --}}
+                                <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                        &#x276F;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
             </div>
         </div>
     </div>
 </section>
 @endsection
+
+<script>
+function handleSearch(event) {
+    event.preventDefault(); // Menghindari submit otomatis
+    let searchQuery = event.target.value;
+    let url = new URL(window.location.href);
+    url.searchParams.set('search', searchQuery);
+    history.pushState({}, '', url); // Memperbarui URL tanpa reload
+
+    // Panggil AJAX untuk mengambil hasil pencarian tanpa refresh
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(html, 'text/html');
+            let newTable = doc.querySelector('table');
+            document.querySelector('table').replaceWith(newTable);
+        });
+}
+</script>

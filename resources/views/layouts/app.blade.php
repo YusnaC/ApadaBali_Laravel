@@ -15,7 +15,7 @@
     <!-- Custom CSS -->  
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />  
     <link rel="stylesheet" href="{{ asset('css/tableStyle.css') }}" />  
-  
+    <meta name="csrf-token" content="{{ csrf_token() }}">  
     <title>@yield('title', 'ApadaStudio - Admin Page')</title>  
 </head>  
   
@@ -59,21 +59,50 @@
     // Request Notification Permission
     async function requestPermission() {
         try {
-            const token = await getToken(messaging, { vapidKey: "BDbzKpYdkjEeUhGuXFl2QIP0CKIqUi0cb0MKBIb8BwJ5Tdc9YXgs4MqUQVGWYLAuW80IUqZI5byUjJJj0bDnz0Y" });
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                console.log('Notification permission denied');
+                return;
+            }
+
+            const token = await getToken(messaging, { 
+                vapidKey: "BDbzKpYdkjEeUhGuXFl2QIP0CKIqUi0cb0MKBIb8BwJ5Tdc9YXgs4MqUQVGWYLAuW80IUqZI5byUjJJj0bDnz0Y" 
+            });
             console.log("FCM Token:", token);
 
-            // Kirim token ke server Laravel
-            fetch('/api/save-fcm-token', {
+            // Send token to Laravel server
+            const response = await fetch('/api/save-fcm-token', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ device_token: token }),
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ device_token: token })
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Server error:', errorData);
+                throw new Error(errorData.message || 'Server error');
+            }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
 
             return token;
         } catch (error) {
-            console.error("Error getting token:", error);
+            console.error("Error in requestPermission:", error.message);
         }
     }
+
+    // Immediately call requestPermission when script loads
+    requestPermission();
+    // } catch (error) {
+    //         console.error("Error getting token:", error);
+    //     }
+    // }
 
     document.addEventListener("DOMContentLoaded", requestPermission);
 
@@ -84,17 +113,53 @@
         const notificationList = document.querySelector(".notification-items");
         const counter = document.querySelector(".notification-counter");
         
-        // Tambahkan notifikasi ke dropdown
-        const newNotification = `
-            <li class="dropdown-item d-flex align-items-center">
-                <i class="bx bx-bell text-warning"></i>
-                <div class="ms-2">
-                    <strong>${payload.notification.title}</strong>
-                    <p class="mb-0">${payload.notification.body}</p>
+        const timeAgo = "Just now";
+        const isSystemNotification = payload.notification.type === 'system';
+        
+        const newNotification = isSystemNotification ? `
+            <div class="notification-item d-flex align-items-center px-3 py-2 border-bottom">
+                <div class="me-3">
+                    <i class='bx bx-bell fs-4 text-warning'></i>
                 </div>
-            </li>
+                <div class="notification-content flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="user-name fw-semibold">${payload.notification.title}</span>
+                            <div class="action">${payload.notification.body}</div>
+                        </div>
+                        <div class="notification-status">
+                            <span class="status-dot bg-info rounded-circle" 
+                                  style="width: 8px; height: 8px; display: inline-block;"></span>
+                        </div>
+                    </div>
+                    <div class="notification-time text-muted small">${timeAgo}</div>
+                </div>
+            </div>
+        ` : `
+            <div class="notification-item d-flex align-items-center px-3 py-2 border-bottom">
+                <div class="user-avatar me-3">
+                    <img src="${payload.notification.image || '/images/default-avatar.jpg'}" 
+                         alt="User Avatar" 
+                         class="rounded-circle"
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                </div>
+                <div class="notification-content flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="user-name fw-semibold">${payload.notification.title}</span>
+                            <span class="action ms-1">${payload.notification.body}</span>
+                        </div>
+                        <div class="notification-status">
+                            <span class="status-dot bg-info rounded-circle" 
+                                  style="width: 8px; height: 8px; display: inline-block;"></span>
+                        </div>
+                    </div>
+                    <div class="notification-time text-muted small">${timeAgo}</div>
+                </div>
+            </div>
         `;
-        notificationList.innerHTML = newNotification + notificationList.innerHTML;
+
+        notificationList.insertAdjacentHTML('afterbegin', newNotification);
 
         // Update badge counter
         let count = parseInt(counter.textContent) || 0;
@@ -103,11 +168,12 @@
 </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>  
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- sweetalert configure js-->  
-    <script src="{{ asset('js/chart.js') }}"></script>  
-    <script src="{{ asset('js/sidebar.js') }}"></script>  
-    <script src="{{ asset('js/buttonControl.js') }}"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url('js/chart.js') }}"></script>
+    <script src="{{ url('js/sidebar.js') }}"></script>
+    <script src="{{ url('js/buttonControl.js') }}"></script>
+    @stack('scripts')
 </body>  
-</html>  
+</html>

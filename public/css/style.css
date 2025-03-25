@@ -100,66 +100,53 @@ li {
 }
 
 /* Penataan padding menu di sidebar */
+/* Sidebar menu container */
 #sidebar .side-menu {
-    padding: 0 20px;
+    padding: 0 16px;
 }
 
-/* Penataan tautan menu di sidebar */
-#sidebar .side-menu a {
-    all: unset;
+/* Base styles for all menu items */
+#sidebar .side-menu a,
+.sidebar-link {
     display: flex;
     align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
     color: var(--text-clr);
     font-size: 0.9rem;
-    padding: 0.7rem 0 0.7rem 0.7rem;
-    transition: background-color 0.1s ease, color 0.1s ease;
-    border-radius: 0.5rem;
-    margin: 0.4rem 0 0 0;
-    pointer-events: auto !important;
+    transition: all 0.3s ease;
+    margin: 4px 0;
 }
 
-/* Efek hover pada menu sidebar */
-#sidebar .side-menu > li > a:hover {
-    background: var(--hover);
-    color: var(--text-clr);
-    transition: background-color 0.05s ease, color 0.05s ease;
-}
-.sidebar-link:hover {
-    background: var(--hover);
-    color: var(--text-clr);
-    transition: background-color 0.05s ease, color 0.05s ease;
-}
-/* Rotasi ikon kanan saat item menu aktif */
-#sidebar .side-menu > li > a.active .icon-right {
-    transform: rotateZ(90deg);
+/* Dropdown menu container */
+#sidebar .slide-dropdown {
+    padding-left: 48px;
+    margin: 0;
 }
 
-/* Penataan item menu yang aktif */
-#sidebar .side-menu > li > a.active,
-#sidebar .side-menu > li > a.active:hover {
+/* Dropdown menu items */
+#sidebar .slide-dropdown a {
+    padding: 12px 16px;
+    margin: 4px 0;
+    border-radius: 8px;
+}
+
+/* Hover and active states */
+#sidebar .side-menu a:hover,
+.sidebar-link:hover,
+#sidebar .side-menu a.active,
+.sidebar-link.active,
+#sidebar .slide-dropdown a.active {
     background-color: var(--primary);
     color: var(--sidebar);
-    transition: background-color 0.1s ease, color 0.1s ease;
 }
 
-/* Mengubah warna ikon menu aktif */
-#sidebar .side-menu a.active .sidebar-icon {
-    filter: brightness(0) invert(1);
-}
-
-.sidebar-link {
-    display: flex; /* Agar a mengambil seluruh area */
-    width: 100%; /* Pastikan selebar parent */
-    text-decoration: none; /* Hilangkan underline */
-    color: inherit; /* Warna teks mengikuti default */
-}
-
+/* Remove any conflicting styles */
 .sidebar-link li {
-    width: 100%; /* Pastikan hover bekerja di seluruh area */
-    border-radius: 10px; /* Sesuai tampilan gambar */
-    padding: 12px 0px; /* Sesuaikan dengan desain */
+    padding: 0;
+    width: 100%;
 }
-
 .sidebar-link:hover li {
     background-color: #fce1db; /* Warna sesuai gambar */
     transition: background 0.3s ease-in-out; /* Animasi halus */
@@ -569,6 +556,312 @@ button:focus {
 .slide-dropdown li a.active {
   background-color: #f97316 !important; /* Tambahkan ini */
   color: white !important;
-  border-radius: 0.375rem; /* Membuat sudut lebih lembut */
-  padding: 0.5rem 1rem; /* Menyesuaikan padding */
+  /* border-radius: 0.375rem; 
+  padding: 0.5rem 1rem;  */
+}
+
+/* Add new responsive styles */
+@media screen and (max-width: 1200px) {
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-text {
+    font-size: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  /* Header adjustments */
+  #header .wrap {
+    margin-left: 0;
+  }
+  
+  /* Dashboard cards */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-icon h5 {
+    font-size: 0.9rem;
+  }
+  
+  .card-text {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+  }
+  
+  .btn-card {
+    font-size: 0.75rem;
+    padding: 0.6rem;
+  }
+  
+  /* Chart containers */
+  .barchart {
+    margin-bottom: 1.5rem;
+  }
+  
+  .chart-container {
+    height: 300px !important;
+  }
+  
+  /* Sidebar adjustments */
+  #sidebar {
+    width: 250px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  /* Dashboard header */
+  .d-flex.justify-content-between.align-items-center.mb-4 h3 {
+    font-size: 1.5rem;
+  }
+  
+  /* Cards */
+  .card-icon img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .card-text {
+    font-size: 1.1rem;
+  }
+  
+  /* Charts */
+  .bg-header h6 {
+    font-size: 0.9rem;
+  }
+  
+  .chart-container {
+    height: 250px !important;
+  }
+  
+  /* Sidebar */
+  #sidebar {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Add grid system overrides */
+.row {
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+}
+
+.col-sm-3, .col-md-6 {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+/* Chart responsiveness */
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+}
+
+/* Card improvements */
+.card {
+  height: 100%;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: white;
+}
+
+/* Warna untuk baris genap (abu-abu muda) */
+.table tbody tr:nth-child(even) {
+    background-color: #007BFF1A; /* Abu-abu muda */
+}
+.prev-btn, .next-btn {
+    background-color: #007bff; /* Warna biru */
+    color: white !important;
+    border-radius: 5px;
+    padding: 8px 15px;
+}
+
+.prev-btn:hover, .next-btn:hover {
+    background-color: #0056b3;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white !important;
+}
+
+.page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.no-striping tbody tr:nth-child(even) {
+    background-color: transparent !important;
+}
+
+/* Base sidebar menu styles */
+#sidebar .side-menu a,
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text-clr);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+/* Active states for sidebar items */
+#sidebar .side-menu a.active,
+.sidebar-link.active,
+#sidebar .slide-dropdown a.active {
+    background-color: #ff6842;
+    color: var(--sidebar);
+    /* padding: 10px 14px; */
+}
+
+/* Active state for sidebar links */
+.sidebar-link.active,
+.sidebar-link.active li,
+.slide-dropdown li a.active {
+    background-color: #ff6842 !important;
+    color: white !important;
+    /* border-radius: 0.375rem;
+    padding: 0.5rem 1rem; */
+}
+
+/* Hover states */
+#sidebar .side-menu a:hover,
+.sidebar-link:hover {
+    background-color: var(--hover);
+    color: var(--text-clr);
+}
+
+/* Dropdown menu */
+#sidebar .slide-dropdown {
+    padding-left: 48px;
+}
+
+#sidebar .slide-dropdown a {
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+/* Dropdown hover */
+#sidebar .slide-dropdown a:hover {
+    background-color: var(--hover);
+    color: var(--text-clr);
+}
+
+/* Remove conflicting hover styles */
+.sidebar-link:hover li {
+    background: none;
+}
+
+/* Icon styles */
+.sidebar-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 16px;
+}
+
+/* Active state icon color */
+.sidebar-link.active .sidebar-icon,
+#sidebar .side-menu a.active .sidebar-icon {
+    filter: brightness(0) invert(1);
+}
+
+/* Notification Styles */
+.notification-list {
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 0;
+  margin-top: 10px;
+}
+
+.notification-header {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-header h6 {
+  font-weight: 600;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  gap: 12px;
+}
+
+.user-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #000;
+}
+
+.action {
+  color: #666;
+}
+
+.notification-time {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+.notification-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #00A3FF;
+}
+
+.notification-footer {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.see-all {
+  color: #00A3FF;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.see-all:hover {
+  text-decoration: underline;
+}
+
+.notification-counter {
+  font-size: 10px;
+  padding: 4px 6px;
+}
+
+.custom-padding {
+    padding: 4rem; /* 64px */
 }

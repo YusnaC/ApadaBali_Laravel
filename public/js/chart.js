@@ -95,98 +95,128 @@ function updateChart(chart, newLabels, newData) {
     chart.update();
 }
 
-// Pilih elemen kanvas
-const projectCtx = document.getElementById("projectChart").getContext("2d");
-const revenueCtx = document.getElementById("revenueChart").getContext("2d");
+document.addEventListener('DOMContentLoaded', function() {
+    const projectCtx = document.getElementById("projectChart").getContext("2d");
+    const revenueCtx = document.getElementById("revenueChart").getContext("2d");
 
-// Data awal untuk kedua chart
-const projectChartData = getChartData("project", "7");
-const revenueChartData = getChartData("revenue", "7");
+    // Format labels to Indonesian months
+    const monthNames = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
 
-// Inisialisasi Chart.js untuk chart proyek
-// Inisialisasi Chart.js untuk chart proyek
-const projectChart = new Chart(projectCtx, {
-    type: "bar",
-    data: {
-        labels: projectChartData.labels,
-        datasets: [
-            {
+    // Group data by month
+    function groupDataByMonth(data) {
+        const monthlyData = Array(12).fill(0);
+        data.forEach(item => {
+            // Parse the month directly from the data
+            const month = parseInt(item.month) - 1; // Subtract 1 as months are 0-based in JS
+            monthlyData[month] += parseInt(item.total || 0);
+        });
+        return monthlyData;
+    }
+
+    // Group revenue data by month
+    function groupRevenueByMonth(data) {
+        const monthlyData = Array(12).fill().map(() => ({
+            pemasukan: 0,
+            pengeluaran: 0,
+            total: 0
+        }));
+
+        data.forEach(item => {
+            // Parse the month directly from the data
+            const month = parseInt(item.month) - 1; // Subtract 1 as months are 0-based in JS
+            monthlyData[month].pemasukan += parseInt(item.pemasukan || 0);
+            monthlyData[month].pengeluaran += parseInt(item.pengeluaran || 0);
+            monthlyData[month].total = monthlyData[month].pemasukan - monthlyData[month].pengeluaran;
+        });
+
+        return monthlyData;
+    }
+
+    // Process monthly data
+    const monthlyProjectData = groupDataByMonth(projectData);
+    const monthlyRevenueData = groupRevenueByMonth(revenueData);
+
+    // Initialize Project Chart
+    const projectChart = new Chart(projectCtx, {
+        type: "bar",
+        data: {
+            labels: monthNames,
+            datasets: [{
                 label: "Proyek",
-                data: projectChartData.data,
-                backgroundColor: "#ff6842", // Warna chart
-                borderColor: "transparent", // Menghapus border
-                borderWidth: 0, // Menghapus border
-            },
-        ],
-    },
-    // options: {
-    //     responsive: true,
-    //     scales: {
-    //         y: {
-    //             beginAtZero: true,
-    //         },
-    //     },
-    // },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false, // Hilangkan label
-            },
+                data: monthlyProjectData,
+                backgroundColor: "#ff6842",
+                borderColor: "transparent",
+                borderWidth: 0,
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false,
+                }
             },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Initialize Revenue Chart
+    const revenueChart = new Chart(revenueCtx, {
+        type: "bar",
+        data: {
+            labels: monthNames,
+            datasets: [
+                {
+                    label: "Pemasukan",
+                    data: monthlyRevenueData.map(item => item.pemasukan),
+                    backgroundColor: "#4CAF50",
+                    borderColor: "transparent",
+                    borderWidth: 0,
+                },
+                {
+                    label: "Pengeluaran",
+                    data: monthlyRevenueData.map(item => item.pengeluaran),
+                    backgroundColor: "#f44336",
+                    borderColor: "transparent",
+                    borderWidth: 0,
+                },
+                {
+                    label: "Total Pendapatan",
+                    data: monthlyRevenueData.map(item => item.total),
+                    backgroundColor: "#ff6842",
+                    borderColor: "transparent",
+                    borderWidth: 0,
+                }
+            ]
         },
-    },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
 });
-
-// Inisialisasi Chart.js untuk chart pendapatan
-const revenueChart = new Chart(revenueCtx, {
-    type: "bar",
-    data: {
-        labels: revenueChartData.labels,
-        datasets: [
-            {
-                label: "Pendapatan",
-                data: revenueChartData.data,
-                backgroundColor: "#ff6842", // Warna chart
-                borderColor: "transparent", // Menghapus border
-                borderWidth: 0, // Menghapus border
-            },
-        ],
-    },
-    // options: {
-    //     responsive: true,
-    //     scales: {
-    //         y: {
-    //             beginAtZero: true,
-    //         },
-    //     },
-    // },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false, // Hilangkan label
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-            },
-        },
-    },
-});
-
-// Event Listener untuk memperbarui chart berdasarkan filter waktu
-// document.getElementById("timeFilterProject").addEventListener("change", (e) => {
-//   const newData = getChartData("project", e.target.value);
-//   updateChart(projectChart, newData.labels, newData.data);
-// });
-
-// document.getElementById("timeFilterRevenue").addEventListener("change", (e) => {
-//   const newData = getChartData("revenue", e.target.value);
-//   updateChart(revenueChart, newData.labels, newData.data);
-// });

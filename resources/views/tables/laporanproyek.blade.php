@@ -8,48 +8,49 @@
     <div class="pencatatan-proyek-content">
         <div class="row">
             <div class="card shadow-sm rounded-0 py-4 px-3">
-            <h4 class="mb-4 fw-bold">Laporan Proyek</h4>
+                <h4 class="mb-4 fw-bold">Laporan {{ request('jenis') == '2' ? 'Furniture' : 'Proyek' }}</h4>
     
-            <div class="input-form-keuangan mb-3">
-                <form action="{{ route('tables.laporanproyek') }}" method="GET">
-                    <div class="d-flex align-items-center gap-2">
-                        <select name="jenis" class="form-select" style="max-width: 200px;" onchange="this.form.submit()">
-                            <option value="1" {{ !$selectedJenis || $selectedJenis == '1' ? 'selected' : '' }}>Proyek</option>
-                            <option value="2" {{ $selectedJenis == '2' ? 'selected' : '' }}>Furniture</option>
-                        </select>
+                <div class="input-form-keuangan mb-3">
+                    <form action="{{ route('tables.laporanproyek') }}" method="GET" id="filterForm">
+                        <div class="d-flex align-items-center gap-2">
+                            <select name="jenis" class="form-select" style="max-width: 200px;" id="jenisSelect" onchange="this.form.submit()">
+                                <option value="1" {{ !request('jenis') || request('jenis') == '1' ? 'selected' : '' }}>Proyek</option>
+                                <option value="2" {{ request('jenis') == '2' ? 'selected' : '' }}>Furniture</option>
+                            </select>
                             
                         <div class="input-group" style="max-width: 150px;"> 
                             <input type="text" name="tgl_awal" class="form-control" placeholder="Tgl awal" 
-                                   value="{{ request('tgl_awal') }}" onfocus="(this.type='date')" onblur="(this.type='text')">
+                                   value="{{ request('tgl_awal') }}" onfocus="(this.type='date'); this.showPicker()" onblur="(this.type='text')">
                             <span class="input-group-text"><i class='bx bx-calendar'></i></span>
                         </div>
                 
                         <div class="input-group" style="max-width: 150px;">
                             <input type="text" name="tgl_akhir" class="form-control" placeholder="Tgl akhir"
-                                   value="{{ request('tgl_akhir') }}" onfocus="(this.type='date')" onblur="(this.type='text')">
+                                   value="{{ request('tgl_akhir') }}" onfocus="(this.type='date'); this.showPicker()" onblur="(this.type='text')">
                             <span class="input-group-text"><i class='bx bx-calendar'></i></span>
                         </div>
                         
                         <div class="dropdown">
-                                        <button class="btn-export dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
-                                            <i class='bx bx-export'></i>
-                                            Export
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="{{ route('proyek.export', request()->all()) }}">Excel</a></li>
-                                            <li><a class="dropdown-item" href="{{ route('proyek.export.pdf', request()->all()) }}">PDF</a></li>
-                                        </ul>
-                                    </div>
+                            <button class="btn-export d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
+                                <i class='bx bx-export'></i>
+                                Export
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ route('proyek.export', request()->all()) }}">Excel</a></li>
+                                <li><a class="dropdown-item" href="{{ route('proyek.export.pdf', request()->all()) }}">PDF</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </form>
             </div>
 
+            <div id="proyekView" class="{{ request('jenis') == '2' ? 'd-none' : '' }}">
                 <!-- Table data -->
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th class="py-3 px-3" style="width: 8%;">
-                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_laporanproyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                     Id Proyek
                                     <div class="sort-icons">    
                                         <i class="bx bxs-up-arrow {{ $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
@@ -137,12 +138,11 @@
                         @forelse($projects as $project)
                             <tr>
                                 <td>{{ $project['id_proyek'] }}</td>
-                                <td>{{ $project['kategori'] }}</td>
+                                <td class="text-start">{{ $project['kategori'] }}</td>
                                 <td>{{ $project['tgl_proyek'] }}</td>
-                                <td>{{ $project['nama_proyek'] }}</td>
-                                <td>{{ $project['lokasi'] }}</td>
-                                <td>{{ $project['luas'] }}</td>
-                                <td>{{ $project['jumlah_lantai'] }}</td>
+                                <td class="text-start">{{ $project['nama_proyek'] }}</td>
+                                <td class="text-start">{{ $project['lokasi'] }}</td>
+                                <td>{{ is_numeric($project['luas']) ? (fmod((float)$project['luas'], 1) == 0 ? number_format($project['luas'], 0) : rtrim(rtrim(number_format($project['luas'], 2, '.', ''), '0'), '.')) : $project['luas'] }}</td>                                <td>{{ $project['jumlah_lantai'] }}</td>
                                 <td>{{ $project['tgl_deadline'] }}</td>
                                 <td>{{ $project['id_drafter'] }}</td>
                             </tr>
@@ -153,21 +153,130 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
 
-                    <!-- Pagination -->
-                    <div class="d-flex justify-content-between align-items-center text-secondary">
-                        <div>
-                            Showing {{ $projects->count() }} of {{ $total }} entries
-                        </div>
+            <div id="furnitureView" class="{{ request('jenis') != '2' ? 'd-none' : '' }}">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-3" style="width: 8%;">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'id_furniture', 'direction' => $sortField === 'id_furniture' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    ID Furniture
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'id_furniture' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'id_furniture' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'tgl_pembuatan', 'direction' => $sortField === 'tgl_pembuatan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Tanggal Pembuatan
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'tgl_pembuatan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'tgl_pembuatan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'nama_furniture', 'direction' => $sortField === 'nama_furniture' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Nama Furniture
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'nama_furniture' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'nama_furniture' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'jumlah_unit', 'direction' => $sortField === 'jumlah_unit' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Jumlah Unit
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'jumlah_unit' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'jumlah_unit' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'harga_unit', 'direction' => $sortField === 'harga_unit' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Harga Unit
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'harga_unit' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'harga_unit' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'lokasi', 'direction' => $sortField === 'lokasi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Lokasi
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'lokasi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'lokasi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                            <th class="py-3 px-3">
+                                <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'tgl_selesai', 'direction' => $sortField === 'tgl_selesai' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                    Tanggal Selesai
+                                    <div class="sort-icons">
+                                        <i class="bx bxs-up-arrow {{ $sortField === 'tgl_selesai' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
+                                        <i class="bx bxs-down-arrow {{ $sortField === 'tgl_selesai' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
+                                    </div>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($projects as $project)
+                            <tr>
+                                <td>{{ $project['id_proyek'] }}</td>
+                                <td>{{ $project['tgl_proyek'] }}</td>
+                                <td class="text-start">{{ $project['nama_proyek'] }}</td>
+                                <td>{{ $project['jumlah'] ?? '-' }}</td>
+                                <td>{{ isset($project['harga']) && !is_null($project['harga']) ? number_format($project['harga'], 0, ',', '.') : '-' }}</td>
+                                <td class="text-start">{{ $project['lokasi'] ?? '-' }}</td>
+                                <td>{{ $project['tgl_deadline'] }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center">Data tidak ditemukan.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-muted">
+                            Showing {{ ($currentPage - 1) * $perPage + 1 }} to 
+                            {{ min($currentPage * $perPage, $total) }} from {{ $total }} entries
+                        </span>
                         <nav>
                             <ul class="pagination">
+                                {{-- Tombol "Previous" --}}
+                                <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                        &#x276E;
+                                    </a>
+                                </li>
+
+                                {{-- Loop Halaman --}}
                                 @for ($i = 1; $i <= ceil($total / $perPage); $i++)
                                     <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                        <a class="page-link" href="{{ route('tables.laporanproyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                        <a class="page-link"
+                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
                                             {{ $i }}
                                         </a>
                                     </li>
                                 @endfor
+
+                                {{-- Tombol "Next" --}}
+                                <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
+                                    <a class="page-link arrow" 
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                        &#x276F;
+                                    </a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
@@ -178,5 +287,8 @@
     </div>
 </section>
 
-        
+<!-- Remove this script at the bottom of the file -->
+<script>
+// Remove the handleViewChange function since we're not redirecting anymore
+</script>
 @endsection

@@ -13,7 +13,7 @@
         <div class="col-md-10">
             <div class="card">
                 <div class="card-body p-5">
-                    <h4 class="mb-5">{{ isset($progres) ? 'Edit Data Progress' : 'Tambah Data Progress' }}</h4>
+                    <h4 class="mb-5 text-center">{{ isset($progres) ? 'Edit Data Progress' : 'Tambah Data Progress' }}</h4>
                     
                     @if ($errors->any())
                         <div class="alert alert-danger mb-4">
@@ -54,8 +54,12 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="mb-2">Tgl Progress</label>
-                                    <input type="date" name="tgl_progres" class="form-control @error('tgl_progres') is-invalid @enderror" 
-                                           value="{{ old('tgl_progres', isset($progres) ? $progres->tgl_progres : '') }}" required>
+                                    <input type="date" 
+                                           name="tgl_progres" 
+                                           class="form-control @error('tgl_progres') is-invalid @enderror"
+                                           value="{{ old('tgl_progres', isset($progres) ? $progres->tgl_progres : '') }}"
+                                           onfocus="this.showPicker()"
+                                           required>
                                 </div>
                             </div>
                         </div>

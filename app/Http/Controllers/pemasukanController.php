@@ -4,41 +4,49 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pemasukan;
+use App\Models\Pengeluaran;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class pemasukanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pemasukan::query();  // Remove the eager loading for now
+        // Get total pemasukan
+        $totalPemasukan = Pemasukan::sum('jumlah');
+        
+        // Get total pengeluaran
+        $totalPengeluaran = Pengeluaran::sum('total_harga');
+        
+        // Get sisa kas (pemasukan with 'kas' in keterangan)
+        $sisaKas = $totalPemasukan - $totalPengeluaran;
+
+        $query = Pemasukan::query();
     
         // Filter pencarian
         $search = $request->query('search');
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('jenis_order', 'like', "%{$search}%")
-                  ->orWhere('pemasukan.id_order', 'like', "%{$search}%");  // Specify the table name
+                  ->orWhere('pemasukan.id_order', 'like', "%{$search}%");
             });
         }
     
         $sortField = $request->query('sort', 'id');
         $sortDirection = $request->query('direction', 'asc');
     
-        // Handle sorting with table prefix
         if ($sortField === 'no') {
             $query->orderBy('pemasukan.id', $sortDirection);
         } else {
             $query->orderBy('pemasukan.' . $sortField, $sortDirection);
         }
 
-        // Rest of the code remains the same
         $perPage = $request->query('entries', 10);
         $pemasukan = $query->paginate($perPage);
         
-        // Calculate totals
         $total = $pemasukan->total();
         $currentPage = $pemasukan->currentPage();
-    
+
         return view('tables.pemasukanKeuangan', [
             'pemasukan' => $pemasukan,
             'search' => $search,
@@ -46,7 +54,10 @@ class pemasukanController extends Controller
             'sortDirection' => $sortDirection,
             'perPage' => $perPage,
             'total' => $total,
-            'currentPage' => $currentPage
+            'currentPage' => $currentPage,
+            'sisaKas' => $sisaKas,
+            'totalPemasukan' => $totalPemasukan,
+            'totalPengeluaran' => $totalPengeluaran
         ]);
     }
 

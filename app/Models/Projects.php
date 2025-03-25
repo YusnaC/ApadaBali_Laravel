@@ -22,5 +22,9 @@ class Projects extends Model
         'jumlah_lantai',
         'tgl_deadline',
         'id_drafter',
-    ]; 
+    ];
+    public function drafter()
+    {
+        return $this->belongsTo(Drafter::class, 'id_drafter', 'id_drafter');
+    } 
 }
