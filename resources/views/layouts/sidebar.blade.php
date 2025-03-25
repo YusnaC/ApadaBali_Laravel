@@ -34,13 +34,13 @@
     @if(Auth::check() && Auth::user()->role === 'admin')
       <!-- Pencatatan -->
       <li class="{{ str_starts_with($currentRoute, 'Pencatatan-') ? 'menu-open' : '' }}">
-        <a href="#" class="d-flex align-items-center" onclick="toggleDropdown(this, 'pencatatan-dropdown')">
-            <img src="{{ asset('icon/pencatatan proyek.svg') }}" alt="icon" class="sidebar-icon me-4" />
-            Daftar Proyek <i class="bx bx-chevron-right icon-right"></i>
+        <a href="#" class="{{ str_starts_with($currentRoute, 'Pencatatan-') ? 'active text-orange-500' : '' }}">
+          <img src="{{ asset('icon/pencatatan proyek.svg') }}" alt="icon" class="sidebar-icon me-4" />
+          Daftar Proyek <i class="bx bx-chevron-right icon-right"></i>
         </a>
-        <ul class="slide-dropdown" id="pencatatan-dropdown">
-            <li><a href="/Pencatatan-Proyek" class="{{ $currentRoute == 'Pencatatan-Proyek' ? 'active bg-orange-500 text-white' : '' }}">Proyek</a></li>
-            <li><a href="/Pencatatan-Furniture" class="{{ $currentRoute == 'Pencatatan-Furniture' ? 'active bg-orange-500 text-white' : '' }}">Furniture</a></li>
+        <ul class="slide-dropdown {{ str_starts_with($currentRoute, 'Pencatatan-') ? 'show' : '' }}">
+          <li><a href="/Pencatatan-Proyek" class="{{ $currentRoute == 'Pencatatan-Proyek' ? 'active text-orange-500' : '' }}">Proyek</a></li>
+          <li><a href="/Pencatatan-Furniture" class="{{ $currentRoute == 'Pencatatan-Furniture' ? 'active text-orange-500' : '' }}">Furniture</a></li>
         </ul>
       </li>
     @else
@@ -78,13 +78,13 @@
     @if(Auth::check() && Auth::user()->role === 'admin')
       <!-- Manajemen Keuangan -->
       <li class="{{ str_starts_with($currentRoute, 'Data-') && str_contains($currentRoute, '-Keuangan') ? 'menu-open' : '' }}">
-        <a href="#" class="d-flex align-items-center" onclick="toggleDropdown(this, 'keuangan-dropdown')">
-            <img src="{{ asset('icon/manajemen keuangan.svg') }}" alt="icon" class="sidebar-icon me-4" />
-            Manajemen Keuangan <i class="bx bx-chevron-right icon-right"></i>
+        <a href="#" class="{{ str_starts_with($currentRoute, 'Data-') && str_contains($currentRoute, '-Keuangan') ? 'active text-orange-500' : '' }}">
+          <img src="{{ asset('icon/manajemen keuangan.svg') }}" alt="icon" class="sidebar-icon me-4" />
+          Manajemen Keuangan <i class="bx bx-chevron-right icon-right"></i>
         </a>
-        <ul class="slide-dropdown" id="keuangan-dropdown">
-            <li><a href="/Data-Pemasukan-Keuangan" class="{{ $currentRoute == 'Data-Pemasukan-Keuangan' ? 'active bg-orange-500 text-white' : '' }}">Pemasukan</a></li>
-            <li><a href="/Data-Pengeluaran-Keuangan" class="{{ $currentRoute == 'Data-Pengeluaran-Keuangan' ? 'active bg-orange-500 text-white' : '' }}">Pengeluaran</a></li>
+        <ul class="slide-dropdown {{ str_starts_with($currentRoute, 'Data-') && str_contains($currentRoute, '-Keuangan') ? 'show' : '' }}">
+          <li><a href="/Data-Pemasukan-Keuangan" class="{{ $currentRoute == 'Data-Pemasukan-Keuangan' ? 'active text-orange-500' : '' }}">Pemasukan</a></li>
+          <li><a href="/Data-Pengeluaran-Keuangan" class="{{ $currentRoute == 'Data-Pengeluaran-Keuangan' ? 'active text-orange-500' : '' }}">Pengeluaran</a></li>
         </ul>
       </li>
       
@@ -106,13 +106,13 @@
       
       <!-- Laporan -->
       <li class="{{ str_starts_with($currentRoute, 'Laporan-') ? 'menu-open' : '' }}">
-        <a href="#" class="d-flex align-items-center" onclick="toggleDropdown(this, 'laporan-dropdown')">
-            <img src="{{ asset('icon/laporan.svg') }}" alt="icon" class="sidebar-icon me-4" />
-            Laporan <i class="bx bx-chevron-right icon-right"></i>
+        <a href="#" class="{{ str_starts_with($currentRoute, 'Laporan-') ? 'active text-orange-500' : '' }}">
+          <img src="{{ asset('icon/laporan.svg') }}" alt="icon" class="sidebar-icon me-4" />
+          Laporan <i class="bx bx-chevron-right icon-right"></i>
         </a>
-        <ul class="slide-dropdown" id="laporan-dropdown">
-            <li><a href="/Laporan-Pemasukan-Keuangan" class="{{ $currentRoute == 'Laporan-Pemasukan-Keuangan' ? 'active bg-orange-500 text-white' : '' }}">Laporan Keuangan</a></li>
-            <li><a href="/Laporan-Proyek" class="{{ $currentRoute == 'Laporan-Proyek' ? 'active bg-orange-500 text-white' : '' }}">Laporan Proyek</a></li>
+        <ul class="slide-dropdown {{ str_starts_with($currentRoute, 'Laporan-') ? 'show' : '' }}">
+          <li><a href="/Laporan-Pemasukan-Keuangan" class="{{ $currentRoute == 'Laporan-Pemasukan-Keuangan' ? 'active text-orange-500' : '' }}">Laporan Keuangan</a></li>
+          <li><a href="/Laporan-Proyek" class="{{ $currentRoute == 'Laporan-Proyek' ? 'active text-orange-500' : '' }}">Laporan Proyek</a></li>
         </ul>
       </li>
     @endif

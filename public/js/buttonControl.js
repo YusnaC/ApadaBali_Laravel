@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     showCancelButton: true,
                     cancelButtonColor: "#F5F6FA",
                     confirmButtonColor: "#FF6842",
-                    confirmButtonText: "Ya, Hapus",
-                    cancelButtonText: "Batal",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
                     reverseButtons: true,
 
                     customClass: {
