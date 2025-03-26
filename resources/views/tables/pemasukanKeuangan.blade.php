@@ -187,9 +187,9 @@
                                 <td class="text-start">{{ $pemasukanKeuangan['jenis_order'] }}</td>
                                 <td>{{ $pemasukanKeuangan['id_order'] }}</td>
                                 <td>{{ \Carbon\Carbon::parse($pemasukanKeuangan->tgl_transaksi)->format('d/m/Y') }}</td>
-                                <td>Rp {{ number_format($pemasukanKeuangan['jumlah'], 0, ',', '.') }}</td>
+                                <td class="text-start">Rp {{ number_format($pemasukanKeuangan['jumlah'], 0, ',', '.') }}</td>
                                 <td>{{ $pemasukanKeuangan['termin'] }}</td>
-                                <td>{{ $pemasukanKeuangan['keterangan'] }}</td>
+                                <td class="text-start">{{ $pemasukanKeuangan['keterangan'] }}</td>
                                 <td>
                                 <div class="button-container">
                                         <!-- Tombol Edit -->
@@ -197,7 +197,7 @@
                                             <i class="bx bx-edit"></i> Edit
                                         </a>
                                         <!-- Tombol Hapus -->
-                                        <button class="btn btn-delete" data-id="{{ $pemasukanKeuangan['id_order'] }}">
+                                        <button class="btn btn-delete" data-id="{{ $pemasukanKeuangan['id'] }}">
                                             <i class="bx bx-trash"></i>
                                         </button>
                                     </div>

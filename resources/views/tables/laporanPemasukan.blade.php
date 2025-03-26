@@ -19,20 +19,33 @@
                                 <option value="2" {{ request('jenis') == '2' ? 'selected' : '' }}>Pengeluaran</option>
                             </select>
                             
-                            <div class="input-group" style="width: 150px;"> 
-                                <input type="text" name="tgl_awal" class="form-control" 
-                                    placeholder="Tgl awal" onfocus="(this.type='date'); this.showPicker()"
-                                    onblur="(this.type='text')" value="{{ request('tgl_awal') }}">
-                                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
-                            </div>
+                            <div class="d-flex align-items-center gap-3" style="width: 22%;">
+    <label for="tgl_awal" class="form-label mb-0" style="white-space: nowrap;">Tanggal Awal</label>
+    <div class="input-group" style="flex: 1;">
+        <input name="tgl_awal" 
+            type="date" 
+            class="form-control" 
+            id="tgl_awal"
+            onfocus="this.showPicker()"
+            value="{{ request('tgl_awal') }}"
+            style="max-width: 200px;">
+    </div>
+</div>
 
-                            <div class="input-group" style="width: 150px;">
-                                <input type="text" name="tgl_akhir" class="form-control" 
-                                    placeholder="Tgl akhir" onfocus="(this.type='date'); this.showPicker()"
-                                    onblur="(this.type='text')" value="{{ request('tgl_akhir') }}">
-                                <span class="input-group-text"><i class='bx bx-calendar'></i></span>
-                            </div>
+<div class="d-flex align-items-center gap-3" style="width: 22%;">
+    <label for="tgl_akhir" class="form-label mb-0" style="white-space: nowrap;">Tanggal Akhir</label>
+    <div class="input-group" style="flex: 1;">
+        <input name="tgl_akhir" 
+            type="date" 
+            class="form-control" 
+            id="tgl_akhir"
+            onfocus="this.showPicker()"
+            value="{{ request('tgl_akhir') }}"
+            style="max-width: 200px;">
+    </div>
+</div>
 
+                        
                             <div class="dropdown">
                                 <button class="btn-export  d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown">
                                     <i class='bx bx-export'></i>
@@ -119,17 +132,17 @@
                     <tbody>
                         @forelse($projects as $laporanPemasukan)
                             <tr>
-                                <td>{{ $laporanPemasukan->id }}</td>
+                                <td class="pt-3">{{ $laporanPemasukan->id }}</td>
                                 <td class="text-start">{{ $laporanPemasukan->jenis_order }}</td>
                                 <td>{{ $laporanPemasukan->id_order }}</td>
-                                <td>{{ $laporanPemasukan->tgl_transaksi ? $laporanPemasukan->tgl_transaksi : $laporanPemasukan->tanggal_transaksi  }}</td>
-                                <td>{{ $laporanPemasukan->jumlah }}</td>
+                                <td>{{ \Carbon\Carbon::parse($laporanPemasukan->tgl_transaksi ?? $laporanPemasukan->tanggal_transaksi)->format('d/m/y') }}</td>
+                                <td class="text-start">Rp {{ number_format($laporanPemasukan->jumlah, 0, ',', '.') }}</td>
                                 <td>{{ $laporanPemasukan->termin }}</td>
-                                <td>{{ $laporanPemasukan->keterangan }}</td>
+                                <td class="text-start">{{ $laporanPemasukan->keterangan }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center">Data tidak ditemukan.</td>
+                                <td colspan="7" class="text-center">Data tidak ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>

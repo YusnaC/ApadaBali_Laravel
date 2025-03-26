@@ -28,15 +28,19 @@
                             <!-- Row 1 -->
                             <div class="col-md-4 mb-3">
                                 <label for="idProyek" class="form-label">Id Proyek</label>
-                                <input name="id_proyek" type="text" class="form-control text-secondary" id="idProyek" 
-                                value="{{ old('id_proyek', $newId) }}" readonly>                            
+                                <input name="id_proyek" 
+                                       type="text" 
+                                       class="form-control text-secondary" 
+                                       id="idProyek" 
+                                       value="{{ old('id_proyek', isset($proyek) ? $proyek->id_proyek : $newId) }}" 
+                                       readonly>                            
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="kategori" class="form-label">Kategori</label>
                                 <select name="kategori" class="form-select" id="kategori">
-                                    <option disabled {{ !isset($kategori) ? 'selected' : '' }}>Pilih Kategori</option>
-                                    <option value="1" data-prefix="ASB" {{ old('kategori', $kategori) == 1 ? 'selected' : '' }}>Proyek Arsitektur</option>
-                                    <option value="2" data-prefix="AJB" {{ old('kategori', $kategori) == 2 ? 'selected' : '' }}>Jasa</option>
+                                    <option disabled>Pilih Kategori</option>
+                                    <option value="1" data-prefix="ASB" {{ (old('kategori', isset($proyek) ? $proyek->kategori : '') == 1) ? 'selected' : '' }}>Proyek Arsitektur</option>
+                                    <option value="2" data-prefix="AJB" {{ (old('kategori', isset($proyek) ? $proyek->kategori : '') == 2) ? 'selected' : '' }}>Jasa</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -62,7 +66,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="luas" class="form-label">Luas</label>
-                                <input name="luas" type="number" class="form-control" id="luas"
+                                <input name="luas" type="number" class="form-control" id="luas" step="any"
                                        value="{{ old('luas', isset($proyek) ? $proyek->luas : '') }}">
                             </div>
 

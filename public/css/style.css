@@ -865,3 +865,23 @@ button:focus {
 .custom-padding {
     padding: 4rem; /* 64px */
 }
+
+.custom-progress-bar {
+    margin-left: 23px;
+    margin-right: 23px;
+    border-radius: 10px;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745 !important; /* Ubah background jadi hijau saat hover */
+    border-color: #28a745 !important; 
+    color: white !important; /* Pastikan teks tetap putih */
+}
+
+.btn-outline-success:hover i {
+    color: white !important; /* Pastikan ikon mata tetap putih */
+}
+.table-custom td, 
+.table-custom th {
+    padding: 0.5rem; /* 8px */
+}

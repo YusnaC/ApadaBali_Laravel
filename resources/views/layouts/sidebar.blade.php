@@ -7,13 +7,16 @@
   <ul class="side-menu">
     @php
         $currentRoute = request()->path();
+        $isDropdownActive = str_starts_with($currentRoute, 'Pencatatan-') || 
+                           (str_starts_with($currentRoute, 'Data-') && str_contains($currentRoute, '-Keuangan')) || 
+                           str_starts_with($currentRoute, 'Laporan-');
     @endphp
     
     @if(Auth::check())
         @if(Auth::user()->role === 'admin')
-            <a href="{{ url('/dashboard-admin') }}" class="sidebar-link {{ $currentRoute == 'dashboard-admin' ? 'active bg-orange-500 text-white' : '' }}">
+            <a href="{{ url('/dashboard-admin') }}" class="sidebar-link {{ $currentRoute == 'dashboard-admin' && !$isDropdownActive ? 'active bg-orange-500 text-white' : '' }}">
                 <li class="d-flex align-items-center">
-                    <img src="{{ asset('icon/dashboard.svg') }}" alt="icon" class="sidebar-icon me-4 {{ $currentRoute == 'dashboard-admin' ? 'filter-white' : '' }}" />
+                    <img src="{{ asset('icon/dashboard.svg') }}" alt="icon" class="sidebar-icon me-4 {{ $currentRoute == 'dashboard-admin' && !$isDropdownActive ? 'filter-white' : '' }}" />
                     Dashboard
                 </li>
             </a>
@@ -34,7 +37,7 @@
     @if(Auth::check() && Auth::user()->role === 'admin')
       <!-- Pencatatan -->
       <li class="{{ str_starts_with($currentRoute, 'Pencatatan-') ? 'menu-open' : '' }}">
-        <a href="#" class="{{ str_starts_with($currentRoute, 'Pencatatan-') ? 'active text-orange-500' : '' }}">
+        <a href="#" class="{{ str_starts_with($currentRoute, 'Pencatatan-') && !str_contains($currentRoute, '-Keuangan') && !str_contains($currentRoute, 'Laporan-') ? 'active text-orange-500' : '' }}">
           <img src="{{ asset('icon/pencatatan proyek.svg') }}" alt="icon" class="sidebar-icon me-4" />
           Daftar Proyek <i class="bx bx-chevron-right icon-right"></i>
         </a>
@@ -78,7 +81,7 @@
     @if(Auth::check() && Auth::user()->role === 'admin')
       <!-- Manajemen Keuangan -->
       <li class="{{ str_starts_with($currentRoute, 'Data-') && str_contains($currentRoute, '-Keuangan') ? 'menu-open' : '' }}">
-        <a href="#" class="{{ str_starts_with($currentRoute, 'Data-') && str_contains($currentRoute, '-Keuangan') ? 'active text-orange-500' : '' }}">
+        <a href="#" class="{{ str_starts_with($currentRoute, 'Data-') && str_contains($currentRoute, '-Keuangan') && !str_contains($currentRoute, 'Laporan-') ? 'active text-orange-500' : '' }}">
           <img src="{{ asset('icon/manajemen keuangan.svg') }}" alt="icon" class="sidebar-icon me-4" />
           Manajemen Keuangan <i class="bx bx-chevron-right icon-right"></i>
         </a>

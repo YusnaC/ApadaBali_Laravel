@@ -12,22 +12,44 @@
     
                 <div class="input-form-keuangan mb-3">
                     <form action="{{ route('tables.laporanproyek') }}" method="GET" id="filterForm">
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-4">
                             <select name="jenis" class="form-select" style="max-width: 200px;" id="jenisSelect" onchange="this.form.submit()">
                                 <option value="1" {{ !request('jenis') || request('jenis') == '1' ? 'selected' : '' }}>Proyek</option>
                                 <option value="2" {{ request('jenis') == '2' ? 'selected' : '' }}>Furniture</option>
                             </select>
                             
-                        <div class="input-group" style="max-width: 150px;"> 
-                            <input type="text" name="tgl_awal" class="form-control" placeholder="Tgl awal" 
-                                   value="{{ request('tgl_awal') }}" onfocus="(this.type='date'); this.showPicker()" onblur="(this.type='text')">
-                            <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+                            <div class="d-flex align-items-center gap-3" style="width: 22%;">
+                            <label for="tgl_awal" class="form-label mb-0" style="white-space: nowrap;">Tanggal Awal</label>
+                            <div class="input-group" style="flex: 1;">
+                            <!-- <label for="tglAwal" class="form-label me-2" style="width: 100px;">Tgl Awal</label> -->
+                                <input name="tgl_awal" 
+                                    type="date" 
+                                    class="form-control" 
+                                    id="tglAwal"
+                                    onfocus="this.showPicker()"
+                                    value="{{ old('tgl_awal', isset($proyek) ? $proyek->tgl_awal : '') }}"
+                                    style="max-width: 200px;">
+                                <!-- <input type="text" id="tgl_awal" name="tgl_awal" class="form-control" 
+                                    placeholder="Tgl awal" onfocus="(this.type='date'); this.showPicker()"
+                                    onblur="(this.type='text')" value="{{ request('tgl_awal') }}"> -->
+                                <!-- <span class="input-group-text bg-white">
+                                    <i class='bx bx-calendar'></i>
+                                </span> -->
+                            </div>
                         </div>
-                
-                        <div class="input-group" style="max-width: 150px;">
-                            <input type="text" name="tgl_akhir" class="form-control" placeholder="Tgl akhir"
-                                   value="{{ request('tgl_akhir') }}" onfocus="(this.type='date'); this.showPicker()" onblur="(this.type='text')">
-                            <span class="input-group-text"><i class='bx bx-calendar'></i></span>
+
+                        <div class="d-flex align-items-center gap-3" style="width: 22%;">
+                            <label for="tgl_akhir" class="form-label mb-0" style="white-space: nowrap;">Tanggal Akhir</label>
+                            <div class="input-group" style="flex: 1;">
+                            <input name="tgl_awal" 
+                                    type="date" 
+                                    class="form-control" 
+                                    id="tglAwal"
+                                    onfocus="this.showPicker()"
+                                    value="{{ old('tgl_awal', isset($proyek) ? $proyek->tgl_awal : '') }}"
+                                    style="max-width: 200px;">
+                                
+                            </div>
                         </div>
                         
                         <div class="dropdown">
@@ -136,15 +158,15 @@
                     <tbody>
                         <!-- Loop untuk menampilkan data laporan proyek -->
                         @forelse($projects as $project)
-                            <tr>
-                                <td>{{ $project['id_proyek'] }}</td>
-                                <td class="text-start">{{ $project['kategori'] }}</td>
-                                <td>{{ $project['tgl_proyek'] }}</td>
-                                <td class="text-start">{{ $project['nama_proyek'] }}</td>
-                                <td class="text-start">{{ $project['lokasi'] }}</td>
-                                <td>{{ is_numeric($project['luas']) ? (fmod((float)$project['luas'], 1) == 0 ? number_format($project['luas'], 0) : rtrim(rtrim(number_format($project['luas'], 2, '.', ''), '0'), '.')) : $project['luas'] }}</td>                                <td>{{ $project['jumlah_lantai'] }}</td>
-                                <td>{{ $project['tgl_deadline'] }}</td>
-                                <td>{{ $project['id_drafter'] }}</td>
+                            <tr class="text-center">
+                                <td class="pt-4 pb-4">{{ $project['id_proyek'] }}</td>
+                                <td class="pt-4 pb-4 text-start">{{ $project['kategori'] }}</td>
+                                <td class="pt-4 pb-4">{{ $project['tgl_proyek'] }}</td>
+                                <td class="pt-4 pb-4 text-start">{{ $project['nama_proyek'] }}</td>
+                                <td class="pt-4 pb-4 text-start">{{ $project['lokasi'] }}</td>
+                                <td class="pt-4 pb-4">{{ is_numeric($project['luas']) ? (fmod((float)$project['luas'], 1) == 0 ? number_format($project['luas'], 0) : rtrim(rtrim(number_format($project['luas'], 2, '.', ''), '0'), '.')) : $project['luas'] }}</td>                                <td>{{ $project['jumlah_lantai'] }}</td>
+                                <td class="pt-4 pb-4">{{ $project['tgl_deadline'] }}</td>
+                                <td class="pt-4 pb-4">{{ $project['id_drafter'] }}</td>
                             </tr>
                         @empty
                             <tr>

@@ -78,7 +78,7 @@
                             <!-- Kolom untuk Nama Furniture dengan pengurutan -->
                             <th class="py-3 px-3">
                                 <a href="{{ route('tables.furniture', array_merge(request()->query(), ['sort' => 'nama_furniture', 'direction' => $sortField === 'nama_furniture' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    Progress
+                                    Progres %
                                     <div class="sort-icons">
                                         <i class="bx bxs-up-arrow {{ $sortField === 'nama_furniture' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
                                         <i class="bx bxs-down-arrow {{ $sortField === 'nama_furniture' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
@@ -99,41 +99,50 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if($projects->isEmpty())
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">Data tidak ditemukan.</td>
+                        </tr>
+                        @else
                             @foreach($projects as $project)
                             <tr class="{{ $loop->even ? 'bg-light' : '' }}">
                                 <td>{{ $project->id_proyek }}</td>
                                 <td>
-                                    <span class="badge {{ $project->status_progres == 'Proses' ? 'bg-warning text-dark' : 'bg-success text-white' }} rounded-pill px-5 py-2 fs-6">
+                                    <span class="badge {{ $project->status_progres == 'Proses' ? 'bg-warning text-dark' : 'bg-success text-white' }} rounded-pill px-5 py-2 fs-6 text-white">
                                         {{ $project->status_progres }}
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="progress flex-grow-1" style="height: 15px;">
-                                            <div class="progress-bar bg-danger" 
-                                                role="progressbar" 
-                                                style="width: {{ $project->progres }}%"
-                                                aria-valuenow="{{ $project->progres }}" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                            </div>
+                                <div class="d-flex align-items-center custom-progress-bar">
+                                    <div class="progress flex-grow-1" style="height: 10px; border-radius: 10px;">
+                                        <div class="progress-bar" 
+                                            role="progressbar" 
+                                            style="width: {{ $project->progres }}%; background-color: #ff6842; border-radius: 10px;"
+                                            aria-valuenow="{{ $project->progres }}" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
                                         </div>
-                                        <span class="ms-2 fw-bold">{{ $project->progres }}%</span>
                                     </div>
+                                    <span class="ms-2 fw-bold">{{ $project->progres }}%</span>
+                                </div>
+
                                 </td>
 
                                 <td class="text-center align-middle d-flex justify-content-center">
                                     <a href="{{ route('progres.show', $project->id_proyek) }}" 
-                                        class="btn btn-sm btn-outline-primary d-flex rounded-circle"
-                                        style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
-                                        <i class='bx bx-show' style="font-size: 18px;"></i>
+                                        class="btn btn-sm btn-outline-success d-flex rounded-full"
+                                        style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; border: 1px solid #28a745; color: #28a745;">
+                                        <i class='bx bx-show' style="font-size: 18px; color: #28a745;"></i>
                                     </a>
                                 </td>
 
 
 
+
+
                             </tr>
                             @endforeach
+                        @endif
                     </tbody>
                 </table>
 

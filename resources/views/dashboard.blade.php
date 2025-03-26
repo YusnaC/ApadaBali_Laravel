@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     label: "Pengeluaran",
                     data: revenueData.map(item => item.pengeluaran),
-                    backgroundColor: "#f44336",
+                    backgroundColor: "#db3c30",
                     borderColor: "transparent",
                     borderWidth: 0,
                 },

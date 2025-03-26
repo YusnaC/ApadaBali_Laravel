@@ -31,17 +31,12 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="jenis_order" class="form-label">Jenis Order</label>
-                                <select name="jenis_order" id="jenis_order" class="form-select @error('jenis_order') is-invalid @enderror">
-                                    <option value="" disabled selected>Pilih Jenis Order</option>
-                                    <option value="Proyek Arsitektur" {{ (isset($pemasukan) && $pemasukan->jenis_order == 'Proyek Arsitektur') || old('jenis_order') == 'Proyek Arsitektur' ? 'selected' : '' }}>
-                                        Proyek Arsitektur
-                                    </option>
-                                    <option value="Furniture" {{ (isset($pemasukan) && $pemasukan->jenis_order == 'Furniture') || old('jenis_order') == 'Furniture' ? 'selected' : '' }}>
-                                        Furniture
-                                    </option>
-                                    <option value="Furniture" {{ (isset($pemasukan) && $pemasukan->jenis_order == 'Jasa') || old('jenis_order') == 'Jasa' ? 'selected' : '' }}>
-                                        Jasa
-                                    </option>
+                                <select name="jenis_order" class="form-select" id="jenis_order">
+                                    <option disabled selected>Pilih Jenis Order</option>
+                                    <option value="Proyek Arsitektur" {{ old('jenis_order', isset($pemasukan) ? $pemasukan->jenis_order : '') == 'Proyek Arsitektur' ? 'selected' : '' }}>Proyek Arsitektur</option>
+                                    <option value="Furniture" {{ old('jenis_order', isset($pemasukan) ? $pemasukan->jenis_order : '') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                                    <option value="Jasa" {{ old('jenis_order', isset($pemasukan) ? $pemasukan->jenis_order : '') == 'Jasa' ? 'selected' : '' }}>Jasa</option>
+
                                 </select>
                                 @error('jenis_order')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -49,14 +44,58 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="id_order" class="form-label">Id Order</label>
-                                <input type="text" name="id_order" id="id_order" 
-                                       class="form-control @error('id_order') is-invalid @enderror"
-                                       value="{{ isset($pemasukan) ? $pemasukan->id_order : old('id_order') }}">
+                                <select name="id_order" class="form-select" id="id_order">
+                                    <option disabled selected>Pilih ID Order</option>
+                                </select>
                                 @error('id_order')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const jenisOrderSelect = document.getElementById('jenis_order');
+    const idOrderSelect = document.getElementById('id_order');
+    
+    const proyekOrders = @json($proyekOrders);
+    const furnitureOrders = @json($furnitureOrders);
+    
+    function populateIdOrder(selectedValue = null) {
+        idOrderSelect.innerHTML = '<option disabled selected>Pilih ID Order</option>';
+        
+        if (jenisOrderSelect.value === 'Proyek Arsitektur') {
+            proyekOrders.forEach(order => {
+                const option = new Option(order.id_proyek, order.id_proyek);
+                if (selectedValue && selectedValue === order.id_proyek) {
+                    option.selected = true;
+                }
+                idOrderSelect.add(option);
+            });
+        } else if (jenisOrderSelect.value === 'Furniture') {
+            furnitureOrders.forEach(order => {
+                const option = new Option(order.id_furniture, order.id_furniture);
+                if (selectedValue && selectedValue === order.id_furniture) {
+                    option.selected = true;
+                }
+                idOrderSelect.add(option);
+            });
+        }
+    }
+    
+    jenisOrderSelect.addEventListener('change', function() {
+        populateIdOrder();
+    });
+    
+    // Auto-select values when editing
+    @if(isset($pemasukan))
+        jenisOrderSelect.value = '{{ $pemasukan->jenis_order }}';
+        populateIdOrder('{{ $pemasukan->id_order }}');
+    @endif
+});
+</script>
+@endpush
 
                         <!-- Row 2 -->
                         <div class="row mb-4">

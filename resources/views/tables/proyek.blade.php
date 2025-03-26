@@ -47,9 +47,9 @@
 
                     <!-- Tabel Data Proyek -->
                     <table class="table table-bordered ">
-                    <thead>
+                    <thead class="pt-4">
                     <tr>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'id_proyek', 'direction' => $sortField === 'id_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Id Proyek
                                 <div class="sort-icons">
@@ -58,7 +58,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'kategori', 'direction' => $sortField === 'kategori' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Kategori
                                 <div class="sort-icons">
@@ -67,7 +67,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'tgl_proyek', 'direction' => $sortField === 'tgl_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Tgl Proyek
                                 <div class="sort-icons">
@@ -76,7 +76,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'nama_proyek', 'direction' => $sortField === 'nama_proyek' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Nama Proyek
                                 <div class="sort-icons">
@@ -85,7 +85,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'lokasi', 'direction' => $sortField === 'lokasi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Lokasi
                                 <div class="sort-icons">
@@ -94,7 +94,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'luas', 'direction' => $sortField === 'luas' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Luas (m²)
                                 <div class="sort-icons">
@@ -103,7 +103,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'jumlah_lantai', 'direction' => $sortField === 'jumlah_lantai' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Jumlah Lantai
                                 <div class="sort-icons">
@@ -112,7 +112,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'tgl_deadline', 'direction' => $sortField === 'tgl_deadline' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Tgl Deadline
                                 <div class="sort-icons">
@@ -121,7 +121,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                             <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'id_drafter', 'direction' => $sortField === 'id_drafter' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Id Drafter
                                 <div class="sort-icons">
@@ -130,7 +130,7 @@
                                 </div>
                             </a>
                         </th>
-                        <th>
+                        <th class="px-3 py-3">
                         <a href="{{ route('tables.proyek', array_merge(request()->query(), ['sort' => 'aksi', 'direction' => $sortField === 'aksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
                                 Aksi
                                 <div class="sort-icons">
@@ -144,7 +144,7 @@
                 <tbody>
                     @if($projects->isEmpty())
                         <tr>
-                            <td colspan="10" class="text-center text-muted">Tidak ada data proyek tersedia.</td>
+                            <td colspan="10" class="text-center text-muted">Data tidak ditemukan.</td>
                         </tr>
                     @else
                     @php
@@ -158,7 +158,7 @@
                                     <td>{{ $proyek['id_proyek'] }}</td>
                                     <td class="text-start">{{ $kategoriList[$proyek['kategori']] }}</td>
                                     <td>{{ \Carbon\Carbon::parse($proyek->tgl_proyek)->format('d/m/Y')  }}</td>
-                                    <td>{{ $proyek['nama_proyek'] }}</td>
+                                    <td class="text-start">{{ $proyek['nama_proyek'] }}</td>
                                     <td class="text-start">{{ $proyek['lokasi'] }}</td>
                                     <td>{{ fmod($proyek['luas'], 1) == 0 ? number_format($proyek['luas'], 0) : rtrim(rtrim(number_format($proyek['luas'], 2, '.', ''), '0'), '.') }}</td>
                                     <td>{{ $proyek['jumlah_lantai'] }}</td>

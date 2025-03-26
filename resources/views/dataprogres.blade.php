@@ -16,17 +16,17 @@
         <div class="row g-4">
             <div class="col-md-4">
                 <small class="text-muted d-block">Id Proyek</small>
-                <input type="text" class="form-control bg-light text-dark py-3 fs-5" 
+                <input type="text" class="form-control bg-light text-dark py-3" 
                     value="{{ $progres->id_proyek ?? 'ASB0001' }}" readonly>
             </div>
             <div class="col-md-4">
                 <small class="text-muted d-block">Nama Proyek</small>
-                <input type="text" class="form-control bg-light text-dark py-3 fs-5" 
+                <input type="text" class="form-control bg-light text-dark py-3" 
                     value="{{ $progres->proyek->nama_proyek ?? 'Proyek1' }}" readonly>
             </div>
             <div class="col-md-4">
                 <small class="text-muted d-block">Id Drafter</small>
-                <input type="text" class="form-control bg-light text-dark py-3 fs-5" 
+                <input type="text" class="form-control bg-light text-dark py-3" 
                     value="{{ $progres->proyek->drafter_id ?? 'D0001' }}" readonly>
             </div>
         </div>
@@ -34,13 +34,13 @@
 
         <!-- Progress Files Table -->
         <div class="table-responsive mt-4">
-            <table class="table align-middle no-striping">
+            <table class="table align-middle no-striping  table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>Nama File</th>
-                        <th>Tgl Progres</th>
-                        <th>Keterangan</th>
-                        <th class="text-center">Aksi</th>
+                        <th class=" py-4">Nama File</th>
+                        <th class=" py-4">Tgl Progres</th>
+                        <th class=" py-4">Keterangan</th>
+                        <th class="text-center py-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +53,7 @@
                             </div>
                         </td>
                         <td>{{ \Carbon\Carbon::parse($file->tgl_progres)->format('d/m/Y') }}</td>
-                        <td>{{ $file->keterangan }}</td>
+                        <td class="text-start">{{ $file->keterangan }}</td>
                         <td class="text-center">
                             <a href="{{ route('progres.download', ['id_proyek' => $file->id_proyek]) }}" 
                                class="btn btn-success btn-sm d-flex align-items-center gap-1">

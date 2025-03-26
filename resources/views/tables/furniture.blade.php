@@ -144,7 +144,7 @@
                         <tr>
                             <td>{{ $furniture->id_furniture }}</td>
                             <td>{{ \Carbon\Carbon::parse($furniture->tgl_pembuatan)->format('d/m/Y') }}</td>
-                            <td>{{ $furniture->nama_furniture }}</td>
+                            <td class="text-start">{{ $furniture->nama_furniture }}</td>
                             <td>{{ $furniture->jumlah_unit }}</td>
                             <td>Rp {{ number_format($furniture->harga_unit, 0, ',', '.') }}</td>
                             <td class="text-start">{{ $furniture->lokasi }}</td>

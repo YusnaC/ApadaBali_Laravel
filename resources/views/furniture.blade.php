@@ -94,7 +94,7 @@
                                 </div>
 
                                 <!-- Lokasi -->
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group mb-4">
                                         <label for="lokasi" class="form-label">Lokasi</label>
                                         <input type="text" class="form-control @error('lokasi') is-invalid @enderror" 

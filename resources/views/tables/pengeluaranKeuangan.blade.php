@@ -79,7 +79,8 @@
                                     <i class="bx bx-search"></i>
                                 </span>
                                 <!-- Input pencarian untuk memfilter data berdasarkan kata kunci -->
-                                <input type="text" name="search" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
+                                <input type="text" oninput="handleSearch(this.value)"
+                                name="search" class="form-control search-input" placeholder="Search..." value="{{ request('search') }}" />
                             </div>
                         </form>
                         <!-- Tombol untuk menambahkan data pengeluaran baru -->
@@ -171,23 +172,31 @@
                     <tbody>
                         <!-- Loop untuk menampilkan data pengeluaran -->
                         @forelse($projects as $pengeluaranKeuangan)
-                            <tr>
-                                <td>{{ $pengeluaranKeuangan['id'] }}</td>
+                            <tr class="p-2">
+                                <td class=" p-2">{{ $pengeluaranKeuangan['id'] }}</td>
                                 <td>{{ \Carbon\Carbon::parse($pengeluaranKeuangan['tgl_transaksi'])->format('d/m/Y') }}</td>
-                                <td>{{ $pengeluaranKeuangan['nama_barang'] }}</td>
+                                <td class="text-start">{{ $pengeluaranKeuangan['nama_barang'] }}</td>
                                 <td>{{ $pengeluaranKeuangan['jumlah'] }}</td>
-                                <td>Rp {{ number_format($pengeluaranKeuangan['harga_satuan'], 0, ',', '.') }}</td>
-                                <td>Rp {{ number_format($pengeluaranKeuangan['total_harga'], 0, ',', '.') }}</td>
-                                <td>{{ $pengeluaranKeuangan['keterangan'] }}</td>
+                                <td class="text-start">Rp {{ number_format($pengeluaranKeuangan['harga_satuan'], 0, ',', '.') }}</td>
+                                <td class="text-start">Rp {{ number_format($pengeluaranKeuangan['total_harga'], 0, ',', '.') }}</td>
+                                <td class="text-start">{{ $pengeluaranKeuangan['keterangan'] }}</td>
                                 <!-- Tombol aksi (Edit/Hapus) untuk setiap entri -->
                                 <td>
                                     <div class="button-container">
-                                        <button class="btn btn-edit">
+                                        <a href="{{ route('pengeluaran.edit', $pengeluaranKeuangan['id']) }}" 
+                                           class="btn btn-edit">
                                             <i class="bx bx-edit"></i> Edit
-                                        </button>
-                                        <button class="btn btn-delete" data-id="{{ $pengeluaranKeuangan['tanggal_transaksi'] }}">
-                                            <i class="bx bx-trash"></i>
-                                        </button>
+                                        </a>
+                                        <form action="{{ route('pengeluaran.destroy', $pengeluaranKeuangan['id']) }}" 
+                                              method="POST" 
+                                              class="d-inline"
+                                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-delete">
+                                                <i class="bx bx-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -241,3 +250,32 @@
     </div>
 </section>
 @endsection
+<script>
+let searchTimeout;
+
+function handleSearch(value) {
+    clearTimeout(searchTimeout);
+    
+    searchTimeout = setTimeout(() => {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('search', value);
+        
+        fetch(currentUrl.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTbody = doc.querySelector('tbody');
+            
+            if (newTbody) {
+                document.querySelector('tbody').innerHTML = newTbody.innerHTML;
+            }
+        })
+        .catch(error => console.error('Search error:', error));
+    }, 300);
+}
+</script>

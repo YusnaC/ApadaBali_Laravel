@@ -63,7 +63,53 @@ class pemasukanController extends Controller
 
     public function create()
     {
-        return view('pemasukan');
+        $furnitureOrders = DB::table('furnitures')
+            ->select('id_furniture')
+            ->get();
+            
+        $proyekOrders = DB::table('projects')
+            ->select('id_proyek')
+            ->get();
+
+        return view('pemasukan', compact('furnitureOrders', 'proyekOrders'));
+    }
+
+    public function edit($id)
+    {
+        $pemasukan = Pemasukan::findOrFail($id);
+        
+        // Get furniture orders
+        $furnitureOrders = DB::table('furnitures')
+            ->select('id_furniture')
+            ->get();
+            
+        // Get project orders
+        $proyekOrders = DB::table('projects')
+            ->select('id_proyek')
+            ->get();
+
+        // Get selected order details
+        // $selectedOrder = $pemasukan->jenis_order === 'Furniture' 
+        //     ? DB::table('furnitures')->where('id_furniture', $pemasukan->id_order)->first()
+        //     : DB::table('projects')->where('id_proyek', $pemasukan->id_order)->first();
+        $selectedOrder = match ($pemasukan->jenis_order) {
+            'Jasa' => DB::table('projects')
+                        ->where('id_proyek', $pemasukan->id_order)
+                        ->where('kategori', 2)
+                        ->first(),
+        
+            'Proyek Arsitektur' => DB::table('projects')
+                                     ->where('id_proyek', $pemasukan->id_order)
+                                     ->where('kategori', 1)
+                                     ->first(),
+        
+            default => DB::table('furnitures')
+                         ->where('id_furniture', $pemasukan->id_order)
+                         ->first(),
+        };
+        
+
+        return view('pemasukan', compact('pemasukan', 'furnitureOrders', 'proyekOrders', 'selectedOrder'));
     }
 
     public function store(Request $request)
@@ -89,11 +135,11 @@ class pemasukanController extends Controller
             ->with('success', 'Data pemasukan berhasil ditambahkan');
     }
 
-    public function edit($id)
-    {
-        $pemasukan = Pemasukan::findOrFail($id);
-        return view('pemasukan', compact('pemasukan'));
-    }
+    // public function edit($id)
+    // {
+    //     $pemasukan = Pemasukan::findOrFail($id);
+    //     return view('pemasukan', compact('pemasukan'));
+    // }
 
     public function update(Request $request, $id)
     {

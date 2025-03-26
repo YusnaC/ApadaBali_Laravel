@@ -97,7 +97,7 @@ class proyekController extends Controller
                 'luas' => $request->luas,
                 'jumlah_lantai' => $request->jumlah_lantai,
                 'tgl_deadline' => $request->tgl_deadline,
-                'id_drafter' => $request->kategori == 2 ? '0' : $request->id_drafter,
+                'id_drafter' => $request->kategory == null ? $request->id_drafter : '0',
             ]);
 
             // Dispatch notification with project data
@@ -132,7 +132,8 @@ class proyekController extends Controller
     {
         $proyek = Project::findOrFail($id);
         $drafters = Drafter::all();
-        return view('proyek', compact('proyek', 'drafters'));
+        $newId = null;
+        return view('proyek', compact('proyek', 'drafters', 'newId'));
     }
     public function update(Request $request, $id)
     {
