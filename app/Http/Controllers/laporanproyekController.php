@@ -64,6 +64,7 @@ class laporanproyekController extends Controller
 
         // Transform the data
         $projects = $items->through(function ($item) use ($jenis) {
+            
             if ($jenis == '1') {
                 return [
                     'id_proyek' => $item->id_proyek,
