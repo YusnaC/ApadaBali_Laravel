@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     showCancelButton: true,
                     cancelButtonColor: "#F5F6FA",
                     confirmButtonColor: "#FF6842",
-                    confirmButtonText: "Yes, delete it!",
+                    confirmButtonText: "Yes, delete!",
                     cancelButtonText: "No, cancel!",
                     reverseButtons: true,
 

@@ -41,7 +41,7 @@
                                 required 
                                 style="border-color: gray-800 !important;" 
                                 autocomplete="current-password" />
-                        <div class="absolute custom-right !important left-4 h-full pt-1 flex items-center pr-1">
+                        <div class="absolute custom-right !important left-[15rem] h-full pt-1 flex items-center pr-1">
                             <button type="button" 
                                     class="focus:outline-none" 
                                     id="togglePassword">
@@ -52,7 +52,7 @@
                 </div>  
   
                 @if (Route::has('password.request'))  
-                    <div class="mt-4 text-right">
+                <div class="mt-4 text-right">
                         <a class="text-sm text-gray-600 hover:text-red-500 underline !important" href="{{ route('password.request') }}">  
                             {{ __('Forgot your password?') }}  
                         </a>  
@@ -80,7 +80,7 @@
     color: red !important;
 }
 .custom-right {
-    right: 10px !important;
+    right: 0.75rem !important;
 }
 .custom-rounded-box {
     background-color: white;

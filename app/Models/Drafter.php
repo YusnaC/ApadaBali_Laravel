@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Drafter extends Model
 {
-    protected $table = 'drafters';
+    use SoftDeletes;
+    
+    protected $table = 'drafter';
 
     protected $fillable = [
         'id_drafter',

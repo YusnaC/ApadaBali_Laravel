@@ -22,7 +22,12 @@ return new class extends Migration
         $table->string('dokumen')->nullable();
         $table->string('keterangan')->nullable();
         $table->timestamps();
-        $table->foreign('id_proyek')->references('id_proyek')->on('proyek');
+        
+        $table->index('id_proyek');
+        $table->foreign('id_proyek')
+              ->references('id_proyek')
+              ->on('projects')
+              ->onDelete('cascade');  // Optional: adds cascade delete
     });
 }
 
@@ -33,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('progress');
+        Schema::dropIfExists('progres');  // Fixed table name to match
     }
 };

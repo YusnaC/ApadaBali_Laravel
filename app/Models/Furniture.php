@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Furniture extends Model
 {
-    protected $table = 'furnitures';
+    use SoftDeletes;
+    
+    protected $table = 'furniture';
     protected $fillable = [
         'id_furniture',
         'tgl_pembuatan',
@@ -21,4 +24,9 @@ class Furniture extends Model
         'tgl_pembuatan',
         'tgl_selesai'
     ];
+
+    public function drafter()
+    {
+        return $this->belongsTo(Drafter::class, 'id_drafter', 'id_drafter');
+    }
 }

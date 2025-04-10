@@ -20,31 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/send-notification', [NotificationController::class, 'sendNotification']);
+use App\Http\Controllers\FCMController;
 
-Route::post('/save-fcm-token', function (Request $request) {
-    try {
-        \Log::info('Received token request:', ['token' => $request->device_token]);
-        
-        $updated = DB::table('users')
-            ->where('id', 1)  // Testing with user ID 1
-            ->update([
-                'fcm_token' => $request->device_token
-            ]);
+Route::post('/save-fcm-token', [FCMController::class, 'saveToken'])->middleware('auth:sanctum');
+Route::post('/send-notification', [NotificationController::class, 'sendNotification']);
 
-        \Log::info('Update result:', ['updated' => $updated]);
-
-        return response()->json([
-            'message' => 'Token saved successfully',
-            'token' => $request->device_token
-        ]);
-
-    } catch (\Exception $e) {
-        \Log::error('Detailed error: ' . $e->getMessage());
-        \Log::error('Stack trace: ' . $e->getTraceAsString());
-        return response()->json([
-            'error' => 'Server error',
-            'message' => $e->getMessage()
-        ], 500);
-    }
-});

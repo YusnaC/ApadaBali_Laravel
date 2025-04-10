@@ -40,7 +40,14 @@
  
       public function destroy(Request $request)  
       {  
-          Auth::logout();  
-          return redirect('/login');  
+          Auth::guard('web')->logout();  
+          $request->session()->invalidate();  
+          $request->session()->regenerateToken();  
+          return redirect('/login')->with('loggedOut', true)  
+          ->withHeaders([  
+              'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',  
+              'Pragma' => 'no-cache',  
+              'Expires' => 'Fri, 01 Jan 1990 00:00:00 GMT',  
+          ]);  
       }  
   }

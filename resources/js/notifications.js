@@ -3,41 +3,72 @@ import { getToken, onMessage } from 'firebase/messaging';
 
 class NotificationHandler {
     constructor() {
-        this.notificationCounter = document.querySelector('.notification-counter');
-        this.notificationList = document.querySelector('.notification-items');
-        this.unreadCount = 0;
         this.notifications = [];
+        this.unreadCount = 0;
+        this.notificationCounter = document.querySelector('notification-counter');
+        this.notificationList = document.querySelector('.notification-items');
         
+        // Initialize Firebase and setup listeners
         this.initializeFirebase();
         this.setupEventListeners();
+        console.log('NotificationHandler initialized');
     }
 
-    async initializeFirebase() {
-        try {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                const token = await getToken(messaging, {
-                    vapidKey: 'BDbzKpYdkjEeUhGuXFl2QIP0CKIqUi0cb0MKBIb8BwJ5Tdc9YXgs4MqUQVGWYLAuW80IUqZI5byUjJJj0bDnz0Y'
-                });
-                
-                // Send token to your Laravel backend
-                await fetch('/api/save-device-token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({ token })
-                });
+    handleNewNotification(payload) {
+        console.log('New notification received:', payload);
+        console.log("this is element notification", document.getElementById('notificationCounter'));
+        
+        if (payload && (payload.notification || payload.data)) {
+            this.unreadCount++;
+            const notificationData = payload.notification || payload.data;
+            this.notifications.unshift({
+                title: notificationData.title,
+                body: notificationData.body,
+                time: new Date().toLocaleTimeString(),
+                read: false
+            });
+            
+            // Update counter and list
+            if (this.notificationCounter) {
+                this.notificationCounter.textContent = this.unreadCount;
+                this.notificationCounter.style.display = 'block';
             }
-        } catch (error) {
-            console.error('Error:', error);
+            
+            if (this.notificationList) {
+                this.updateNotificationList();
+            }
+        }
+    }
+
+    updateNotificationList() {
+        console.log("apakah dia masuk sini?");
+        
+        if (this.notificationList && this.notifications.length > 0) {
+            const notificationHtml = this.notifications.map(notification => `
+                <div class="notification-item d-flex align-items-center px-3 py-2 border-bottom">
+                    <div class="me-3">
+                        <i class="bx bx-bell fs-4 text-warning"></i>
+                    </div>
+                    <div class="notification-content flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="user-name fw-semibold">${notification.title}</span>
+                                <div class="action">${notification.body}</div>
+                            </div>
+                        </div>
+                        <div class="notification-time text-muted small">${notification.time}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            this.notificationList.innerHTML = notificationHtml;
         }
     }
 
     setupEventListeners() {
         // Listen for new messages
         onMessage(messaging, (payload) => {
+            console.log('Firebase message received:', payload);
             this.handleNewNotification(payload);
         });
 
@@ -45,24 +76,6 @@ class NotificationHandler {
         document.querySelector('.mark-all-read').addEventListener('click', () => {
             this.markAllAsRead();
         });
-    }
-
-    handleNewNotification(payload) {
-        this.unreadCount++;
-        this.notifications.unshift(payload.data);
-        this.updateNotificationCounter();
-        this.updateNotificationList();
-    }
-
-    updateNotificationCounter() {
-        this.notificationCounter.textContent = this.unreadCount;
-        this.notificationCounter.style.display = this.unreadCount > 0 ? 'block' : 'none';
-    }
-
-    updateNotificationList() {
-        this.notificationList.innerHTML = this.notifications.map(notification => `
-           
-        `).join('');
     }
 
     markAllAsRead() {

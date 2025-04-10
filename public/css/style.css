@@ -244,10 +244,10 @@ li {
 }
 
 /* Efek hover pada tautan di dalam dropdown */
-#sidebar .slide-dropdown a:hover {
+/* #sidebar .slide-dropdown a:hover {
     background: var(--hover);
     color: var(--text-clr);
-}
+} */
 
 /* Mengatur tampilan tautan aktif dalam dropdown */
 #sidebar .slide-dropdown a.active {
@@ -277,8 +277,22 @@ li {
 }
 
 /* Mengatur margin kiri untuk elemen dengan kelas wrap di dalam header */
+/* Header wrap styling */
 #header .wrap {
     margin-left: 20%;
+    transition: margin-left 0.3s ease;
+}
+
+
+/* When sidebar is hidden */
+#sidebar[style*="translateX(-100%)"] + section #header .wrap {
+    margin-left: 0;
+}
+
+@media (max-width: 767px) {
+    #header .wrap {
+        margin-left: 0;
+    }
 }
 
 /* Penataan pembatas vertikal di sidebar */
@@ -493,7 +507,7 @@ button:focus {
     left: 0;
     top: 0;
     height: 100%;
-    width: 300px;
+    width: 310px;
     background: #fff;
     transform: translateX(-100%); /* Sidebar tersembunyi */
     transition: transform 0.3s ease-in-out;
@@ -667,14 +681,15 @@ button:focus {
   transition: transform 0.2s ease;
 }
 
-.card:hover {
+/* .card:hover {
   transform: translateY(-5px);
-}
+} */
 
 .card-body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* padding-top: 3rem; */
 }
 
 .table tbody tr:nth-child(odd) {
@@ -884,4 +899,11 @@ button:focus {
 .table-custom td, 
 .table-custom th {
     padding: 0.5rem; /* 8px */
+}
+@media (max-width: 768px) {
+
+    .main-content {
+        padding-top: 2rem!important;
+        margin: 4rem 0 0 0 !important;
+    }
 }

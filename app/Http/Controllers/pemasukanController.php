@@ -18,9 +18,10 @@ class pemasukanController extends Controller
         // Get total pengeluaran
         $totalPengeluaran = Pengeluaran::sum('total_harga');
         
-        // Get sisa kas (pemasukan with 'kas' in keterangan)
-        $sisaKas = $totalPemasukan - $totalPengeluaran;
-
+        // Get sisa kas
+        $sisaKas = (int)($totalPemasukan - $totalPengeluaran);
+    
+        // Initialize query
         $query = Pemasukan::query();
     
         // Filter pencarian
@@ -28,33 +29,38 @@ class pemasukanController extends Controller
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('jenis_order', 'like', "%{$search}%")
-                  ->orWhere('pemasukan.id_order', 'like', "%{$search}%");
+                  ->orWhere('id_order', 'like', "%{$search}%")
+                  ->orWhere('tgl_transaksi', 'like', "%{$search}%")
+                  ->orWhere('keterangan', 'like', "%{$search}%")
+                  ->orWhere('jumlah', 'like', "%{$search}%")
+                  ->orWhere('termin', 'like', "%{$search}%");
+                  ;
             });
         }
     
-        $sortField = $request->query('sort', 'id');
-        $sortDirection = $request->query('direction', 'asc');
+        // Handle sorting
+        $sortField = $request->query('sort', 'created_at');
+        $sortDirection = $request->query('direction', 'desc');
     
+        // Special handling for 'no' column
         if ($sortField === 'no') {
-            $query->orderBy('pemasukan.id', $sortDirection);
+            $query->orderBy('id', $sortDirection);
         } else {
-            $query->orderBy('pemasukan.' . $sortField, $sortDirection);
+            $query->orderBy($sortField, $sortDirection);
         }
-
+    
+        // Pagination
         $perPage = $request->query('entries', 10);
         $pemasukan = $query->paginate($perPage);
         
-        $total = $pemasukan->total();
-        $currentPage = $pemasukan->currentPage();
-
         return view('tables.pemasukanKeuangan', [
             'pemasukan' => $pemasukan,
             'search' => $search,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
             'perPage' => $perPage,
-            'total' => $total,
-            'currentPage' => $currentPage,
+            'total' => $pemasukan->total(),
+            'currentPage' => $pemasukan->currentPage(),
             'sisaKas' => $sisaKas,
             'totalPemasukan' => $totalPemasukan,
             'totalPengeluaran' => $totalPengeluaran
@@ -63,7 +69,7 @@ class pemasukanController extends Controller
 
     public function create()
     {
-        $furnitureOrders = DB::table('furnitures')
+        $furnitureOrders = DB::table('furniture')
             ->select('id_furniture')
             ->get();
             
@@ -79,7 +85,7 @@ class pemasukanController extends Controller
         $pemasukan = Pemasukan::findOrFail($id);
         
         // Get furniture orders
-        $furnitureOrders = DB::table('furnitures')
+        $furnitureOrders = DB::table('furniture')
             ->select('id_furniture')
             ->get();
             
@@ -103,7 +109,7 @@ class pemasukanController extends Controller
                                      ->where('kategori', 1)
                                      ->first(),
         
-            default => DB::table('furnitures')
+            default => DB::table('furniture')
                          ->where('id_furniture', $pemasukan->id_order)
                          ->first(),
         };
@@ -114,16 +120,44 @@ class pemasukanController extends Controller
 
     public function store(Request $request)
     {
+        $messages = [
+            'jenis_order.required' => 'Jenis order wajib diisi',
+            'jenis_order.in' => 'Jenis order harus Proyek Arsitektur, Furniture atau Jasa',
+            'id_order.required' => 'ID order wajib diisi',
+            'tgl_transaksi.required' => 'Tanggal transaksi wajib diisi',
+            'tgl_transaksi.date' => 'Format tanggal transaksi tidak valid',
+            'jumlah.required' => 'Jumlah wajib diisi',
+            'jumlah.numeric' => 'Jumlah harus berupa angka',
+            'jumlah.min' => 'Jumlah tidak boleh kurang dari 0',
+            'termin.required' => 'Termin wajib diisi',
+            'termin.integer' => 'Termin harus berupa angka bulat',
+            
+        ];
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'jenis_order' => 'required|in:Proyek Arsitektur,Furniture',
-            'id_order' => 'required|unique:pemasukan',
+            'jenis_order' => 'required|in:Proyek Arsitektur,Furniture,Jasa',
+            'id_order' => [
+                'required'
+            ],
             'tgl_transaksi' => 'required|date',
             'jumlah' => 'required|numeric|min:0',
-            'termin' => 'required|integer|min:1|max:3',
+            'termin' => [
+                'required',
+                'integer',
+                function ($attribute, $value, $fail) use ($request) {
+                    $exists = Pemasukan::where('id_order', $request->id_order)
+                                     ->where('termin', $value)
+                                     ->exists();
+                    if ($exists) {
+                        $fail('Termin ini sudah ada untuk ID Order yang sama.');
+                    }
+                }
+            ],
             'keterangan' => 'nullable|string|max:255'
-        ]);
+        ], $messages);
 
         if ($validator->fails()) {
+            // dd($validator->errors());
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -144,15 +178,30 @@ class pemasukanController extends Controller
     public function update(Request $request, $id)
     {
         $pemasukan = Pemasukan::findOrFail($id);
-
+        $messages = [
+            'jenis_order.required' => 'Jenis order wajib diisi',
+            'jenis_order.in' => 'Jenis order harus Proyek Arsitektur, Furniture atau Jasa',
+            'id_order.required' => 'ID order wajib diisi',
+            'tgl_transaksi.required' => 'Tanggal transaksi wajib diisi',
+            'tgl_transaksi.date' => 'Format tanggal transaksi tidak valid',
+            'jumlah.required' => 'Jumlah wajib diisi',
+            'jumlah.numeric' => 'Jumlah harus berupa angka',
+            'jumlah.min' => 'Jumlah tidak boleh kurang dari 0',
+            'termin.required' => 'Termin wajib diisi',
+            'termin.integer' => 'Termin harus berupa angka bulat',
+            
+        ];
         $validator = Validator::make($request->all(), [
-            'jenis_order' => 'required|in:Proyek Arsitektur,Furniture',
-            'id_order' => 'required|unique:pemasukan,id_order,'.$id,
+            'jenis_order' => 'required|in:Proyek Arsitektur,Furniture,Jasa',
+            'id_order' => 'required',
             'tgl_transaksi' => 'required|date',
             'jumlah' => 'required|numeric|min:0',
-            'termin' => 'required|integer|min:1|max:3',
+            'termin' => [
+                'required',
+                
+            ],
             'keterangan' => 'nullable|string|max:255'
-        ]);
+        ], $messages);
 
         if ($validator->fails()) {
             return redirect()->back()

@@ -20,7 +20,19 @@ class NewPasswordController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
+            'password' => [
+                'required',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/'
+            ],
+            'password_confirmation' => 'required' // Add this line
+        ], [
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.regex' => 'Password harus mengandung huruf dan angka.',
+            'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.'
         ]);
 
         $status = Password::reset(

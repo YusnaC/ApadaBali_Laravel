@@ -23,12 +23,24 @@ class SendProjectNotification implements ShouldQueue
 
     public function handle()
     {
-        $message = "Proyek baru '{$this->project->nama_proyek}' telah dibuat untuk Drafter {$this->project->id_drafter}";
-        
-        Http::get(url('/api/send-notification'), [
-            'title' => 'Proyek Baru',
-            'message' => $message,
-            'drafter_id' => $this->project->id_drafter
-        ]);
+        try {
+            $messaging = app('firebase.messaging');
+            
+            $notification = [
+                'title' => 'Proyek Baru',
+                'body' => 'Proyek ' . $this->project->nama_proyek . ' telah dibuat'
+            ];
+
+            $tokens = \DB::table('users')
+                ->whereNotNull('fcm_token')
+                ->pluck('fcm_token')
+                ->chunk(500) // Process in chunks
+                ->each(function($tokenBatch) use ($messaging, $notification) {
+                    $messaging->sendMulticast($notification, $tokenBatch->toArray());
+                });
+
+        } catch (\Exception $e) {
+            \Log::error('Firebase notification failed: ' . $e->getMessage());
+        }
     }
 }

@@ -12,7 +12,7 @@
         <h3 class="fw-bold">Dashboard</h3>
     </div>
 
-    <div class="row">
+    <div class="row g-4 g-sm-3">
         <!-- Card 1: Completed Projects -->
         <div class="col-sm-6">
             <div class="card">
@@ -26,7 +26,7 @@
                     <p class="card-text">{{ $completedProjects }}</p>
                     <!-- Card Button: Link to view the completed projects -->
                     <a href="{{ route('tables.proyekdrafter') }}" class="w-100 d-flex justify-content-between align-items-center btn-card-drafter">
-                        View Projects
+                        Lihat Proyek
                         <i class="bx bx-chevron-right ms-2"></i>
                     </a>
                 </div>

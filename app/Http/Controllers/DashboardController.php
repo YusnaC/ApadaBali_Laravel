@@ -17,52 +17,202 @@ class DashboardController extends Controller
         $filter = $request->input('filter', 'month'); // Default to monthly view
         
         // Get card data
-        $totalProyek = Project::count();
-        $totalPemasukan = Pemasukan::sum('jumlah');
-        $totalPengeluaran = Pengeluaran::sum('total_harga');
+        // Subquery untuk ambil progres terakhir per proyek
+        $totalProyek = DB::table('progres')
+        ->where('status_progres', 'Selesai')
+        ->whereNull('deleted_at')
+        ->count();
+
+        $totalPemasukan = Pemasukan::whereNull('deleted_at')->sum('jumlah');
+        $totalPengeluaran = Pengeluaran::whereNull('deleted_at')->sum('total_harga');
         $totalPendapatan = $totalPemasukan - $totalPengeluaran;
         $totalKlien = Klien::count();
-        $proyekBerjalan = Progres::where('status_progres', 'Proses')->distinct('id_proyek')->count();
+        $proyekBerjalan = Progres::whereIn('id_progres', function($query) {
+                            $query->selectRaw('MAX(id_progres)')
+                                ->from('progres')
+                                ->whereNull('deleted_at')
+                                ->groupBy('id_proyek');
+                        })
+                        ->where('status_progres', 'Proses')
+                        ->count();
     
         // Get project and revenue data based on filter
         switch($filter) {
             case 'week':
-                $projectData = Project::select(
+                // Get dates for the last 7 days
+                $dates = collect(range(0, 6))
+                    ->map(fn($day) => date('Y-m-d', strtotime("-$day days")))
+                    ->reverse();
+
+                $rawProjectData = Project::select(
                     DB::raw('DATE(tgl_proyek) as date'),
                     DB::raw('COUNT(*) as total')
                 )
-                ->whereRaw('tgl_proyek >= DATE_SUB(NOW(), INTERVAL 7 DAY)')
-                ->groupBy('date')
+                ->whereRaw('DATE(tgl_proyek) >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
+                ->whereRaw('DATE(tgl_proyek) <= CURDATE()')
+                ->whereNull('deleted_at')
+                ->groupBy(DB::raw('DATE(tgl_proyek)'))
                 ->orderBy('date')
-                ->get();
-    
+                ->get()
+                ->keyBy('date');
+
+                $projectData = $dates->map(function($date) use ($rawProjectData) {
+                    return [
+                        'date' => $date,
+                        'year' => date('Y', strtotime($date)),
+                        'month' => (int)date('m', strtotime($date)),
+                        'day' => (int)date('d', strtotime($date)),
+                        'total' => $rawProjectData->get($date)?->total ?? 0
+                    ];
+                })->values()->toArray();
+                
                 $revenueData = $this->getWeeklyRevenueData();
                 break;
-    
+
             case 'year':
-                $projectData = Project::select(
+                // Get data for last 5 years
+                $years = collect(range(date('Y')-4, date('Y')));
+                
+                $rawProjectData = Project::select(
+                    DB::raw('YEAR(tgl_proyek) as year'),
+                    DB::raw('COUNT(*) as total')
+                )
+                ->whereYear('tgl_proyek', '>=', date('Y')-4)
+                ->whereNull('deleted_at')
+                ->groupBy(DB::raw('YEAR(tgl_proyek)'))
+                ->orderBy('year')
+                ->get()
+                ->keyBy('year');
+
+                $projectData = $years->map(function($year) use ($rawProjectData) {
+                    return [
+                        'year' => (int)$year,
+                        'total' => $rawProjectData->get($year)?->total ?? 0
+                    ];
+                });
+                
+                // Get yearly revenue data
+                $pemasukan = DB::table('pemasukan')
+                    ->whereNull('deleted_at')
+                    ->select(
+                        DB::raw('YEAR(tgl_transaksi) as year'),
+                        DB::raw('SUM(jumlah) as pemasukan')
+                    )
+                    ->whereYear('tgl_transaksi', '>=', date('Y')-4)
+                    ->groupBy('year')
+                    ->get()
+                    ->keyBy('year');
+
+                $pengeluaran = DB::table('pengeluaran')
+                    ->whereNull('deleted_at')
+                    ->select(
+                        DB::raw('YEAR(tanggal_transaksi) as year'),
+                        DB::raw('SUM(total_harga) as pengeluaran')
+                    )
+                    ->whereYear('tanggal_transaksi', '>=', date('Y')-4)
+                    ->groupBy('year')
+                    ->get()
+                    ->keyBy('year');
+
+                $revenueData = $years->map(function($year) use ($pemasukan, $pengeluaran) {
+                    $pemasukanAmount = isset($pemasukan[$year]) ? (float)$pemasukan[$year]->pemasukan : 0;
+                    $pengeluaranAmount = isset($pengeluaran[$year]) ? (float)$pengeluaran[$year]->pengeluaran : 0;
+                    
+                    return [
+                        'year' => (int)$year,
+                        'pemasukan' => $pemasukanAmount,
+                        'pengeluaran' => $pengeluaranAmount,
+                        'total' => $pemasukanAmount - $pengeluaranAmount
+                    ];
+                })->values();
+                break;
+
+            default: // month
+                // Create array of all months (1-12)
+                $months = collect(range(1, 12));
+                $currentYear = date('Y');
+
+                $rawProjectData = Project::select(
                     DB::raw('MONTH(tgl_proyek) as month'),
                     DB::raw('COUNT(*) as total')
                 )
-                ->whereYear('tgl_proyek', date('Y'))
+                ->whereYear('tgl_proyek', $currentYear)
+                ->whereNull('deleted_at')
                 ->groupBy(DB::raw('MONTH(tgl_proyek)'))
                 ->orderBy('month')
-                ->get();
-    
-                $revenueData = $this->getYearlyRevenueData();
+                ->get()
+                ->keyBy('month');
+
+                $projectData = $months->map(function($month) use ($rawProjectData, $currentYear) {
+                    return [
+                        'month' => (int)$month,
+                        'year' => (int)$currentYear,
+                        'total' => $rawProjectData->get($month)?->total ?? 0
+                    ];
+                });
+                
+                // Get monthly revenue data for all months
+                $pemasukan = DB::table('pemasukan')
+                    ->whereNull('deleted_at')
+                    ->select(
+                        DB::raw('MONTH(tgl_transaksi) as month'),
+                        DB::raw('SUM(jumlah) as pemasukan')
+                    )
+                    ->whereYear('tgl_transaksi', $currentYear)
+                    ->groupBy(DB::raw('MONTH(tgl_transaksi)'))
+                    ->orderBy('month')
+                    ->get()
+                    ->keyBy('month');
+
+                $pengeluaran = DB::table('pengeluaran')
+                    ->whereNull('deleted_at')
+                    ->select(
+                        DB::raw('MONTH(tanggal_transaksi) as month'),
+                        DB::raw('SUM(total_harga) as pengeluaran')
+                    )
+                    ->whereYear('tanggal_transaksi', $currentYear)
+                    ->groupBy(DB::raw('MONTH(tanggal_transaksi)'))
+                    ->orderBy('month')
+                    ->get()
+                    ->keyBy('month');
+
+                $revenueData = $months->map(function($month) use ($pemasukan, $pengeluaran) {
+                    $pemasukanAmount = isset($pemasukan[$month]) ? (float)$pemasukan[$month]->pemasukan : 0;
+                    $pengeluaranAmount = isset($pengeluaran[$month]) ? (float)$pengeluaran[$month]->pengeluaran : 0;
+                    
+                    return [
+                        'month' => (int)$month,
+                        'pemasukan' => $pemasukanAmount,
+                        'pengeluaran' => $pengeluaranAmount,
+                        'total' => $pemasukanAmount - $pengeluaranAmount
+                    ];
+                })->values();
                 break;
-    
-            default: // month
-                $projectData = Project::select(
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
+                $days = collect(range(1, $daysInMonth));
+                $currentYear = date('Y');
+                $currentMonth = date('m');
+
+                $rawProjectData = Project::select(
                     DB::raw('DAY(tgl_proyek) as day'),
                     DB::raw('COUNT(*) as total')
                 )
-                ->whereMonth('tgl_proyek', date('m'))
-                ->whereYear('tgl_proyek', date('Y'))
+                ->whereMonth('tgl_proyek', $currentMonth)
+                ->whereYear('tgl_proyek', $currentYear)
                 ->groupBy('day')
                 ->orderBy('day')
-                ->get();
-    
+                ->get()
+                ->keyBy('day');
+
+                $projectData = $days->map(function($day) use ($rawProjectData, $currentYear, $currentMonth) {
+                    return [
+                        'day' => (int)$day,
+                        'month' => (int)$currentMonth,
+                        'year' => (int)$currentYear,
+                        'total' => $rawProjectData->get($day)?->total ?? 0
+                    ];
+                });
+                
                 $revenueData = $this->getMonthlyRevenueData();
         }
     
@@ -79,64 +229,46 @@ class DashboardController extends Controller
     
     private function getWeeklyRevenueData()
     {
-        return DB::table('pemasukan')
+        // Get dates for the last 7 days
+        $dates = collect(range(0, 6))
+            ->map(fn($day) => date('Y-m-d', strtotime("-$day days")))
+            ->reverse();
+
+        $pemasukan = DB::table('pemasukan')
+            ->whereNull('deleted_at')
             ->select(
                 DB::raw('DATE(tgl_transaksi) as date'),
                 DB::raw('SUM(jumlah) as pemasukan')
             )
-            ->whereRaw('tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 7 DAY)')
+            ->whereRaw('DATE(tgl_transaksi) >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
+            ->whereRaw('DATE(tgl_transaksi) <= CURDATE()')
             ->groupBy('date')
+            ->orderBy('date')
             ->get()
-            ->map(function($item) {
-                $pengeluaran = DB::table('pengeluarans')
-                    ->whereDate('tanggal_transaksi', $item->date)
-                    ->sum('total_harga');
-                
-                return [
-                    'date' => $item->date,
-                    'pemasukan' => (float)$item->pemasukan,
-                    'pengeluaran' => (float)$pengeluaran,
-                    'total' => (float)$item->pemasukan - (float)$pengeluaran
-                ];
-            });
-    }
-    
-    private function getMonthlyRevenueData()
-    {
-        // Get all days of current month
-        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
-        $days = collect(range(1, $daysInMonth));
-        
-        // Get pemasukan data
-        $pemasukan = DB::table('pemasukan')
+            ->keyBy('date');
+
+        $pengeluaran = DB::table('pengeluaran')
+            ->whereNull('deleted_at')
             ->select(
-                DB::raw('DAY(tgl_transaksi) as day'),
-                DB::raw('SUM(jumlah) as pemasukan')
-            )
-            ->whereMonth('tgl_transaksi', date('m'))
-            ->whereYear('tgl_transaksi', date('Y'))
-            ->groupBy('day')
-            ->get()
-            ->keyBy('day');
-    
-        // Get pengeluaran data
-        $pengeluaran = DB::table('pengeluarans')
-            ->select(
-                DB::raw('DAY(tanggal_transaksi) as day'),
+                DB::raw('DATE(tanggal_transaksi) as date'),
                 DB::raw('SUM(total_harga) as pengeluaran')
             )
-            ->whereMonth('tanggal_transaksi', date('m'))
-            ->whereYear('tanggal_transaksi', date('Y'))
-            ->groupBy('day')
+            ->whereRaw('DATE(tanggal_transaksi) >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
+            ->whereRaw('DATE(tanggal_transaksi) <= CURDATE()')
+            ->groupBy('date')
+            ->orderBy('date')
             ->get()
-            ->keyBy('day');
-    
-        return $days->map(function($day) use ($pemasukan, $pengeluaran) {
-            $pemasukanAmount = isset($pemasukan[$day]) ? (float)$pemasukan[$day]->pemasukan : 0;
-            $pengeluaranAmount = isset($pengeluaran[$day]) ? (float)$pengeluaran[$day]->pengeluaran : 0;
+            ->keyBy('date');
+
+        return $dates->map(function($date) use ($pemasukan, $pengeluaran) {
+            $pemasukanAmount = isset($pemasukan[$date]) ? (float)$pemasukan[$date]->pemasukan : 0;
+            $pengeluaranAmount = isset($pengeluaran[$date]) ? (float)$pengeluaran[$date]->pengeluaran : 0;
             
             return [
-                'day' => (int)$day,
+                'date' => $date,
+                'year' => date('Y', strtotime($date)),
+                'month' => (int)date('m', strtotime($date)),
+                'day' => (int)date('d', strtotime($date)),
                 'pemasukan' => $pemasukanAmount,
                 'pengeluaran' => $pengeluaranAmount,
                 'total' => $pemasukanAmount - $pengeluaranAmount
@@ -144,82 +276,86 @@ class DashboardController extends Controller
         })->values();
     }
     
-    // private function getWeeklyRevenueData()
-    // {
-    //     // Get dates for last 7 days
-    //     $dates = collect(range(0, 6))->map(function($day) {
-    //         return date('Y-m-d', strtotime("-$day days"));
-    //     })->reverse();
+    private function getMonthlyRevenueData()
+    {
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
+        $days = collect(range(1, $daysInMonth));
+        $currentYear = date('Y');
+        $currentMonth = date('m');
         
-    //     // Get pemasukan data
-    //     $pemasukan = DB::table('pemasukan')
-    //         ->select(
-    //             DB::raw('DATE(tgl_transaksi) as date'),
-    //             DB::raw('SUM(jumlah) as pemasukan')
-    //         )
-    //         ->whereRaw('tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 7 DAY)')
-    //         ->groupBy('date')
-    //         ->get()
-    //         ->keyBy('date');
+        $pemasukan = DB::table('pemasukan')
+            ->whereNull('deleted_at')
+            ->select(
+                DB::raw('DAY(tgl_transaksi) as day'),
+                DB::raw('SUM(jumlah) as pemasukan')
+            )
+            ->whereMonth('tgl_transaksi', $currentMonth)
+            ->whereYear('tgl_transaksi', $currentYear)
+            ->groupBy('day')
+            ->get()
+            ->keyBy('day');
     
-    //     // Get pengeluaran data
-    //     $pengeluaran = DB::table('pengeluarans')
-    //         ->select(
-    //             DB::raw('DATE(tanggal_transaksi) as date'),
-    //             DB::raw('SUM(total_harga) as pengeluaran')
-    //         )
-    //         ->whereRaw('tanggal_transaksi >= DATE_SUB(NOW(), INTERVAL 7 DAY)')
-    //         ->groupBy('date')
-    //         ->get()
-    //         ->keyBy('date');
+        $pengeluaran = DB::table('pengeluaran')
+            ->whereNull('deleted_at')
+            ->select(
+                DB::raw('DAY(tanggal_transaksi) as day'),
+                DB::raw('SUM(total_harga) as pengeluaran')
+            )
+            ->whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->groupBy('day')
+            ->get()
+            ->keyBy('day');
     
-    //     return $dates->map(function($date) use ($pemasukan, $pengeluaran) {
-    //         $pemasukanAmount = isset($pemasukan[$date]) ? (float)$pemasukan[$date]->pemasukan : 0;
-    //         $pengeluaranAmount = isset($pengeluaran[$date]) ? (float)$pengeluaran[$date]->pengeluaran : 0;
+        return $days->map(function($day) use ($pemasukan, $pengeluaran, $currentYear, $currentMonth) {
+            $pemasukanAmount = isset($pemasukan[$day]) ? (float)$pemasukan[$day]->pemasukan : 0;
+            $pengeluaranAmount = isset($pengeluaran[$day]) ? (float)$pengeluaran[$day]->pengeluaran : 0;
             
-    //         return [
-    //             'date' => $date,
-    //             'pemasukan' => $pemasukanAmount,
-    //             'pengeluaran' => $pengeluaranAmount,
-    //             'total' => $pemasukanAmount - $pengeluaranAmount
-    //         ];
-    //     })->values();
-    // }
-    
+            return [
+                'day' => (int)$day,
+                'month' => (int)$currentMonth,
+                'year' => (int)$currentYear,
+                'pemasukan' => $pemasukanAmount,
+                'pengeluaran' => $pengeluaranAmount,
+                'total' => $pemasukanAmount - $pengeluaranAmount
+            ];
+        })->values();
+    }
+
     private function getYearlyRevenueData()
     {
-        // Get all months of the year
         $months = collect(range(1, 12));
+        $currentYear = date('Y');
         
-        // Get pemasukan data
         $pemasukan = DB::table('pemasukan')
+            ->whereNull('deleted_at')
             ->select(
                 DB::raw('MONTH(tgl_transaksi) as month'),
                 DB::raw('SUM(jumlah) as pemasukan')
             )
-            ->whereYear('tgl_transaksi', date('Y'))
+            ->whereYear('tgl_transaksi', $currentYear)
             ->groupBy('month')
             ->get()
             ->keyBy('month');
     
-        // Get pengeluaran data
-        $pengeluaran = DB::table('pengeluarans')
+        $pengeluaran = DB::table('pengeluaran')
+            ->whereNull('deleted_at')
             ->select(
                 DB::raw('MONTH(tanggal_transaksi) as month'),
                 DB::raw('SUM(total_harga) as pengeluaran')
             )
-            ->whereYear('tanggal_transaksi', date('Y'))
+            ->whereYear('tanggal_transaksi', $currentYear)
             ->groupBy('month')
             ->get()
             ->keyBy('month');
     
-        // Combine data for all months
-        return $months->map(function($month) use ($pemasukan, $pengeluaran) {
+        return $months->map(function($month) use ($pemasukan, $pengeluaran, $currentYear) {
             $pemasukanAmount = isset($pemasukan[$month]) ? (float)$pemasukan[$month]->pemasukan : 0;
             $pengeluaranAmount = isset($pengeluaran[$month]) ? (float)$pengeluaran[$month]->pengeluaran : 0;
             
             return [
                 'month' => (int)$month,
+                'year' => (int)$currentYear,
                 'pemasukan' => $pemasukanAmount,
                 'pengeluaran' => $pengeluaranAmount,
                 'total' => $pemasukanAmount - $pengeluaranAmount
@@ -246,7 +382,7 @@ class DashboardController extends Controller
     //         ->keyBy('day');
     
     //     // Get pengeluaran data
-    //     $pengeluaran = DB::table('pengeluarans')
+    //     $pengeluaran = DB::table('pengeluaran')
     //         ->select(
     //             DB::raw('DAY(tanggal_transaksi) as day'),
     //             DB::raw('SUM(total_harga) as pengeluaran')
@@ -290,7 +426,7 @@ class DashboardController extends Controller
     //         ->keyBy('date');
     
     //     // Get pengeluaran data
-    //     $pengeluaran = DB::table('pengeluarans')
+    //     $pengeluaran = DB::table('pengeluaran')
     //         ->select(
     //             DB::raw('DATE(tanggal_transaksi) as date'),
     //             DB::raw('SUM(total_harga) as pengeluaran')
@@ -338,7 +474,7 @@ class DashboardController extends Controller
             ->get();
     
         // Get pengeluaran data
-        $pengeluaranData = DB::table('pengeluarans')
+        $pengeluaranData = DB::table('pengeluaran')
             ->select(
                 DB::raw('MONTH(tanggal_transaksi) as month'),
                 DB::raw('SUM(total_harga) as pengeluaran')

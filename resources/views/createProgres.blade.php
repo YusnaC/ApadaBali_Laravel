@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', isset($progres) ? 'Edit Data Progress' : 'Tambah Data Progress')
+@section('title', isset($progres) ? 'Edit Data Progres' : 'Tambah Data Progres')
 
 @section('content')
 <div class="mb-4 ms-5">
@@ -12,20 +12,11 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <div class="card-body p-5">
-                    <h4 class="mb-5 text-center">{{ isset($progres) ? 'Edit Data Progress' : 'Tambah Data Progress' }}</h4>
-                    
-                    @if ($errors->any())
-                        <div class="alert alert-danger mb-4">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                <div class="card-body p-md-5">
+                  
+                    <h4 class="mb-5 text-center fw-bold font-weight-bold mt-5" style="font-weight: 900 !important;">{{ isset($progres) ? 'Edit Data Progres' : 'Tambah Data Progres' }}</h4>
 
-                    <form action="{{ isset($progres) ? route('proyek.progress.update', ['id' => $progres->id_progres]) : route('progres.store') }}" 
+                    <form action="{{ isset($progres) ? route('progres.update', ['id' => $progres->id_progres]) : route('progres.store') }}" 
                           method="POST" 
                           enctype="multipart/form-data">
                         @csrf
@@ -33,83 +24,112 @@
                             @method('PUT')
                         @endif
 
-                        <div class="row mb-4">
-                            <div class="col-md-6 pe-5">
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <label class="mb-2">Id Proyek</label>
-                                    <select name="id_proyek" class="form-select @error('id_proyek') is-invalid @enderror" {{ isset($progres) ? 'disabled' : 'required' }}>
-                                        <option value="">Pilih ID Proyek</option>
-                                        @foreach($projects as $project)
+                                    <select name="id_proyek" class="form-select @error('id_proyek') is-invalid border-danger @enderror {{ isset($progres) ? 'bg-light text-secondary' : '' }}" {{ isset($progres) ? 'disabled' : '' }}>
+                                    @foreach($projects as $project)
+                                        @php
+                                            $drafter = DB::table('drafter')
+                                                ->where('nama_drafter', auth()->user()->name)
+                                                ->first();
+                                        @endphp
+                                        @if($project->id_drafter == ($drafter ? $drafter->id_drafter : '0'))
                                             <option value="{{ $project->id_proyek }}" 
                                                 {{ (old('id_proyek', isset($progres) ? $progres->id_proyek : '')) == $project->id_proyek ? 'selected' : '' }}>
                                                 {{ $project->id_proyek }}
                                             </option>
-                                        @endforeach
+                                        @endif
+                                    @endforeach
                                     </select>
-                                    @if(isset($progres))
-                                        <input type="hidden" name="id_proyek" value="{{ $progres->id_proyek }}">
-                                    @endif
+                                    @error('id_proyek')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <div class="form-group">
-                                    <label class="mb-2">Tgl Progress</label>
+                                    <label class="mb-2">Tgl Progres</label>
                                     <input type="date" 
-                                           name="tgl_progres" 
-                                           class="form-control @error('tgl_progres') is-invalid @enderror"
-                                           value="{{ old('tgl_progres', isset($progres) ? $progres->tgl_progres : '') }}"
-                                           onfocus="this.showPicker()"
-                                           required>
+                                        name="tgl_progres" 
+                                        class="form-control @error('tgl_progres') is-invalid border-danger @enderror"
+                                        value="{{ old('tgl_progres', isset($progres) ? \Carbon\Carbon::parse($progres->tgl_progres)->format('Y-m-d') : '') }}"
+                                        onfocus="this.showPicker()">
+                                    @error('tgl_progres')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label class="mb-2">Status Progress</label>
-                            <select name="status_progres" class="form-select @error('status_progres') is-invalid @enderror" required>
-                                <option value="">Pilih Status</option>
-                                <option value="Proses" {{ old('status_progres', isset($progres) ? $progres->status_progres : '') == 'Proses' ? 'selected' : '' }}>Proses</option>
-                                <option value="Selesai" {{ old('status_progres', isset($progres) ? $progres->status_progres : '') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                            </select>
                         </div>
 
                         <div class="form-group mb-4">
                             <label class="mb-2">Progres (%)</label>
-                            <input type="number" name="progres" class="form-control @error('progres') is-invalid @enderror" 
-                                   min="0" max="100" value="{{ old('progres', isset($progres) ? $progres->progres : '') }}" required>
+                            <input type="number" name="progres" class="form-control @error('progres') is-invalid border-danger @enderror" 
+                                   min="0" max="100" value="{{ old('progres', isset($progres) ? $progres->progres : '') }}" >
+                            @error('progres')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="form-group mb-4">
                             <label class="mb-2">Keterangan</label>
-                            <input type="text" name="keterangan" class="form-control @error('keterangan') is-invalid @enderror" 
+                            <input type="text" name="keterangan" class="form-control @error('keterangan') is-invalid border-danger @enderror" 
                                    value="{{ old('keterangan', isset($progres) ? $progres->keterangan : '') }}">
+                            @error('keterangan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
+                        <style>
+                            @media (max-width: 768px) {
+                                .upload-box {
+                                    flex-direction: column;
+                                    align-items: stretch;
+                                    padding: 1rem;
+                                    gap: 0.5rem;
+                                }
+                                
+                                .btn-upload {
+                                    width: 100%;
+                                    margin: 0;
+                                }
+                                
+                                .file-name {
+                                    margin: 0;
+                                    word-break: break-all;
+                                    text-align: center;
+                                    padding: 0.5rem;
+                                }
+                            }
+                        </style>
+                        
                         <div class="form-group mb-5">
-                            <label class="mb-2">Upload Dokumen (PDF, DOC, DOCX, ZIP max 2MB)</label>
-                            <div class="d-flex">
-                                <button type="button" class="btn btn-light me-2" onclick="document.getElementById('dokumen').click()">
+                            <label class="mb-2">Upload Dokumen</label>
+                            <div class="upload-box @error('dokumen') border-danger @enderror">
+                                <button type="button" class="btn btn-upload" onclick="document.getElementById('dokumen').click()">
                                     Choose Files
                                 </button>
-                                <span class="form-control border-0">
+                                <span class="file-name" id="fileNameDisplay">
                                     {{ isset($progres) && $progres->dokumen ? basename($progres->dokumen) : 'No file chosen' }}
                                 </span>
                                 <input type="file" id="dokumen" name="dokumen" 
                                        class="d-none @error('dokumen') is-invalid @enderror" 
-                                       accept=".pdf,.doc,.docx,.zip"
-                                       onchange="updateFileName(this)" 
-                                       {{ isset($progres) ? '' : 'required' }}>
+                                       accept=".zip,.rar,.pdf"
+                                       onchange="updateFileName(this)">
                             </div>
                             @error('dokumen')
-                                <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted mt-2 d-block">Allowed file types: PDF, DOC, DOCX, ZIP, maximum size: 2MB</small>
+                            <small class="text-muted mt-2 d-block">Allowed file types: ZIP, RAR maximum size: 2MB</small>
                         </div>
 
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary px-5">
-                                {{ isset($progres) ? 'Update' : 'Simpan' }}
-                            </button>
+                        <div class="text-center mb-5">
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary px-5">
+                                    {{ isset($progres) ? 'Update' : 'Simpan' }}
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -122,6 +142,7 @@
 .card {
     border: none;
     box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    border-radius: 0; /* Remove rounded corners */
 }
 
 .form-control, .form-select {
@@ -149,14 +170,35 @@
 }
 
 label {
+    color: #000000;
+}
+
+.upload-box {
+    background-color: #F8F9FA;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.btn-upload {
+    background: #F3F3F3;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    padding: 8px 16px;
     color: #555;
+}
+
+.file-name {
+    color: #666;
+    margin-left: 10px;
 }
 </style>
 
 <script>
 function updateFileName(input) {
     const fileName = input.files[0] ? input.files[0].name : 'No file chosen';
-    input.parentElement.querySelector('span').textContent = fileName;
+    document.getElementById('fileNameDisplay').textContent = fileName;
 }
 </script>
 @endsection

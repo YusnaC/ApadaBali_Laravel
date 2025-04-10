@@ -19,12 +19,14 @@ class DrafterController extends Controller
         $search = $request->query('search');
         if ($search) {
             $query->where('nama_drafter', 'like', "%{$search}%")
-                  ->orWhere('id_drafter', 'like', "%{$search}%");
+                  ->orWhere('id_drafter', 'like', "%{$search}%")
+                  ->orWhere('alamat_drafter', 'like', "%{$search}%")
+                  ->orWhere('no_whatsapp', 'like', "%{$search}%");
         }
 
         // Sorting
         $sortField = $request->query('sort', 'id_drafter');
-        $sortDirection = $request->query('direction', 'asc');
+        $sortDirection = $request->query('direction', 'desc');
         $query->orderBy($sortField, $sortDirection);
 
         // Pagination
@@ -43,28 +45,56 @@ class DrafterController extends Controller
     }
 
     public function create()
-    {
-        $lastDrafter = Drafter::orderByRaw("CAST(SUBSTRING(id_drafter, 2) AS UNSIGNED) DESC")->first();
+{
+    // Ambil data drafter terakhir berdasarkan angka dari id_drafter (contoh: D0005)
+    $lastDrafter = Drafter::withTrashed()
+        ->orderByRaw("CAST(SUBSTRING(id_drafter, 2) AS UNSIGNED) DESC")
+        ->first();
 
-        if (!$lastDrafter) {
-            $newId = 'D0001';
-        } else {
-            $lastNumber = intval(substr($lastDrafter->id_drafter, 1));
-            $newId = 'D' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        }
-        $drafter = null;
-        return view('dataDrafter', compact('newId', 'drafter'));
+    // Jika belum ada data drafter, mulai dari D0001
+    if (!$lastDrafter) {
+        $newId = 'D0001';
+    } else {
+        // Ambil angka dari id_drafter terakhir dan increment
+        $lastNumber = (int) substr($lastDrafter->id_drafter, 1);
+        $newId = 'D' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
     }
+
+    // Untuk create, kita kirimkan newId ke view
+    $drafter = null;
+    return view('dataDrafter', compact('newId', 'drafter'));
+}
+
 
     public function store(Request $request)
     {
+        $messages = [
+            'nama_drafter.required' => 'Nama drafter wajib diisi',
+            'nama_drafter.string' => 'Nama drafter harus berupa teks',
+            'nama_drafter.max' => 'Nama drafter maksimal 255 karakter',
+            'alamat_drafter.required' => 'Alamat drafter wajib diisi',
+            'alamat_drafter.string' => 'Alamat drafter harus berupa teks',
+            'no_whatsapp.required' => 'Nomor WhatsApp wajib diisi',
+            'no_whatsapp.string' => 'Nomor WhatsApp harus berupa teks',
+            'no_whatsapp.max' => 'Nomor WhatsApp maksimal 15 karakter',
+            'username.required' => 'Username wajib diisi',
+            'username.string' => 'Username harus berupa teks',
+            'username.unique' => 'Username sudah digunakan',
+            'password.required' => 'Password wajib diisi',
+            'password.string' => 'Password harus berupa teks',
+            'password.min' => 'Password minimal 8 karakter',
+            'email' => 'Email wajib diisi',
+
+        ];
+
         $validator = Validator::make($request->all(), [
             'nama_drafter' => 'required|string|max:255',
             'alamat_drafter' => 'required|string',
+            'email' => 'required|email|unique:users,email',
             'no_whatsapp' => 'required|string|max:15',
             'username' => 'required|string|unique:users',
-            'password' => 'required|string|min:6'
-        ]);
+            'password' => 'required|string|min:8'
+        ], $messages);
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -87,7 +117,7 @@ class DrafterController extends Controller
             User::create([
                 'username' => $request->username,
                 'name' => $request->nama_drafter,
-                'email' => $request->username . '@apadabali.com',
+                'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => 'drafter'
             ]);
@@ -113,13 +143,33 @@ class DrafterController extends Controller
 
     public function update(Request $request, $id)
     {
+        $messages = [
+            'nama_drafter.required' => 'Nama drafter wajib diisi',
+            'nama_drafter.string' => 'Nama drafter harus berupa teks',
+            'nama_drafter.max' => 'Nama drafter maksimal 255 karakter',
+            'alamat_drafter.required' => 'Alamat drafter wajib diisi',
+            'alamat_drafter.string' => 'Alamat drafter harus berupa teks',
+            'no_whatsapp.required' => 'Nomor WhatsApp wajib diisi',
+            'no_whatsapp.string' => 'Nomor WhatsApp harus berupa teks',
+            'no_whatsapp.max' => 'Nomor WhatsApp maksimal 15 karakter',
+            'username.required' => 'Username wajib diisi',
+            'username.string' => 'Username harus berupa teks',
+            'username.unique' => 'Username sudah digunakan',
+            'password.required' => 'Password wajib diisi',
+            'password.string' => 'Password harus berupa teks',
+            'password.min' => 'Password minimal 8 karakter',
+            'email' => 'Email wajib diisi',
+
+        ];
+
         $drafter = Drafter::where('id_drafter', $id)->firstOrFail();
 
         $validator = Validator::make($request->all(), [
             'nama_drafter' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
             'alamat_drafter' => 'required|string',
             'no_whatsapp' => 'required|string|max:15'
-        ]);
+        ], $messages);
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -138,11 +188,11 @@ class DrafterController extends Controller
         try {
             DB::beginTransaction();
 
-            // Find and delete drafter
+            // Find drafter
             $drafter = Drafter::where('id_drafter', $id)->firstOrFail();
             
-            // Find and delete associated user account
-            User::where('username', $drafter->id_drafter)->delete();
+            // Find and delete associated user account by name
+            User::where('name', $drafter->nama_drafter)->delete();
             
             // Delete drafter record
             $drafter->delete();

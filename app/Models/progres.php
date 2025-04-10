@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Progres extends Model
 {
     protected $table = 'progres';
     protected $primaryKey = 'id_progres';
-    
+    use SoftDeletes;
+
     protected $fillable = [
         'id_proyek',
         'tgl_progres',

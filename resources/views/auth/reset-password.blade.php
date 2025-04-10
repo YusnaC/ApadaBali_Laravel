@@ -10,17 +10,23 @@
 
                 <div>
                     <x-label for="email" value="{{ __('Email') }}" />
-                    <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus />
+                    <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)"  autofocus />
                 </div>
 
                 <div class="mt-4">
                     <x-label for="password" value="{{ __('New Password') }}" />
-                    <x-input id="password" class="block mt-1 w-full" type="password" name="password" required />
+                    <x-input id="password" class="block mt-1 w-full" type="password" name="password" />
+                    @error('password')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
                     <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                    <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required />
+                    <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation"  />
+                    @error('password_confirmation')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-6">

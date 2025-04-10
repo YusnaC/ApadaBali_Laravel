@@ -14,21 +14,11 @@
     <!-- Main Content -->
     <div class="row justify-content-center">
         <div class="col-lg-11">
-            <div class="card shadow-sm rounded-0 p-5">
+            <div class="card shadow-sm rounded-0 p-md-5">
                 <div class="card-body">
-                    <h4 class="text-center mb-5 fw-bold">
+                    <h4 class="text-center mb-5 fw-bold mt-5">
                         {{ isset($drafter) ? 'Edit Data Drafter' : 'Tambah Data Drafter' }}
                     </h4>
-
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
 
                     <!-- Form Section -->
                     <form action="{{ isset($drafter) ? route('drafter.update', $drafter->id_drafter) : route('drafter.store') }}" method="POST">
@@ -39,10 +29,10 @@
 
                         <!-- Row 1: ID Drafter and Username -->
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-6 pb-md-0 pb-4">
                                 <label for="id_drafter" class="form-label">Id Drafter</label>
                                 <input type="text" id="id_drafter" name="id_drafter" 
-                                       class="form-control text-secondary @error('id_drafter') is-invalid @enderror" 
+                                       class="form-control bg-light text-secondary @error('id_drafter') is-invalid @enderror" 
                                        value="{{ old('id_drafter', isset($drafter) ? $drafter->id_drafter : $newId) }}" readonly>
                                 @error('id_drafter')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -93,9 +83,12 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="no_whatsapp" class="form-label">No WhatsApp</label>
-                                <input type="text" id="no_whatsapp" name="no_whatsapp" 
+                                <input type="tel" id="no_whatsapp" name="no_whatsapp" 
                                        class="form-control @error('no_whatsapp') is-invalid @enderror"
-                                       value="{{ isset($drafter) ? $drafter->no_whatsapp : old('no_whatsapp') }}">
+                                       value="{{ isset($drafter) ? $drafter->no_whatsapp : old('no_whatsapp') }}"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                       pattern="[0-9]*"
+                                       placeholder="08">
                                 @error('no_whatsapp')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -114,7 +107,7 @@
                         </div>
 
                         <!-- Save Button -->
-                        <div class="d-flex justify-content-center mt-5">
+                        <div class="d-flex justify-content-center mt-5 mb-5">
                             <button type="submit" class="btn-save">
                                 {{ isset($drafter) ? 'Update' : 'Simpan' }}
                             </button>

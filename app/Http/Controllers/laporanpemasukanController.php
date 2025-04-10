@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Pengeluaran;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LaporanExport;
+use Carbon\Carbon;
 
 class laporanpemasukanController extends Controller
 {
@@ -47,13 +50,18 @@ class laporanpemasukanController extends Controller
         // Sorting
         $sortField = $request->query('sort', $dateField);
         $sortDirection = $request->query('direction', 'desc');
-        
+    
         // Adjust sort field for pengeluaran
         if ($reportType === 'pengeluaran') {
             $sortField = $this->mapSortField($sortField);
         }
-        
-        $query->orderBy($sortField, $sortDirection);
+    
+        // Remove duplicate orderBy and handle 'no' column properly
+        if ($sortField === 'no') {
+            $query->orderBy('id', $sortDirection);
+        } else {
+            $query->orderBy($sortField, $sortDirection);
+        }
     
         // Pagination
         $perPage = $request->query('entries', 10);
@@ -115,28 +123,80 @@ private function mapSortField($field)
     // Method to handle export
     public function exportPDF(Request $request)
     {
-        $jenis = $request->input('jenis');
+        $reportType = $request->input('reportType', 'pemasukan');
+        $exportType = $request->input('type', 'pdf');
+        $preview = $request->input('preview', false);
         
-        if ($jenis == '2') {
-            $query = DB::table('pengeluarans')
-            ->select('id', 'tanggal_transaksi AS tgl_transaksi', 'nama_barang AS jenis_order', DB::raw("NULL AS id_order"), 'jumlah', DB::raw("NULL AS termin"), 'keterangan'); 
+        if ($reportType === 'pengeluaran') {
+            $query = DB::table('pengeluaran')
+                ->select(
+                    'id', 
+                    'tanggal_transaksi', 
+                    'nama_barang', 
+                    'jumlah',
+                    'harga_satuan',
+                    'total_harga', 
+                    'keterangan'
+                )
+                ->whereNull('deleted_at')
+                ->orderBy('tanggal_transaksi', 'asc');
+            $dateField = 'tanggal_transaksi';
         } else {
-            $query = DB::table('pemasukan');
+            $query = DB::table('pemasukan')
+                ->select(
+                    'id',
+                    'tgl_transaksi',
+                    'jenis_order',
+                    'id_order',
+                    'jumlah',
+                    'termin',
+                    'keterangan'
+                )
+                ->whereNull('deleted_at')
+                ->orderBy('tgl_transaksi', 'asc');
+            $dateField = 'tgl_transaksi';
         }
-
-        if ($request->filled('tgl_awal') && $request->filled('tgl_akhir')) {
-            $query->whereBetween('tgl_transaksi', [$request->tgl_awal, $request->tgl_akhir]);
+    
+        if ($request->filled(['tgl_awal', 'tgl_akhir'])) {
+            $startDate = Carbon::parse($request->tgl_awal)->startOfDay();
+            $endDate = Carbon::parse($request->tgl_akhir)->endOfDay();
+            $query->whereBetween($dateField, [$startDate, $endDate]);
         }
-
+    
         $data = $query->get();
-        
-        $pdf = PDF::loadView('exports.laporan-pdf', [
-            'data' => $data,
-            'jenis' => $jenis == '2' ? 'Pengeluaran' : 'Pemasukan',
-            'tgl_awal' => $request->tgl_awal,
-            'tgl_akhir' => $request->tgl_akhir
-        ]);
 
-        return $pdf->download('laporan-keuangan.pdf');
+        if ($exportType === 'pdf') {
+            $pdf = PDF::loadView('exports.laporan-pdf', [
+                'data' => $data,
+                'reportType' => $reportType,
+                'tgl_awal' => $request->tgl_awal,
+                'tgl_akhir' => $request->tgl_akhir
+            ]);
+            $pdf->setPaper('A4', 'landscape');
+            
+            if ($preview) {
+                return $pdf->stream("laporan-{$reportType}.pdf");
+            }
+            return $pdf->download("laporan-{$reportType}.pdf");
+        }
+        
+        // Modify data structure for Excel export
+        if ($reportType === 'pemasukan') {
+            $data = collect($data)->values()->map(function ($item, $index) {
+                return (object) [
+                    'no' => $index + 1,
+                    'id' => $item->id,
+                    'tgl_transaksi' => $item->tgl_transaksi,
+                    'jenis_order' => $item->jenis_order,
+                    'id_order' => $item->id_order,
+                    'jumlah' => $item->jumlah,
+                    'termin' => $item->termin,
+                    'keterangan' => $item->keterangan
+                ];
+            });
+        }
+        
+        return Excel::download(new LaporanExport($data, $reportType), "laporan-{$reportType}.xlsx");
     }
+   
 }

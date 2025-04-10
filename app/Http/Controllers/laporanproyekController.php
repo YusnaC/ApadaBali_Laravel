@@ -7,6 +7,8 @@ use App\Models\Furniture;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use App\Exports\LaporanExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class laporanproyekController extends Controller
 {
@@ -15,11 +17,11 @@ class laporanproyekController extends Controller
         $jenis = $request->query('jenis', '1');
         
         if ($jenis == '1') {
-            $query = Project::query();
+            $query = Project::query()->with('drafter');  // Add relationship
             $dateField = 'tgl_proyek';
         } else {
-            $query = Furniture::query();
-            $dateField = 'tgl_pembuatan';  // Changed from tgl_furniture to tgl_pembuatan
+            $query = Furniture::query()->with('drafter');  // Add relationship
+            $dateField = 'tgl_pembuatan';
         }
 
         // Filter by date range if provided
@@ -47,7 +49,7 @@ class laporanproyekController extends Controller
         // Update the date field in the transformation
         // Sorting
         $sortField = $request->query('sort', $jenis == '1' ? 'id_proyek' : 'id_furniture');
-        $sortDirection = $request->query('direction', 'asc');
+        $sortDirection = $request->query('direction', 'desc');
         
         // Adjust sort field for furniture
         if ($jenis == '2') {
@@ -64,18 +66,18 @@ class laporanproyekController extends Controller
 
         // Transform the data
         $projects = $items->through(function ($item) use ($jenis) {
-            
             if ($jenis == '1') {
                 return [
                     'id_proyek' => $item->id_proyek,
-                    'kategori' => 'Proyek Arsitektur',
+                    'kategori' => $item->kategori == '1' ? 'Proyek Arsitektur' : 
+                                ($item->kategori == '2' ? 'Jasa' : $item->kategori),
                     'tgl_proyek' => $item->tgl_proyek ? date('d/m/Y', strtotime($item->tgl_proyek)) : '',
                     'nama_proyek' => $item->nama_proyek,
                     'lokasi' => $item->lokasi,
                     'luas' => $item->luas,
                     'jumlah_lantai' => $item->jumlah_lantai,
                     'tgl_deadline' => $item->tgl_deadline ? date('d/m/Y', strtotime($item->tgl_deadline)) : '',
-                    'id_drafter' => $item->id_drafter,
+                    'id_drafter' => $item->id_drafter ?? '-',  // Use relationship
                 ];
             } else {
                 return [
@@ -89,7 +91,7 @@ class laporanproyekController extends Controller
                     'harga' => $item->harga_unit,
                     'jumlah_lantai' => $item->jumlah_lantai ?? '-',
                     'tgl_deadline' => $item->tgl_selesai ? date('d/m/Y', strtotime($item->tgl_selesai)) : '',
-                    'id_drafter' => $item->id_drafter ?? '-',
+                    'id_drafter' => $item->id_drafter ?? '-',  // Use relationship
                 ];
             }
         });
@@ -111,24 +113,69 @@ class laporanproyekController extends Controller
         $jenis = $request->input('jenis', '1');
         
         if ($jenis == '2') {
-            $query = DB::table('furnitures');
+            $query = DB::table('furniture')
+                ->whereNull('deleted_at')
+                ->orderBy('tgl_pembuatan', 'asc');
         } else {
-            $query = DB::table('projects');
+            $query = DB::table('projects')
+                ->leftJoin('drafter', 'projects.id_drafter', '=', 'drafter.id_drafter')
+                ->select('projects.*', DB::raw("COALESCE(drafter.id_drafter, '-') as id_drafter"))
+                ->whereNull('projects.deleted_at')
+                ->orderBy('tgl_proyek', 'asc');
         }
 
         if ($request->filled('tgl_awal') && $request->filled('tgl_akhir')) {
-            $query->whereBetween('tgl_proyek', [$request->tgl_awal, $request->tgl_akhir]);
+            $dateField = $jenis == '2' ? 'tgl_pembuatan' : 'tgl_proyek';
+            $query->whereBetween($dateField, [$request->tgl_awal, $request->tgl_akhir]);
         }
 
         $data = $query->get();
-        
-        $pdf = PDF::loadView('exports.lapocts-proyek-pdf', [
+        // dd($data);
+        $pdf = PDF::loadView('exports.laporan-proyek-pdf', [
             'data' => $data,
             'jenis' => $jenis == '2' ? 'Furniture' : 'Proyek',
             'tgl_awal' => $request->tgl_awal,
             'tgl_akhir' => $request->tgl_akhir
         ]);
+        $pdf->setPaper('A4', 'landscape');
 
-        return $pdf->download('laporan-proyek.pdf');
+        return $pdf->stream('laporan-proyek.pdf'); // Changed from download() to stream()
+    }
+
+    public function export(Request $request)
+    {
+        $jenis = $request->input('jenis', '1');
+        $exportType = $request->input('type', 'pdf');
+        // dd($jenis);
+        if ($jenis == '2') {
+            $query = DB::table('furniture');
+            $dateField = 'tgl_pembuatan';
+        } else {
+            $query = DB::table('projects');
+            $dateField = 'tgl_proyek';
+        }
+
+        if ($request->filled('tgl_awal') && $request->filled('tgl_akhir')) {
+            $dateField = $jenis == '2' ? 'tgl_pembuatan' : 'tgl_proyek';
+            $query->whereBetween($dateField, [$request->tgl_awal, $request->tgl_akhir]);
+        }
+
+        $data = $query->get();
+
+        dd($data);
+        
+        if ($exportType === 'pdf') {
+            $pdf = PDF::loadView('exports.laporan-proyek', [
+                'data' => $data,
+                'jenis' => $jenis == '2' ? 'Furniture' : 'Proyek',
+                'tgl_awal' => $request->tgl_awal,
+                'tgl_akhir' => $request->tgl_akhir
+            ]);
+            
+            $pdf->setPaper('A4', 'landscape');
+            return $pdf->download("laporan-{$jenis}.pdf");
+        } else {
+            return Excel::download(new LaporanExport($data, $jenis), "laporan-{$jenis}.xlsx");
+        }
     }
 }

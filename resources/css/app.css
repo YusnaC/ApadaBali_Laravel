@@ -23,3 +23,88 @@
 .notification-item:hover {
     background-color: #f1f3f4;
 }
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    position: relative;
+}
+
+.table {
+    width: 100%;
+    white-space: nowrap;
+    min-width: 1200px;
+    border-collapse: collapse;
+}
+
+.table td, .table th {
+    padding: 12px;
+    vertical-align: middle;
+    min-width: 120px;
+    text-align: left;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .table-responsive {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .table {
+        font-size: 14px;
+        border-spacing: 0;
+    }
+
+    .table td, .table th {
+        padding: 10px 8px;
+        min-width: 100px;
+    }
+    
+    .table td:first-child,
+    .table th:first-child {
+        position: sticky;
+        left: 0;
+        background: white;
+        z-index: 1;
+    }
+
+    /* Adjust column widths for better mobile view */
+    .table td:nth-child(4), 
+    .table td:nth-child(5) {
+        min-width: 150px;
+    }
+
+    .card {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+/* Search and entries section responsive */
+@media (max-width: 576px) {
+    .form-add {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .search-form,
+    .entries-dropdown,
+    .btn-add {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .entries-label {
+        display: block;
+        margin-top: 5px;
+    }
+}
+
+.form-label1 {
+    color: #7F7F7F;
+}

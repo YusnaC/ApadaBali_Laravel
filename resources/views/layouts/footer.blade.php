@@ -1,4 +1,12 @@
-<footer class="footer me-5 px-5 py-3">
-  <!-- Menampilkan teks hak cipta dengan tahun dinamis menggunakan sintaks PHP -->
-  <p class="footer-text">Copyright &copy; ApadaBali {{ date('Y') }} X Primakara University All Rights Reserved</p>
+<footer class="footer me-md-5 px-5 py-md-3 pb-3">
+  <p class="footer-text">&copy; {{ date('Y') }} Copyright ApadaBali X Primakara University All Rights Reserved</p>
 </footer>
+
+<style>
+@media (max-width: 768px) {
+  .footer-text {
+    font-size: 11px !important;
+    padding-top: 1rem !important;
+  }
+}
+</style>

@@ -7,36 +7,46 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Project;
+use Illuminate\Support\Facades\DB;
 
 class progresproyekController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Progres::query();
-        // dd($query);
+        // Get the logged-in user's ID and join with necessary tables
+        // dd(Auth::id());
+        // Get drafter ID based on logged-in user's name
+        $loggedInUserName = Auth::user()->name;
+        $drafter = DB::table('drafter')
+            ->where('nama_drafter', $loggedInUserName)
+            ->first();
+            
+        $query = Progres::query()
+            ->join('projects', 'progres.id_proyek', '=', 'projects.id_proyek')
+            ->where('projects.id_drafter', $drafter ? $drafter->id_drafter : '0');
+            // ->join('drafters', 'projects.id_drafter', '=', 'drafters.id')
+            // ->where('drafters.id', Auth::id()-1);
         // Search functionality
         $search = $request->query('search');
         if ($search) {
             $query->where(function($q) use ($search) {
-                $q->where('id_proyek', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%");
+                $q->where('progres.id_proyek', 'like', "%{$search}%")
+                  ->orWhere('keterangan', 'like', "%{$search}%")
+                  ->orWhere('tgl_progres', 'like', "%{$search}%")
+                  ->orWhere('progres', 'like', "%{$search}%")
+                  ->orWhere('dokumen', 'like', "%{$search}%");
             });
         }
-
+    
         // Sorting
         $sortField = $request->query('sort', 'id_proyek');
-        $sortDirection = $request->query('direction', 'asc');
+        $sortDirection = $request->query('direction', 'desc');
         $query->orderBy($sortField, $sortDirection);
-
-        // Filter for drafter
-        // if (Auth::user()->role === 'drafter') {
-        //     $query->where('id_drafter', Auth::id());
-        // }
-
+    
         // Pagination
         $perPage = $request->query('entries', 10);
-        $projects = $query->paginate($perPage);
-
+        $projects = $query->select('progres.*')->paginate($perPage);
+    
         return view('tables.progresproyek', [
             'projects' => $projects,
             'total' => $projects->total(),

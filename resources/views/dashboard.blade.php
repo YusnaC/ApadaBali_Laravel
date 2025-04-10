@@ -90,16 +90,22 @@
             <!-- Column 1: Project Details Bar Chart -->
             <div class="col-12 col-lg-6">
                 <div class="barchart bg-white p-3 shadow-sm">
-                    <div class="bg-header d-flex justify-content-between align-items-center mb-4">
-                        <h6>Rincian Proyek</h6>
-                        <select class="form-select" style="width: auto;" id="projectFilterSelect">
-                            <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Mingguan</option>
-                            <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Bulanan</option>
-                            <option value="year" {{ $filter == 'year' ? 'selected' : '' }}>Tahunan</option>
-                        </select>
+                    <div class="bg-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
+                        <h6 class="mb-2 mb-sm-0">Rincian Proyek</h6>
+                        <div class="position-relative">
+                            <select class="form-select form-select-sm pe-4" style="width: auto; min-width: 120px; background:#F5F5F5; appearance: none;" id="projectFilterSelect">
+                                <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Mingguan</option>
+                                <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Bulanan</option>
+                                <option value="year" {{ $filter == 'year' ? 'selected' : '' }}>Tahunan</option>
+                            </select>
+                            <i class='bx bx-chevron-down position-absolute' style="right: 8px; top: 50%; transform: translateY(-50%);"></i>
+                        </div>
                     </div>
-                    <div class="chart-container" style="position: relative; min-height: 300px;">
+                    <div class="chart-container" style="position: relative; min-height: 400px; height: 70vh; max-height: 300px;">
                         <canvas id="projectChart"></canvas>
+                        <div id="noProjectDataMessage" class="d-none position-absolute top-50 start-50 translate-middle text-secondary" style="font-size: 0.75rem;">
+                            Tidak ada data untuk ditampilkan
+                        </div>
                     </div>
                 </div>
             </div>
@@ -107,16 +113,22 @@
             <!-- Column 2: Revenue Details Bar Chart -->
             <div class="col-12 col-lg-6">
                 <div class="barchart bg-white p-3 shadow-sm">
-                    <div class="bg-header d-flex justify-content-between align-items-center mb-4">
-                        <h6>Rincian Pendapatan</h6>
-                        <select class="form-select" style="width: auto;" id="filterSelect">
-                            <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Mingguan</option>
-                            <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Bulanan</option>
-                            <option value="year" {{ $filter == 'year' ? 'selected' : '' }}>Tahunan</option>
-                        </select>
+                    <div class="bg-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4">
+                        <h6 class="mb-2 mb-sm-0">Rincian Pendapatan</h6>
+                        <div class="position-relative">
+                            <select class="form-select form-select-sm pe-4" style="width: auto; min-width: 120px; background:#F5F5F5; appearance: none;" id="filterSelect">
+                                <option value="week" {{ $filter == 'week' ? 'selected' : '' }}>Mingguan</option>
+                                <option value="month" {{ $filter == 'month' ? 'selected' : '' }}>Bulanan</option>
+                                <option value="year" {{ $filter == 'year' ? 'selected' : '' }}>Tahunan</option>
+                            </select>
+                            <i class='bx bx-chevron-down position-absolute' style="right: 8px; top: 50%; transform: translateY(-50%);"></i>
+                        </div>
                     </div>
-                    <div class="chart-container" style="position: relative; min-height: 300px;">
+                    <div class="chart-container" style="position: relative; min-height: 400px; height: 70vh; max-height: 300px;">
                         <canvas id="revenueChart"></canvas>
+                        <div id="noRevenueDataMessage" class="d-none position-absolute top-50 start-50 translate-middle text-secondary" style="font-size: 0.75rem;">
+                            Tidak ada data untuk ditampilkan
+                        </div>
                     </div>
                 </div>
             </div>
@@ -139,126 +151,172 @@ document.addEventListener('DOMContentLoaded', function() {
     const filter = '{{ $filter }}';
 
     console.log('Project Data:', projectData);
-
-    // Get project labels based on filter
-    const projectLabels = projectData.map(item => {
-        switch(filter) {
-            case 'week':
-                return new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-            case 'month':
-                return item.day;
-            case 'year':
-                return monthNames[item.month - 1];
-            default:
-                return '';
-        }
-    });
-
-    // Add event listeners for both filters
-    document.getElementById('projectFilterSelect').addEventListener('change', function() {
-        window.location.href = `{{ route('dashboard.admin') }}?filter=${this.value}`;
-    });
-
-    document.getElementById('filterSelect').addEventListener('change', function() {
-        window.location.href = `{{ route('dashboard.admin') }}?filter=${this.value}`;
-    });
-
-    // Create Project Chart
-    const projectChart = new Chart(document.getElementById("projectChart"), {
-        type: "bar",
-        data: {
-            labels: projectLabels,
-            datasets: [{
-                label: "Jumlah Proyek",
-                data: projectData.map(item => item.total),
-                backgroundColor: "#ff6842",
-                borderColor: "transparent",
-                borderWidth: 0,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false,
-                    position: 'top',
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-
     console.log('Revenue Data:', revenueData);
 
-    // Get labels based on filter
-    const labels = revenueData.map(item => {
-        switch(filter) {
-            case 'week':
-                return new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-            case 'month':
-                return item.day;
-            case 'year':
-                return monthNames[item.month - 1];
-            default:
-                return '';
+    // Project Chart
+    const projectLabels = projectData.map(item => {
+        try {
+            if (!item) return 'Invalid Date';
+            
+            switch(filter) {
+                case 'week':
+                    if (!item.date) return 'Invalid Date';
+                    return new Date(item.date).toLocaleDateString('id-ID', { 
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                case 'month':
+                    return monthNames[item.month - 1];
+                case 'year':
+                    return item.year.toString();
+                default:
+                    return 'Invalid Date';
+            }
+        } catch (error) {
+            console.error('Date parsing error:', error, item);
+            return 'Invalid Date';
         }
     });
 
-    // Create Revenue Chart
-    const revenueChart = new Chart(document.getElementById("revenueChart"), {
-        type: "bar",
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: "Pemasukan",
-                    data: revenueData.map(item => item.pemasukan),
-                    backgroundColor: "#ff6842",
+    const projectValues = projectData.map(item => parseInt(item.total) || 0);
+    
+    // Project Chart
+    const projectCtx = document.getElementById("projectChart").getContext('2d');
+    const noProjectDataMessage = document.getElementById("noProjectDataMessage");
+    
+    if (projectData.length === 0 || projectValues.every(value => value === 0)) {
+        noProjectDataMessage.classList.remove('d-none');
+        if (window.projectChart) {
+            window.projectChart.destroy();
+        }
+    } else {
+        noProjectDataMessage.classList.add('d-none');
+        window.projectChart = new Chart(projectCtx, {
+            type: "bar",
+            data: {
+                labels: projectLabels,
+                datasets: [{
+                    label: "Jumlah Proyek",
+                    data: projectValues,
+                    backgroundColor: "#FC6842", // Changed to orange
                     borderColor: "transparent",
                     borderWidth: 0,
-                },
-                {
-                    label: "Pengeluaran",
-                    data: revenueData.map(item => item.pengeluaran),
-                    backgroundColor: "#db3c30",
-                    borderColor: "transparent",
-                    borderWidth: 0,
-                },
-                // {
-                //     label: "Total Pendapatan",
-                //     data: revenueData.map(item => item.total),
-                //     backgroundColor: "#ff6842",
-                //     borderColor: "transparent",
-                //     borderWidth: 0,
-                // }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                }
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
                         }
                     }
                 }
             }
+        });
+    }
+
+    // Revenue Chart
+    const revenueLabels = revenueData.map(item => {
+        try {
+            switch(filter) {
+                case 'week':
+                    return new Date(item.date).toLocaleDateString('id-ID', { 
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                case 'month':
+                    return monthNames[item.month - 1];
+                case 'year':
+                    return item.year.toString();
+                default:
+                    return 'Invalid Date';
+            }
+        } catch (error) {
+            console.error('Date parsing error:', error, item);
+            return 'Invalid Date';
         }
+    });
+
+    const revenueCtx = document.getElementById("revenueChart").getContext('2d');
+    const noRevenueDataMessage = document.getElementById("noRevenueDataMessage");
+    
+    const hasRevenueData = revenueData && revenueData.length > 0 && 
+        revenueData.some(item => (parseFloat(item.pemasukan) > 0 || parseFloat(item.pengeluaran) > 0));
+
+    if (!hasRevenueData) {
+        noRevenueDataMessage.classList.remove('d-none');
+        if (window.revenueChart) {
+            window.revenueChart.destroy();
+        }
+    } else {
+        noRevenueDataMessage.classList.add('d-none');
+        window.revenueChart = new Chart(revenueCtx, {
+            type: "bar",
+            data: {
+                labels: revenueLabels,
+                datasets: [
+                    {
+                        label: "Pemasukan",
+                        data: revenueData.map(item => parseFloat(item.pemasukan) || 0),
+                        backgroundColor: "#FC6842", // Orange color
+                        borderColor: "transparent",
+                    },
+                    {
+                        label: "Pengeluaran",
+                        data: revenueData.map(item => parseFloat(item.pengeluaran) || 0),
+                        backgroundColor: "#da0909", // Lighter orange for contrast
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Event listeners for filters
+    ['projectFilterSelect', 'filterSelect'].forEach(id => {
+        document.getElementById(id).addEventListener('change', function() {
+            const filterValue = this.value;
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('filter', filterValue);
+            window.location.href = currentUrl.toString();
+        });
     });
 });
 </script>

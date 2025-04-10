@@ -24,6 +24,19 @@ class ForgotPassword extends Component
         'newPasswordConfirmation' => 'required'
     ];
 
+    protected $messages = [
+        'email.required' => 'Email harus diisi.',
+        'email.email' => 'Format email tidak valid.',
+        'email.exists' => 'Email tidak terdaftar.',
+        'enteredCode.required' => 'Kode verifikasi harus diisi.',
+        'enteredCode.min' => 'Kode verifikasi harus 4 digit.',
+        'enteredCode.max' => 'Kode verifikasi harus 4 digit.',
+        'newPassword.required' => 'Password baru harus diisi.',
+        'newPassword.min' => 'Password minimal harus 8 karakter.',
+        'newPassword.confirmed' => 'Konfirmasi password tidak cocok.',
+        'newPasswordConfirmation.required' => 'Konfirmasi password harus diisi.'
+    ];
+
     public function sendVerificationCode()
     {
         $this->validate([

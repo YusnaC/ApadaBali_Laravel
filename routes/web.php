@@ -19,6 +19,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LaporanProyekController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\FCMController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,10 +44,9 @@ Route::get('/', function () {
 });
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');  
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);  
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');  
-//Login 
-// Route::get('/projects/create', [proyekController::class, 'create'])->name('projects.store');
-// Route::post('/projects', [proyekController::class, 'store'])->name('projects.store');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout')
+    ->middleware('auth');
 Route::post('/projects/store', [proyekController::class, 'store'])->name('proyek.store');
 
 Route::get('/furniture', [FurnitureController::class, 'index'])->name('furniture.index');
@@ -59,8 +59,6 @@ Route::delete('/furniture/{furniture}', [FurnitureController::class, 'destroy'])
 
 Route::get('/proyek/progress', [proyekController::class, 'progressProyek'])->name('proyek.progress');
 
-// Route::get('/Sign In', function () { //sign in (login)
-//     return view('signin');
 // });
 //progresss
 Route::get('/Progres-Proyek', [ProgresController::class, 'index'])->name('tables.progresproyek');
@@ -68,7 +66,6 @@ Route::get('/Tambah-Data-Progres', [ProgresController::class, 'create'])->name('
 Route::post('/progres', [ProgresController::class, 'store'])->name('progres.store');
 Route::get('/detail-proyek/{id_proyek}', [ProgresController::class, 'show'])->name('progres.show');
 Route::get('/progres/download/{id_proyek}', [ProgresController::class, 'download'])->name('progres.download');
-// Route::get('/Tambah-Data-Progres', [ProgresController::class, 'create'])->name('progres.create');
 
 // Keep these existing routes
 Route::post('/progres', [ProgresController::class, 'store'])->name('progres.store');
@@ -84,7 +81,15 @@ Route::delete('/Pencatatan-Proyek/{id}', [proyekController::class, 'destroy'])->
 //end pproject CRUD
 
 // ROUTES FOR ADMIN 
-Route::get('/dashboard-admin', [DashboardController::class, 'admin'])->middleware(['auth'])->name('dashboard.admin');  
+Route::middleware(['auth', 'prevent-back-history'])->group(function () {
+    // Your authenticated routes here
+    Route::get('/dashboard-admin', [DashboardController::class, 'admin'])->name('dashboard.admin');
+    Route::get('/dashboard-drafter', [DashboardDrafterController::class, 'index'])
+        ->middleware(['auth', 'prevent-back-history', 'session.timeout'])  // Added session timeout middleware
+        ->name('dashboard.drafter');
+    Route::get('/api/klien/order-ids', [KlienController::class, 'getOrderIds'])
+        ->middleware(['auth', 'prevent-back-history', 'session.timeout']); // Added protection for API route
+});
 
 Route::get('/Pencatatan-Proyek', [App\Http\Controllers\proyekController::class, 'proyek'])->name('tables.proyek'); //Tabel pencatatan proyek
 Route::get('/Pencatatan-Furniture', [App\Http\Controllers\furnitureController::class, 'index'])->name('tables.furniture'); //Tabel pencatatan furniture
@@ -103,7 +108,7 @@ Route::get('/Laporan-Pengeluaran-Keuangan', [App\Http\Controllers\laporanpengelu
 Route::get('/Laporan-Proyek', [App\Http\Controllers\LaporanProyekController::class, 'laporanproyek'])->name('tables.laporanproyek'); //Tabel laporan proyek
 Route::get('/Laporan-Furniture', [App\Http\Controllers\laporanfurnitureController::class, 'laporanfurniture'])->name('tables.laporanfurniture'); //Tabel laporan furniture
 Route::get('/Tambah-Data-Proyek', [App\Http\Controllers\proyekController::class, 'create'])->name('proyek.create');
-Route::get('/laporan-pemasukan/export', [laporanpemasukanController::class, 'export'])->name('pemasukan.export');
+Route::get('/laporan-pemasukan/export', [laporanpemasukanController::class, 'export'])->name('laporan.export');
 // Route::get('/Tambah-Data-Furniture', function () { //form tambah / edit data furniture
 //     return view('furniture');
 // });
@@ -125,9 +130,6 @@ Route::get('/Tambah-Data-Drafter', function () { //form tambah / edit data draft
 Route::get('/Tambah-Data-Klien', function () { //form tambah / edit data klien oleh admin
     return view('dataKlien');
 });
-// Route::get('/Admin-Profile', function () { //form edit profile punya admin
-//     return view('editProfile');
-// });
 
 Route::get('/Admin-Profile', [ProfileController::class, 'index'])->middleware('auth');
 
@@ -136,9 +138,7 @@ Route::get('/laporan-proyek/export', [App\Http\Controllers\LaporanProyekControll
 Route::get('/dashboard-drafter', function () { //tampilan dashboard drafter
     return view('dashboarddrafter');
 });
-// Route::get('/Detail-Progres-Proyek', function () {
-//     return view('detailProgres');
-// });
+
 Route::get('/Daftar-Proyek', [App\Http\Controllers\proyekdrafterController::class, 'proyekdrafter'])->name('tables.proyekdrafter'); //Tabel darftar Proyek
 Route::get('/Progres-Proyek', [App\Http\Controllers\progresproyekController::class, 'progresproyek'])->name('tables.progresproyek'); //Tabel daftar progres
 Route::get('/detailproyek/{id}', [proyekController::class, 'show'])->name('detailproyek'); //detail proyek
@@ -147,9 +147,7 @@ Route::get('/Drafter-Profile', function () { //form edit profile punya drafter
 });
 Route::get('/detail-proyek/{id_proyek}', [ProgresController::class, 'show'])->name('progres.show');
 Route::get('/progres/download/{id_proyek}', [ProgresController::class, 'download'])->name('progres.download');
-// Route::get('/Tambah-Data-Progres', function () { //form tambah / edit progres
-//     return view('dataprogres');
-// });
+
 
 //this is for middleware
 Route::group(['middleware' => ['auth', 'role:admin']], function () {  
@@ -195,17 +193,13 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/laporan/export-pdf', [LaporanPemasukanController::class, 'exportPDF'])->name('pemasukan.export.pdf');
 Route::get('/laporan-proyek/export-pdf', [LaporanProyekController::class, 'exportPDF'])->name('proyek.export.pdf');
-Route::get('/laporan-proyek/export', [LaporanProyekController::class, 'export'])->name('proyek.export');
+// Route::get('/laporan/export', [laporanproyekController::class, 'exportPDF'])->name('laporan.exportPDF');
+    // ->middleware(['web']);
 Route::get('/api/get-latest-project-id', [proyekController::class, 'getLatestProjectId']);
 Route::get('/dashboard/admin', [DashboardController::class, 'admin'])->name('dashboard.admin');
-// Remove these duplicate routes
-// Route::get('/forgot-password', function () {
-//     return view('auth.forgot-password');
-// })->middleware('guest')->name('password.request');
 
-// Route::get('/forgot-password', [App\Http\Livewire\ForgotPassword::class, '__invoke'])
-//     ->middleware('guest')
-//     ->name('password.request');
+// Add this with your other routes
+Route::post('/api/save-fcm-token', [FCMController::class, 'saveToken'])->middleware('auth');
 
 // Keep only these password reset routes
 Route::middleware('guest')->group(function () {
@@ -232,10 +226,7 @@ use App\Http\Controllers\DashboardDrafterController;
 
 // Fix the middleware namespace
 Route::get('/dashboard-drafter', [DashboardDrafterController::class, 'index'])
-    ->middleware(['auth'])  // Updated middleware
+    ->middleware(['auth', 'prevent-back-history', 'session.timeout'])  // Added session timeout middleware
     ->name('dashboard.drafter');
-
-
-
-
-
+Route::get('/api/klien/order-ids', [KlienController::class, 'getOrderIds'])
+    ->middleware(['auth', 'prevent-back-history', 'session.timeout']); // Added protection for API route

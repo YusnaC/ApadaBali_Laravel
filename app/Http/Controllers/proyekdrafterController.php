@@ -11,24 +11,34 @@ class proyekdrafterController extends Controller
 {
     public function proyekdrafter(Request $request)
     {
-        // Get projects from database and filter by logged-in drafter
+        // Get drafter ID based on logged-in user's name
+        $loggedInUserName = auth()->user()->name;
+        $drafter = \App\Models\Drafter::where('nama_drafter', $loggedInUserName)->first();
+        
+        // Initialize project query with drafter's ID
         $query = \App\Models\Project::query();
-        $loggedInDrafterId = auth()->user()->id -1 ;
-        // dd($loggedInDrafterId);
-        $query->where('id_drafter', $loggedInDrafterId);
-
+        if ($drafter) {
+            $query->where('id_drafter', $drafter->id_drafter);
+        } else {
+            $query->where('id_drafter', '0'); // Return no results if drafter not found
+        }
+        
         // Filter based on search
         $search = $request->query('search');
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('nama_proyek', 'like', "%{$search}%")
-                  ->orWhere('kategori', 'like', "%{$search}%");
+                  ->orWhere('lokasi', 'like', "%{$search}%")
+                  ->orWhere('luas', 'like', "%{$search}%")
+                  ->orWhere('jumlah_lantai', 'like', "%{$search}%")
+                  ->orWhere('tgl_proyek', 'like', "%{$search}%")
+                  ->orWhere('tgl_deadline', 'like', "%{$search}%");
             });
         }
 
         // Sorting
-        $sortField = $request->query('sort', 'id_proyek');
-        $sortDirection = $request->query('direction', 'asc');
+        $sortField = $request->query('sort', 'created_at');
+        $sortDirection = $request->query('direction', 'desc');
         $query->orderBy($sortField, $sortDirection);
 
         // Pagination
@@ -45,7 +55,5 @@ class proyekdrafterController extends Controller
             'sortDirection' => $sortDirection,
         ]);
     }
-    
-
 }
 

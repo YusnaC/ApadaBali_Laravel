@@ -52,17 +52,16 @@
                 </div>
 
                 <!-- Form Pencarian dan Filter Entires per page -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <form method="GET" id="entriesForm">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                    <form method="GET" id="entriesForm" class="mb-2 mb-md-0">
                         <div class="d-flex align-items-center">
-                            <!-- Dropdown untuk memilih jumlah entri per halaman -->
-                            <select class="form-select-entries entries-dropdown me-3" name="entries" onchange="document.getElementById('entriesForm').submit()">
+                            <select class="form-select-entries entries-dropdown me-2" name="entries" onchange="document.getElementById('entriesForm').submit()">
                                 <option value="10" {{ request('entries') == 10 ? 'selected' : '' }}>10</option>
                                 <option value="20" {{ request('entries') == 20 ? 'selected' : '' }}>20</option>
                                 <option value="50" {{ request('entries') == 50 ? 'selected' : '' }}>50</option>
                                 <option value="100" {{ request('entries') == 100 ? 'selected' : '' }}>100</option>
                             </select>
-                            <span class="entries-label text-secondary">entries per page</span>
+                            <span class="entries-label text-secondary small">entries per page</span>
                         </div>
                         <!-- Hidden Inputs untuk menjaga query parameter search dan sorting -->
                         <input type="hidden" name="search" value="{{ request('search') }}">
@@ -70,10 +69,9 @@
                         <input type="hidden" name="direction" value="{{ request('direction') }}">
                     </form>
 
-                    <!-- Form untuk Pencarian -->
-                    <div class="form-add d-flex">
-                        <form method="GET" action="{{ route('tables.pemasukanKeuangan') }}" class="d-flex search-form" id="searchForm">
-                            <div class="input-group me-2">
+                    <div class="form-add d-flex w-md-auto">
+                        <form method="GET" action="{{ route('tables.pemasukanKeuangan') }}" class="d-flex search-form flex-grow-1 me-md-2 mb-2 mb-md-0">
+                            <div class="input-group">
                                 <span class="input-group-text">
                                     <i class="bx bx-search"></i>
                                 </span>
@@ -85,145 +83,162 @@
                                     value="{{ request('search') }}"
                                     oninput="handleSearch(this.value)"
                                     autocomplete="off"
+                                    style="margin:5px;"
                                 />
                             </div>
                         </form>
-                        <!-- Tombol untuk menambah data pemasukan -->
-                        <a href="/Tambah-Data-Pemasukan" class="btn-add fw-bold py-3 px-4">+ Tambah</a>
+                        <a href="/Tambah-Data-Pemasukan" class="btn-add fw-bold px-3" style="padding-top:12px; ">+ Tambah</a>
                     </div>
                 </div>
 
                 <!-- Tabel Data Pemasukan Keuangan -->
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <!-- Kolom Header untuk No (dengan fungsi sorting) -->
-                            <th class="py-3 px-3" style="width: 7%;">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'no', 'direction' => $sortField === 'no' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    No
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'no' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'no' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                            <!-- Kolom Header untuk Jenis Order -->
-                            <th class="py-3 px-3">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'jenis_order', 'direction' => $sortField === 'jenis_order' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    Jenis Order
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'jenis_order' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'jenis_order' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                            <!-- Kolom Header untuk ID Order -->
-                            <th class="py-3 px-3" style="width: 10%;">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'id_order', 'direction' => $sortField === 'id_order' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    ID Order
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'id_order' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'id_order' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                            <!-- Kolom Header untuk Tanggal Transaksi -->
-                            <th class="py-3 px-3">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'tgl_transaksi', 'direction' => $sortField === 'tgl_transaksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    Tgl Transaksi
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'tgl_transaksi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'tgl_transaksi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                            <!-- Kolom Header untuk Jumlah -->
-                            <th class="py-3 px-3" style="width: 10%;">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'jumlah', 'direction' => $sortField === 'jumlah' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    Jumlah
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'jumlah' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'jumlah' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                            <!-- Kolom Header untuk Termin -->
-                            <th class="py-3 px-3" style="width: 10%;">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'termin', 'direction' => $sortField === 'termin' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    Termin
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'termin' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'termin' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                            <!-- Kolom Header untuk Keterangan -->
-                            <th class="py-3 px-3">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'keterangan', 'direction' => $sortField === 'keterangan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    Keterangan
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'keterangan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'keterangan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                            <!-- Kolom Header untuk Aksi -->
-                            <th class="py-3 px-3" style="width: 10%;">
-                                <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'aksi', 'direction' => $sortField === 'aksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                    Aksi
-                                    <div class="sort-icons">
-                                        <i class="bx bxs-up-arrow {{ $sortField === 'aksi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}"></i>
-                                        <i class="bx bxs-down-arrow {{ $sortField === 'aksi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}"></i>
-                                    </div>
-                                </a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Loop untuk menampilkan setiap data pemasukan keuangan -->
-                        @forelse($pemasukan as $pemasukanKeuangan)
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td>{{ $pemasukanKeuangan['id'] }}</td>
-                                <td class="text-start">{{ $pemasukanKeuangan['jenis_order'] }}</td>
-                                <td>{{ $pemasukanKeuangan['id_order'] }}</td>
-                                <td>{{ \Carbon\Carbon::parse($pemasukanKeuangan->tgl_transaksi)->format('d/m/Y') }}</td>
-                                <td class="text-start">Rp {{ number_format($pemasukanKeuangan['jumlah'], 0, ',', '.') }}</td>
-                                <td>{{ $pemasukanKeuangan['termin'] }}</td>
-                                <td class="text-start">{{ $pemasukanKeuangan['keterangan'] }}</td>
-                                <td>
-                                <div class="button-container">
-                                        <!-- Tombol Edit -->
-                                        <a href="{{ route('pemasukan.edit', $pemasukanKeuangan['id']) }}" class="btn btn-edit">
-                                            <i class="bx bx-edit"></i> Edit
-                                        </a>
-                                        <!-- Tombol Hapus -->
-                                        <button class="btn btn-delete" data-id="{{ $pemasukanKeuangan['id'] }}">
-                                            <i class="bx bx-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
+                                <!-- Kolom Header untuk No (dengan fungsi sorting) -->
+                                <th class="py-3 px-3" style="width: 7%;">
+                                    <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'no', 'direction' => $sortField === 'no' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                        No
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow {{ $sortField === 'no' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow {{ $sortField === 'no' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
+                                <!-- Kolom Header untuk Jenis Order -->
+                                <th class="py-3 px-3">
+                                    <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'jenis_order', 'direction' => $sortField === 'jenis_order' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                        Jenis Order
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow {{ $sortField === 'jenis_order' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow {{ $sortField === 'jenis_order' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
+                                <!-- Kolom Header untuk ID Order -->
+                                <th class="py-3 px-3" style="width: 10%;">
+                                    <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'id_order', 'direction' => $sortField === 'id_order' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                        ID Order
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow {{ $sortField === 'id_order' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow {{ $sortField === 'id_order' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
+                                <!-- Kolom Header untuk Tanggal Transaksi -->
+                                <th class="py-3 px-3">
+                                    <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'tgl_transaksi', 'direction' => $sortField === 'tgl_transaksi' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                        Tgl Transaksi
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow {{ $sortField === 'tgl_transaksi' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow {{ $sortField === 'tgl_transaksi' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
+                                <!-- Kolom Header untuk Jumlah -->
+                                <th class="py-3 px-3" style="width: 10%;">
+                                    <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'jumlah', 'direction' => $sortField === 'jumlah' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                        Jumlah
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow {{ $sortField === 'jumlah' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow {{ $sortField === 'jumlah' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
+                                <!-- Kolom Header untuk Termin -->
+                                <th class="py-3 px-3" style="width: 10%;">
+                                    <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'termin', 'direction' => $sortField === 'termin' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                        Termin
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow {{ $sortField === 'termin' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow {{ $sortField === 'termin' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
+                                <!-- Kolom Header untuk Keterangan -->
+                                <th class="py-3 px-3">
+                                    <a href="{{ route('tables.pemasukanKeuangan', array_merge(request()->query(), ['sort' => 'keterangan', 'direction' => $sortField === 'keterangan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
+                                        Keterangan
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow {{ $sortField === 'keterangan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow {{ $sortField === 'keterangan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
+                                <!-- Kolom Header untuk Aksi -->
+                                <th class="py-3 px-3" style="width: 10%;">
+                                    <a href="" class="text-white header-link">
+                                        Aksi
+                                        <div class="sort-icons">
+                                            <i class="bx bxs-up-arrow inactive" style="font-size: 9px;"></i>
+                                            <i class="bx bxs-down-arrow inactive" style="font-size: 9px;"></i>
+                                        </div>
+                                    </a>
+                                </th>
                             </tr>
-                        @empty
-                            <!-- Menampilkan pesan jika data tidak ditemukan -->
-                            <tr>
-                                <td colspan="8" class="text-center">Data tidak ditemukan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <!-- Loop untuk menampilkan setiap data pemasukan keuangan -->
+                            @forelse($pemasukan as $index => $pemasukanKeuangan)
+                                <tr>
+                                    <td>{{ ($currentPage - 1) * $perPage + $index + 1 }}</td>
+                                    <td class="text-start">{{ $pemasukanKeuangan['jenis_order'] }}</td>
+                                    <td>{{ $pemasukanKeuangan['id_order'] }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($pemasukanKeuangan->tgl_transaksi)->format('d/m/Y') }}</td>
+                                    <td class="text-start">Rp {{ number_format($pemasukanKeuangan['jumlah'], 0, ',', '.') }}</td>
+                                    <td>{{ $pemasukanKeuangan['termin'] }}</td>
+                                    <td class="text-start">{{ $pemasukanKeuangan['keterangan'] }}</td>
+                                    <td>
+                                    <div class="button-container">
+                                            <!-- Tombol Edit -->
+                                            <a href="{{ route('pemasukan.edit', $pemasukanKeuangan['id']) }}" class="btn btn-edit">
+                                                <i class="bx bx-edit"></i> Edit
+                                            </a>
+                                            <form action="{{ route('pemasukan.destroy', $pemasukanKeuangan['id']) }}" 
+                                                      method="POST" 
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-delete">
+                                                    <i class="bx bx-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <!-- Menampilkan pesan jika data tidak ditemukan -->
+                                <tr>
+                                    <td colspan="8" class="text-center">Data tidak ditemukan.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
                 <!-- Navigasi Halaman (Pagination) -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="text-muted">
+                                              <span class="text-muted pagination-info">
                             Showing {{ ($currentPage - 1) * $perPage + 1 }} to 
                             {{ min($currentPage * $perPage, $total) }} from {{ $total }} entries
                         </span>
+
+<!-- Add this style section at the bottom of the file -->
+<style>
+@media (max-width: 768px) {
+    .pagination-info {
+        font-size: 12px;
+    }
+}
+</style>
                         <nav>
                             <ul class="pagination">
                                 {{-- Tombol "Previous" --}}
                                 <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
                                     <a class="page-link arrow" 
-                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                    href="{{ $currentPage > 1 ? route('tables.pemasukanKeuangan', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
                                         &#x276E;
                                     </a>
                                 </li>
@@ -232,7 +247,7 @@
                                 @for ($i = 1; $i <= ceil($total / $perPage); $i++)
                                     <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
                                         <a class="page-link"
-                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                        href="{{ route('tables.pemasukanKeuangan', array_merge(request()->all(), ['page' => $i])) }}">
                                             {{ $i }}
                                         </a>
                                     </li>
@@ -241,7 +256,7 @@
                                 {{-- Tombol "Next" --}}
                                 <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
                                     <a class="page-link arrow" 
-                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.pemasukanKeuangan', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
                                         &#x276F;
                                     </a>
                                 </li>
