@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('luas', 10, 2);
             $table->integer('jumlah_lantai');
             $table->date('tgl_deadline');
-            $table->unsignedBigInteger('id_drafter'); // Foreign key
+            $table->string('id_drafter'); // Foreign key
 
             $table->timestamps();
         });
