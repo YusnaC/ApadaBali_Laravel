@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Pengeluaran extends Model
 {
     use SoftDeletes;
+    protected $table = 'pengeluaran'; // default-nya Laravel akan mengira 'pengeluarans'
 
+    
     protected $fillable = [
         'tanggal_transaksi',
         'nama_barang',

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('kliens', function (Blueprint $table) {
+        Schema::create('klien', function (Blueprint $table) {
             $table->id();
             $table->string('id_klien')->unique();
             $table->enum('jenis_order', ['Proyek Arsitektur', 'Furniture']);
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('kliens');
+        Schema::dropIfExists('klien');
     }
 };
