@@ -232,7 +232,7 @@ public function create(Request $request)
             DB::beginTransaction();
             
             // Find the project
-            $proyek = Project::where('id_proyek', $id_proyek)->first();
+            $proyek = Proyek::where('id_proyek', $id_proyek)->first();
             
             if (!$proyek) {
                 DB::rollBack();
@@ -255,7 +255,7 @@ public function create(Request $request)
 
     public function edit($id)
     {
-        $proyek = Project::findOrFail($id);
+        $proyek = Proyek::findOrFail($id);
         $drafters = Drafter::all();
         $newId = null;
         // dd($drafters);
