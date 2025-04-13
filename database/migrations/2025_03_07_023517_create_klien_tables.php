@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('klien', function (Blueprint $table) {
             $table->id();
             $table->string('id_klien')->unique();
-            $table->enum('jenis_order', ['Proyek Arsitektur', 'Furniture']);
+            $table->enum('jenis_order', ['Proyek Arsitektur', 'Furniture', 'Jasa']);
             $table->string('id_order')->unique();
             $table->string('nama_klien');
             $table->text('alamat_klien');

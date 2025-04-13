@@ -48,7 +48,7 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
                     $row->total_harga,
                     $row->keterangan,
                 ];
-            case 'proyek': // Proyek
+            case '1': // Proyek
                 return [
                     $row->id_proyek,
                     'Proyek Arsitektur',
@@ -60,7 +60,7 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
                     $row->tgl_deadline,
                     $row->id_drafter
                 ];
-            case 'furniture': // Furniture
+            case '2': // Furniture
                 return [
                     $row->id_furniture,
                     'Furniture',

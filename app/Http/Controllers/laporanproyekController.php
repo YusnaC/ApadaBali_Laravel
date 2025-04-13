@@ -146,24 +146,29 @@ class laporanproyekController extends Controller
     {
         $jenis = $request->input('jenis', '1');
         $exportType = $request->input('type', 'pdf');
-        // dd($jenis);
+        $jenisLabel = $jenis == '1' ? 'proyek-arsitektur' : 'jasa';
+
         if ($jenis == '2') {
-            $query = DB::table('furniture');
+            $query = DB::table('furniture')
+                ->whereNull('deleted_at')
+                ->orderBy('tgl_pembuatan', 'asc');
             $dateField = 'tgl_pembuatan';
         } else {
-            $query = DB::table('proyek');
+            $query = DB::table('proyek')
+                ->where('kategori', $jenis) // Filter by kategori
+                ->leftJoin('drafter', 'proyek.id_drafter', '=', 'drafter.id_drafter')
+                ->select('proyek.*', DB::raw("COALESCE(drafter.id_drafter, '-') as id_drafter"))
+                ->whereNull('proyek.deleted_at')
+                ->orderBy('tgl_proyek', 'asc');
             $dateField = 'tgl_proyek';
         }
 
         if ($request->filled('tgl_awal') && $request->filled('tgl_akhir')) {
-            $dateField = $jenis == '2' ? 'tgl_pembuatan' : 'tgl_proyek';
             $query->whereBetween($dateField, [$request->tgl_awal, $request->tgl_akhir]);
         }
 
         $data = $query->get();
-
         // dd($data);
-        
         if ($exportType === 'pdf') {
             $pdf = PDF::loadView('exports.laporan-proyek', [
                 'data' => $data,
@@ -173,9 +178,9 @@ class laporanproyekController extends Controller
             ]);
             
             $pdf->setPaper('A4', 'landscape');
-            return $pdf->download("laporan-{$jenis}.pdf");
+            return $pdf->download("laporan-{$jenisLabel}.pdf");
         } else {
-            return Excel::download(new LaporanExport($data, $jenis), "laporan-{$jenis}.xlsx");
+            return Excel::download(new LaporanExport($data, $jenis), "laporan-{$jenisLabel}.xlsx");
         }
     }
 }
