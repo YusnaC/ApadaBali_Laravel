@@ -101,7 +101,7 @@ class FurnitureController extends Controller
         ];
 
         $validated = $request->validate([
-            'id_furniture' => 'required|string|unique:furnitures,id_furniture',
+            'id_furniture' => 'required|string|unique:furniture,id_furniture',
             'nama_furniture' => 'required|string|max:255',
             'jumlah_unit' => 'required|integer|min:1',
             'harga_unit' => 'required|numeric|min:0',
