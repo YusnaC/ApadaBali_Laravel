@@ -58,8 +58,14 @@ class KlienController extends Controller
         }
     
         // Add these lines to fetch options for new records
-        $proyekOptions = DB::table('proyek')->select('id_proyek')->get();
-        $furnitureOptions = DB::table('furniture')->select('id_furniture')->get();
+        $proyekOptions = DB::table('proyek')
+            ->whereNull('deleted_at')
+            ->select('id_proyek')
+            ->get();
+        $furnitureOptions = DB::table('furniture')
+            ->whereNull('deleted_at')
+            ->select('id_furniture')
+            ->get();
     
         $klien = null;
         return view('dataKlien', compact('newId', 'klien', 'proyekOptions', 'furnitureOptions'));
@@ -72,15 +78,18 @@ class KlienController extends Controller
         if ($jenisOrder === 'Proyek Arsitektur') {
             $orders = DB::table('proyek')
                 ->where('kategori', '1')
+                ->whereNull('deleted_at')
                 ->select('id_proyek as id')
                 ->get();
         } elseif ($jenisOrder === 'Jasa') {
             $orders = DB::table('proyek')
                 ->where('kategori', '2')
+                ->whereNull('deleted_at')
                 ->select('id_proyek as id')
                 ->get();
         } elseif ($jenisOrder === 'Furniture') {
             $orders = DB::table('furniture')
+                ->whereNull('deleted_at')
                 ->select('id_furniture as id')
                 ->get();
         }
