@@ -259,14 +259,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const hasRevenueData = revenueData && revenueData.length > 0 && 
         revenueData.some(item => (parseFloat(item.pemasukan) > 0 || parseFloat(item.pengeluaran) > 0));
-
+    
     if (!hasRevenueData) {
         noRevenueDataMessage.classList.remove('d-none');
+        document.getElementById('revenueChart').style.display = 'none';
         if (window.revenueChart) {
             window.revenueChart.destroy();
         }
     } else {
         noRevenueDataMessage.classList.add('d-none');
+        document.getElementById('revenueChart').style.display = 'block';
         window.revenueChart = new Chart(revenueCtx, {
             type: "bar",
             data: {
