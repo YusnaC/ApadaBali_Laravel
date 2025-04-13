@@ -73,7 +73,7 @@ class pemasukanController extends Controller
             ->select('id_furniture')
             ->get();
             
-        $proyekOrders = DB::table('projects')
+        $proyekOrders = DB::table('proyek')
             ->select('id_proyek')
             ->get();
 
@@ -90,7 +90,7 @@ class pemasukanController extends Controller
             ->get();
             
         // Get project orders
-        $proyekOrders = DB::table('projects')
+        $proyekOrders = DB::table('proyek')
             ->select('id_proyek')
             ->get();
 
@@ -99,12 +99,12 @@ class pemasukanController extends Controller
         //     ? DB::table('furnitures')->where('id_furniture', $pemasukan->id_order)->first()
         //     : DB::table('projects')->where('id_proyek', $pemasukan->id_order)->first();
         $selectedOrder = match ($pemasukan->jenis_order) {
-            'Jasa' => DB::table('projects')
+            'Jasa' => DB::table('proyek')
                         ->where('id_proyek', $pemasukan->id_order)
                         ->where('kategori', 2)
                         ->first(),
         
-            'Proyek Arsitektur' => DB::table('projects')
+            'Proyek Arsitektur' => DB::table('proyek')
                                      ->where('id_proyek', $pemasukan->id_order)
                                      ->where('kategori', 1)
                                      ->first(),

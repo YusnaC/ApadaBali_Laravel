@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Progres;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Project;
+use App\Models\Proyek;
 use Illuminate\Support\Facades\DB;
 
 class ProgresController extends Controller
@@ -102,7 +102,7 @@ class ProgresController extends Controller
         ];
 
         $validated = $request->validate([
-            'id_proyek' => 'required|exists:projects,id_proyek',
+            'id_proyek' => 'required|exists:proyek,id_proyek',
             'tgl_progres' => 'required|date',
             'progres' => 'required|integer|min:0|max:100',
             'dokumen' => 'required|file|mimes:zip,rar,pdf|max:5120',
@@ -275,7 +275,7 @@ class ProgresController extends Controller
     public function edit($id)
     {
         $progres = Progres::findOrFail($id);
-    $projects = Project::select('id_proyek', 'nama_proyek')->get();
+    $projects = Proyek::select('id_proyek', 'nama_proyek')->get();
     return view('detailProyek', compact('progres', 'projects'));
     }
 

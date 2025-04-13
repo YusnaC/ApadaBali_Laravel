@@ -6,7 +6,7 @@ use App\Models\Progres;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Project;
+use App\Models\Proyek;
 use Illuminate\Support\Facades\DB;
 
 class progresproyekController extends Controller
@@ -22,8 +22,8 @@ class progresproyekController extends Controller
             ->first();
             
         $query = Progres::query()
-            ->join('projects', 'progres.id_proyek', '=', 'projects.id_proyek')
-            ->where('projects.id_drafter', $drafter ? $drafter->id_drafter : '0');
+            ->join('proyek', 'progres.id_proyek', '=', 'proyek.id_proyek')
+            ->where('proyek.id_drafter', $drafter ? $drafter->id_drafter : '0');
             // ->join('drafters', 'projects.id_drafter', '=', 'drafters.id')
             // ->where('drafters.id', Auth::id()-1);
         // Search functionality
@@ -60,7 +60,7 @@ class progresproyekController extends Controller
 
     public function create()
     {
-        $projects = Project::all();
+        $projects = Proyek::all();
         $project = null; // Initialize project as null for the create form
         return view('createProgres', compact('projects', 'project'));
     }
@@ -91,7 +91,7 @@ class progresproyekController extends Controller
     public function edit($id)
     {
         $progres = Progres::findOrFail($id);
-        $projects = Project::all();
+        $projects = Proyek::all();
         
         // if (Auth::user()->role !== 'admin' && $progres->id_drafter !== Auth::id()) {
         //     abort(403);

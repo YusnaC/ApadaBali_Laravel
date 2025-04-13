@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('proyek', function (Blueprint $table) {
             $table->string('id_proyek')->primary(); // Primary key dengan auto-increment
             $table->string('nama_proyek');
             $table->string('kategori');
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('project');
     }
 };

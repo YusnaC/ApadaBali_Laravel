@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Project extends Model
+class Proyek extends Model
 {
     use SoftDeletes;
     use HasFactory;
-    protected $table = 'projects';
+    protected $table = 'proyek';
     protected $primaryKey = 'id_proyek';
     public $timestamps = true;
     public $incrementing = false; // Tambahkan ini karena id_proyek bukan auto-increment
@@ -30,6 +30,7 @@ class Project extends Model
     public function drafter()
     {
         return $this->belongsTo(Drafter::class, 'id_drafter', 'id');
+        // return $this->belongsTo(Drafter::class, 'id_drafter', 'id_drafter');
     }
 
 }

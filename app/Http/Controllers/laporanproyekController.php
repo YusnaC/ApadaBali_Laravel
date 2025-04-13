@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
+use App\Models\Proyek;
 use App\Models\Furniture;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -17,7 +17,7 @@ class laporanproyekController extends Controller
         $jenis = $request->query('jenis', '1');
         
         if ($jenis == '1') {
-            $query = Project::query()->with('drafter');  // Add relationship
+            $query = Proyek::query()->with('drafter');  // Add relationship
             $dateField = 'tgl_proyek';
         } else {
             $query = Furniture::query()->with('drafter');  // Add relationship
@@ -117,10 +117,10 @@ class laporanproyekController extends Controller
                 ->whereNull('deleted_at')
                 ->orderBy('tgl_pembuatan', 'asc');
         } else {
-            $query = DB::table('projects')
-                ->leftJoin('drafter', 'projects.id_drafter', '=', 'drafter.id_drafter')
-                ->select('projects.*', DB::raw("COALESCE(drafter.id_drafter, '-') as id_drafter"))
-                ->whereNull('projects.deleted_at')
+            $query = DB::table('proyek')
+                ->leftJoin('drafter', 'proyek.id_drafter', '=', 'drafter.id_drafter')
+                ->select('proyek.*', DB::raw("COALESCE(drafter.id_drafter, '-') as id_drafter"))
+                ->whereNull('proyek.deleted_at')
                 ->orderBy('tgl_proyek', 'asc');
         }
 
@@ -151,7 +151,7 @@ class laporanproyekController extends Controller
             $query = DB::table('furniture');
             $dateField = 'tgl_pembuatan';
         } else {
-            $query = DB::table('projects');
+            $query = DB::table('proyek');
             $dateField = 'tgl_proyek';
         }
 

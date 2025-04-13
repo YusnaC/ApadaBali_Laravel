@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Models\Project;
+use App\Models\Proyek;
 use Illuminate\Support\Facades\DB;
 use App\Models\Progres;
 use App\Models\Drafter;
@@ -21,7 +21,7 @@ class proyekController extends Controller
     public function proyek(Request $request)
 {
     // Initialize query with join
-    $query = Project::query();
+    $query = Proyek::query();
 
     // Handle search
     $search = $request->query('search');
@@ -84,7 +84,7 @@ public function create(Request $request)
     $prefix = ($kategori == 2) ? 'AJB' : 'ASB';
 
     // Get the last project ID including soft deleted records
-    $lastProject = Project::withTrashed()
+    $lastProject = Proyek::withTrashed()
         ->where('id_proyek', 'LIKE', "{$prefix}%")
         ->orderByRaw("CAST(SUBSTRING(id_proyek, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
         ->first();
@@ -109,7 +109,7 @@ public function create(Request $request)
     {
         try {
             $validated = $request->validate([
-                'id_proyek' => 'required|string|unique:projects,id_proyek',
+                'id_proyek' => 'required|string|unique:proyek,id_proyek',
                 'nama_proyek' => 'required|string|max:255',
                 'kategori' => 'required|integer',
                 'tgl_proyek' => 'required|date',
@@ -120,7 +120,7 @@ public function create(Request $request)
                 'id_drafter' => $request->kategori == 1 ? 'required' : 'nullable',
             ]);
 
-            $project = Project::create([
+            $project = Proyek::create([
                 'id_proyek' => $request->id_proyek,
                 'kategori' => $request->kategori,
                 'tgl_proyek' => $request->tgl_proyek,
@@ -274,14 +274,14 @@ public function create(Request $request)
             'id_drafter' => 'required',
         ]);
         // dd($request->all());
-        $proyek = Project::findOrFail($id);
+        $proyek = Proyek::findOrFail($id);
         $proyek->update($request->all());
 
         return redirect()->route('tables.proyek')->with('success', 'Data proyek berhasil diperbarui.');
     }
 
     public function progress(Request $request){
-        $project = Project::findOneOrFail($projectId);
+        $project = Proyek::findOneOrFail($projectId);
         return $project->progress_percentage;
     }
 
@@ -290,14 +290,14 @@ public function create(Request $request)
         try {
             $query = Progres::select(
                 'progres.id_proyek',
-                'projects.nama_proyek',
+                'proyek.nama_proyek',
                 DB::raw('MAX(progres.tgl_progres) as tgl_progres'),
                 DB::raw('MAX(progres.status_progres) as status_progres'),
                 DB::raw('MAX(progres.progres) as progres')
             )
-                ->join('projects', 'projects.id_proyek', '=', 'progres.id_proyek')
+                ->join('proyek', 'proyek.id_proyek', '=', 'progres.id_proyek')
                 ->whereNull('progres.deleted_at')
-                ->whereNull('projects.deleted_at')
+                ->whereNull('proyek.deleted_at')
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
                         ->from('progres as p2')
@@ -312,7 +312,7 @@ public function create(Request $request)
                         ->whereRaw('progres.tgl_progres < p3.tgl_progres')
                         ->whereNull('p3.deleted_at');
                 })
-                ->groupBy('progres.id_proyek', 'projects.nama_proyek');
+                ->groupBy('progres.id_proyek', 'proyek.nama_proyek');
 
             // Search functionality
             if ($request->has('search') && $request->search !== '') {
@@ -378,7 +378,7 @@ public function create(Request $request)
     $prefix = $request->query('prefix', 'ASB'); // Default ASB jika tidak ada parameter
 
     // Cari ID proyek terakhir yang memiliki prefix sesuai kategori
-    $lastProject = Project::withTrashed()
+    $lastProject = Proyek::withTrashed()
         ->where('id_proyek', 'LIKE', "{$prefix}%")
         ->orderByRaw("CAST(SUBSTRING(id_proyek, 4) AS UNSIGNED) DESC")
         ->first();

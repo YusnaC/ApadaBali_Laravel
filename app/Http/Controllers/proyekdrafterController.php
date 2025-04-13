@@ -16,7 +16,7 @@ class proyekdrafterController extends Controller
         $drafter = \App\Models\Drafter::where('nama_drafter', $loggedInUserName)->first();
         
         // Initialize project query with drafter's ID
-        $query = \App\Models\Project::query();
+        $query = \App\Models\Proyek::query();
         if ($drafter) {
             $query->where('id_drafter', $drafter->id_drafter);
         } else {

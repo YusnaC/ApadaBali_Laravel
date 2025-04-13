@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
+use App\Models\Proyek;
 use App\Models\Klien;
 use App\Models\Pemasukan;
 use App\Models\Pengeluaran;
@@ -44,7 +44,7 @@ class DashboardController extends Controller
                     ->map(fn($day) => date('Y-m-d', strtotime("-$day days")))
                     ->reverse();
 
-                $rawProjectData = Project::select(
+                $rawProjectData = Proyek::select(
                     DB::raw('DATE(tgl_proyek) as date'),
                     DB::raw('COUNT(*) as total')
                 )
@@ -73,7 +73,7 @@ class DashboardController extends Controller
                 // Get data for last 5 years
                 $years = collect(range(date('Y')-4, date('Y')));
                 
-                $rawProjectData = Project::select(
+                $rawProjectData = Proyek::select(
                     DB::raw('YEAR(tgl_proyek) as year'),
                     DB::raw('COUNT(*) as total')
                 )
@@ -132,7 +132,7 @@ class DashboardController extends Controller
                 $months = collect(range(1, 12));
                 $currentYear = date('Y');
 
-                $rawProjectData = Project::select(
+                $rawProjectData = Proyek::select(
                     DB::raw('MONTH(tgl_proyek) as month'),
                     DB::raw('COUNT(*) as total')
                 )
@@ -193,7 +193,7 @@ class DashboardController extends Controller
                 $currentYear = date('Y');
                 $currentMonth = date('m');
 
-                $rawProjectData = Project::select(
+                $rawProjectData = Proyek::select(
                     DB::raw('DAY(tgl_proyek) as day'),
                     DB::raw('COUNT(*) as total')
                 )
@@ -455,7 +455,7 @@ class DashboardController extends Controller
         $currentYear = date('Y');
     
         // Get monthly project data
-        $projectData = DB::table('projects')
+        $projectData = DB::table('proyek')
             ->selectRaw('MONTH(tgl_proyek) as month, COUNT(*) as total')
             ->whereYear('tgl_proyek', $currentYear)
             ->groupBy(DB::raw('MONTH(tgl_proyek)'))

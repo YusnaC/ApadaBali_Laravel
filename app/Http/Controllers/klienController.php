@@ -58,7 +58,7 @@ class KlienController extends Controller
         }
     
         // Add these lines to fetch options for new records
-        $proyekOptions = DB::table('projects')->select('id_proyek')->get();
+        $proyekOptions = DB::table('proyek')->select('id_proyek')->get();
         $furnitureOptions = DB::table('furniture')->select('id_furniture')->get();
     
         $klien = null;
@@ -70,12 +70,12 @@ class KlienController extends Controller
         $jenisOrder = $request->jenis_order;
         
         if ($jenisOrder === 'Proyek Arsitektur') {
-            $orders = DB::table('projects')
+            $orders = DB::table('proyek')
                 ->where('kategori', '1')
                 ->select('id_proyek as id')
                 ->get();
         } elseif ($jenisOrder === 'Jasa') {
-            $orders = DB::table('projects')
+            $orders = DB::table('proyek')
                 ->where('kategori', '2')
                 ->select('id_proyek as id')
                 ->get();
@@ -129,7 +129,7 @@ class KlienController extends Controller
         $klien = Klien::where('id_klien', $id)->firstOrFail();
         
         // Get projects and furniture for dropdowns
-        $proyekOptions = DB::table('projects')->select('id_proyek')->get();
+        $proyekOptions = DB::table('proyek')->select('id_proyek')->get();
         $furnitureOptions = DB::table('furniture')->select('id_furniture')->get();
         
         return view('dataKlien', compact('klien', 'proyekOptions', 'furnitureOptions'));
