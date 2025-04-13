@@ -91,12 +91,13 @@ public function create(Request $request)
 
     // Generate new ID by incrementing the last number
     if (!$lastProject) {
-        $newId = $prefix . '0001';
+        $newId = $prefix . ($prefix === 'AJB' ? '0001' : '0001');
     } else {
         // Ambil angka setelah prefix
         $lastNumber = (int) substr($lastProject->id_proyek, strlen($prefix));
         $newNumber = $lastNumber + 1;
-        $newId = $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        $padLength = ($prefix === 'AJB') ? 4 : 4;
+        $newId = $prefix . str_pad($newNumber, $padLength, '0', STR_PAD_LEFT);
     }
 
     $drafters = Drafter::all();
@@ -380,12 +381,12 @@ public function create(Request $request)
     // Cari ID proyek terakhir yang memiliki prefix sesuai kategori
     $lastProject = Proyek::withTrashed()
         ->where('id_proyek', 'LIKE', "{$prefix}%")
-        ->orderByRaw("CAST(SUBSTRING(id_proyek, 4) AS UNSIGNED) DESC")
+        ->orderByRaw("CAST(SUBSTRING(id_proyek, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
         ->first();
 
     // Tentukan ID proyek baru
     if (!$lastProject) {
-        $newId = $prefix . '001';
+        $newId = $prefix . '0001';
     } else {
         $lastNumber = intval(substr($lastProject->id_proyek, 3));
         $newId = $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);

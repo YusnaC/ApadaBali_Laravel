@@ -71,10 +71,12 @@ class pemasukanController extends Controller
     {
         $furnitureOrders = DB::table('furniture')
             ->select('id_furniture')
+            ->whereNull('deleted_at')
             ->get();
             
         $proyekOrders = DB::table('proyek')
             ->select('id_proyek')
+            ->whereNull('deleted_at')
             ->get();
 
         return view('pemasukan', compact('furnitureOrders', 'proyekOrders'));
@@ -144,14 +146,14 @@ class pemasukanController extends Controller
             'termin' => [
                 'required',
                 'integer',
-                function ($attribute, $value, $fail) use ($request) {
-                    $exists = Pemasukan::where('id_order', $request->id_order)
-                                     ->where('termin', $value)
-                                     ->exists();
-                    if ($exists) {
-                        $fail('Termin ini sudah ada untuk ID Order yang sama.');
-                    }
-                }
+                // function ($attribute, $value, $fail) use ($request) {
+                //     $exists = Pemasukan::where('id_order', $request->id_order)
+                //                      ->where('termin', $value)
+                //                      ->exists();
+                //     if ($exists) {
+                //         $fail('Termin ini sudah ada untuk ID Order yang sama.');
+                //     }
+                // }
             ],
             'keterangan' => 'nullable|string|max:255'
         ], $messages);

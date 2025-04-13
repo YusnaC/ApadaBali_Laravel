@@ -257,18 +257,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const revenueCtx = document.getElementById("revenueChart").getContext('2d');
     const noRevenueDataMessage = document.getElementById("noRevenueDataMessage");
     
+    // Check if revenueData exists and has data
     const hasRevenueData = revenueData && revenueData.length > 0 && 
         revenueData.some(item => (parseFloat(item.pemasukan) > 0 || parseFloat(item.pengeluaran) > 0));
     
     if (!hasRevenueData) {
+        // Show the no data message and hide the chart
         noRevenueDataMessage.classList.remove('d-none');
-        document.getElementById('revenueChart').style.display = 'none';
+        document.getElementById('revenueChart').style.visibility = 'hidden'; // Changed from display to visibility
         if (window.revenueChart) {
             window.revenueChart.destroy();
         }
     } else {
+        // Hide the no data message and show the chart
         noRevenueDataMessage.classList.add('d-none');
-        document.getElementById('revenueChart').style.display = 'block';
+        document.getElementById('revenueChart').style.visibility = 'visible'; // Changed from display to visibility
         window.revenueChart = new Chart(revenueCtx, {
             type: "bar",
             data: {

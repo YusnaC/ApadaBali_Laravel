@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('pemasukan', function (Blueprint $table) {
             $table->id();
-            $table->enum('jenis_order', ['Proyek Arsitektur', 'Furniture']);
+            $table->enum('jenis_order', ['Proyek Arsitektur', 'Furniture', 'Jasa']);
             $table->string('id_order')->unique();
             $table->date('tgl_transaksi');
             $table->decimal('jumlah', 12, 2);
