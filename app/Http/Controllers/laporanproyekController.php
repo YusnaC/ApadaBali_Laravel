@@ -162,7 +162,7 @@ class laporanproyekController extends Controller
 
         $data = $query->get();
 
-        dd($data);
+        // dd($data);
         
         if ($exportType === 'pdf') {
             $pdf = PDF::loadView('exports.laporan-proyek', [
