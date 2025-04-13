@@ -119,6 +119,8 @@ class DrafterController extends Controller
                 'name' => $request->nama_drafter,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'address' => $request->alamat_drafter,
+                'phone_number' => $request->no_whatsapp,
                 'role' => 'drafter'
             ]);
 
