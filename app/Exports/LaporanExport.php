@@ -67,7 +67,6 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
                     $row->tgl_pembuatan,
                     $row->nama_furniture,
                     $row->lokasi,
-                    $row->luas ?? '-',
                     $row->jumlah_unit,
                     $row->harga_unit,
                     $row->tgl_selesai,
@@ -115,10 +114,8 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
             case '2': // Furniture
                 return [
                     'ID Furniture',
-                    'Kategori',
                     'Tanggal Pembuatan',
                     'Nama Furniture',
-                    'Lokasi',
                     'Luas',
                     'Jumlah Unit',
                     'Harga Unit',
