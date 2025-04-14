@@ -187,7 +187,7 @@
                                     </th>
                                     <th class="py-3 px-3">
                                         <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'tgl_pembuatan', 'direction' => $sortField === 'tgl_pembuatan' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                            Tanggal Pembuatan
+                                            Tgl Pembuatan
                                             <div class="sort-icons">
                                                 <i class="bx bxs-up-arrow {{ $sortField === 'tgl_pembuatan' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
                                                 <i class="bx bxs-down-arrow {{ $sortField === 'tgl_pembuatan' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
@@ -232,7 +232,7 @@
                                     </th>
                                     <th class="py-3 px-3">
                                         <a href="{{ route('tables.laporanproyek', array_merge(request()->query(), ['sort' => 'tgl_selesai', 'direction' => $sortField === 'tgl_selesai' && $sortDirection === 'asc' ? 'desc' : 'asc'])) }}" class="text-white header-link">
-                                            Tanggal Selesai
+                                            Tgl Selesai
                                             <div class="sort-icons" >
                                                 <i class="bx bxs-up-arrow {{ $sortField === 'tgl_selesai' && $sortDirection === 'asc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>
                                                 <i class="bx bxs-down-arrow {{ $sortField === 'tgl_selesai' && $sortDirection === 'desc' ? 'active' : 'inactive' }}" style="font-size: 9px;"></i>

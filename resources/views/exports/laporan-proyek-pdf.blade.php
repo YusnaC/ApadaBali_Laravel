@@ -72,7 +72,7 @@
                     <th>Tgl Proyek</th>
                     <th>Nama Proyek</th>
                     <th>Lokasi</th>
-                    <th>Luas</th>
+                    <th>Luas (m²)</th>
                     <th>Jumlah Lantai</th>
                     <th>Tgl Deadline</th>
                     <th>ID Drafter</th>
@@ -109,7 +109,7 @@
                         <td>{{ $item->tgl_pembuatan }}</td>
                         <td>{{ $item->nama_furniture }}</td>
                         <td>{{ $item->jumlah_unit }}</td>
-                        <td>{{ $item->harga_unit }}</td>
+                        <td>Rp {{ number_format($item->harga_unit, 0, ',', '.') }}</td>
                         <td>{{ $item->lokasi }}</td>
                         <td>{{ $item->tgl_selesai }}</td>
                     @endif
