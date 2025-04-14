@@ -71,7 +71,6 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
                     $row->jumlah_unit,
                     $row->harga_unit,
                     $row->tgl_selesai,
-                    $row->id_drafter
                 ];
             default:
                 return [];
