@@ -25,6 +25,6 @@ class Progres extends Model
 
     public function proyek()
     {
-        return $this->belongsTo(Project::class, 'id_proyek', 'id_proyek');
+        return $this->belongsTo(Proyek::class, 'id_proyek', 'id_proyek');
     }
 }

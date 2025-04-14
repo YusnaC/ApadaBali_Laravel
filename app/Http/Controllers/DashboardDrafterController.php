@@ -37,13 +37,17 @@ class DashboardDrafterController extends Controller
             ->whereNull('progres.deleted_at')
             ->where(function($query) {
                 $query->where('progres.status_progres', 'Proses')
+                      ->whereNull('progres.deleted_at')
                       ->orWhere('progres.progres', '<', 100);
             })
-            ->whereNotExists(function($query) {
+            ->whereNotExists(function($query) use ($drafterId) {
                 $query->select(DB::raw(1))
                       ->from('progres as p2')
-                      ->whereRaw('progres.id_proyek = p2.id_proyek')
-                      ->where('p2.status_progres', 'Selesai');
+                      ->join('proyek as p3', 'p2.id_proyek', '=', 'p3.id_proyek')
+                      ->whereRaw('proyek.id_proyek = p2.id_proyek')
+                      ->where('p2.status_progres', 'Selesai')
+                      ->where('p3.id_drafter', $drafterId)
+                      ->whereNull('p2.deleted_at');
             })
             ->groupBy('proyek.id_proyek')
             ->get()
