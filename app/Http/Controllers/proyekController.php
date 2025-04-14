@@ -79,8 +79,6 @@ class proyekController extends Controller
 public function create(Request $request)
 {
     $kategori = $request->kategori ?? 1;
-
-    // Tentukan prefix berdasarkan kategori
     $prefix = ($kategori == 2) ? 'AJB' : 'ASB';
 
     // Get the last project ID including soft deleted records
@@ -91,17 +89,16 @@ public function create(Request $request)
 
     // Generate new ID by incrementing the last number
     if (!$lastProject) {
-        $newId = $prefix . ($prefix === 'AJB' ? '0001' : '0001');
+        $newId = $prefix . '0001';
     } else {
-        // Ambil angka setelah prefix
+        // Get number after prefix and increment
         $lastNumber = (int) substr($lastProject->id_proyek, strlen($prefix));
         $newNumber = $lastNumber + 1;
-        $padLength = ($prefix === 'AJB') ? 4 : 4;
-        $newId = $prefix . str_pad($newNumber, $padLength, '0', STR_PAD_LEFT);
+        // Always use 4 digits padding for both AJB and ASB
+        $newId = $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
     $drafters = Drafter::all();
-
     return view('proyek', compact('newId', 'drafters', 'kategori'));
 }
 
@@ -376,20 +373,18 @@ public function create(Request $request)
 
     public function getLatestProjectId(Request $request)
 {
-    $prefix = $request->query('prefix', 'ASB'); // Default ASB jika tidak ada parameter
+    $prefix = $request->query('prefix', 'ASB');
 
-    // Cari ID proyek terakhir yang memiliki prefix sesuai kategori
     $lastProject = Proyek::withTrashed()
         ->where('id_proyek', 'LIKE', "{$prefix}%")
         ->orderByRaw("CAST(SUBSTRING(id_proyek, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
         ->first();
 
-    // Tentukan ID proyek baru
     if (!$lastProject) {
         $newId = $prefix . '0001';
     } else {
-        $lastNumber = intval(substr($lastProject->id_proyek, 3));
-        $newId = $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $lastNumber = (int) substr($lastProject->id_proyek, strlen($prefix));
+        $newId = $prefix . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
     }
 
     return response()->json([
