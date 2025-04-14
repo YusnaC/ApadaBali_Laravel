@@ -150,9 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const revenueData = {!! json_encode($revenueData) !!};
     const filter = '{{ $filter }}';
 
-    console.log('Project Data:', projectData);
-    console.log('Revenue Data:', revenueData);
-
     // Project Chart
     const projectLabels = projectData.map(item => {
         try {
@@ -180,18 +177,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const projectValues = projectData.map(item => parseInt(item.total) || 0);
-    
+    const revData = revenueData.map(item => parseInt(item.total) || 0);
+    // console.log("this is fucking data", revData);
     // Project Chart
     const projectCtx = document.getElementById("projectChart").getContext('2d');
     const noProjectDataMessage = document.getElementById("noProjectDataMessage");
+    const projectChartCanvas = document.getElementById("projectChart");
     
     if (projectData.length === 0 || projectValues.every(value => value === 0)) {
         noProjectDataMessage.classList.remove('d-none');
-        if (window.projectChart) {
-            window.projectChart.destroy();
-        }
+        projectChartCanvas.style.display = 'none';
+        // if (window.projectChart) {
+        //     window.projectChart.destroy();
+        // }
     } else {
         noProjectDataMessage.classList.add('d-none');
+        projectChartCanvas.style.display = 'block';
         window.projectChart = new Chart(projectCtx, {
             type: "bar",
             data: {
@@ -254,24 +255,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Revenue Chart
+    
+    // Revenue Chart
     const revenueCtx = document.getElementById("revenueChart").getContext('2d');
     const noRevenueDataMessage = document.getElementById("noRevenueDataMessage");
-    
-    // Check if revenueData exists and has data
+    const revenueChartCanvas = document.getElementById("revenueChart");
+    // Check if revenue data has valid values
     const hasRevenueData = revenueData && revenueData.length > 0 && 
-        revenueData.some(item => (parseFloat(item.pemasukan) > 0 || parseFloat(item.pengeluaran) > 0));
+        revenueData.some(item => {
+            const pemasukan = parseFloat(item.pemasukan) || 0;
+            const pengeluaran = parseFloat(item.pengeluaran) || 0;
+            return pemasukan > 0 || pengeluaran > 0;
+        });
     
-    if (!hasRevenueData) {
-        // Show the no data message and hide the chart
+    if (!hasRevenueData || revenueData.length === 0 || revData.every(value=>value === 0)) {
         noRevenueDataMessage.classList.remove('d-none');
-        document.getElementById('revenueChart').style.visibility = 'hidden'; // Changed from display to visibility
+        revenueChartCanvas.style.display = 'none';
         if (window.revenueChart) {
             window.revenueChart.destroy();
         }
     } else {
-        // Hide the no data message and show the chart
         noRevenueDataMessage.classList.add('d-none');
-        document.getElementById('revenueChart').style.visibility = 'visible'; // Changed from display to visibility
+        revenueChartCanvas.style.display = 'block';
         window.revenueChart = new Chart(revenueCtx, {
             type: "bar",
             data: {
@@ -316,12 +322,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event listeners for filters
     ['projectFilterSelect', 'filterSelect'].forEach(id => {
-        document.getElementById(id).addEventListener('change', function() {
-            const filterValue = this.value;
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('filter', filterValue);
-            window.location.href = currentUrl.toString();
-        });
+        const select = document.getElementById(id);
+        if (select) {
+            select.addEventListener('change', function(e) {
+                e.preventDefault();
+                const filterValue = this.value;
+                
+                // Create form and submit
+                const form = document.createElement('form');
+                form.method = 'GET';
+                form.action = window.location.pathname;
+                
+                const filterInput = document.createElement('input');
+                filterInput.type = 'hidden';
+                filterInput.name = 'filter';
+                filterInput.value = filterValue;
+                
+                form.appendChild(filterInput);
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
     });
 });
 </script>

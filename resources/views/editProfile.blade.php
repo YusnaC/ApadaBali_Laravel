@@ -55,6 +55,15 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                @if($user->role === 'drafter')
+                                <div class="mb-4">
+                                    <label for="no_hp" class="form-label">Nomor HP</label>
+                                    <input type="text" class="form-control text-secondary @error('no_hp') is-invalid border-danger @enderror" id="no_hp" name="no_hp" value="{{ old('no_hp', $user->phone) }}" >
+                                    @error('no_hp')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                @endif
                                 <div class="mb-4">
                                     <label for="alamat" class="form-label">Alamat</label>
                                     <textarea class="form-control text-secondary @error('alamat') is-invalid border-danger @enderror" id="alamat" name="alamat" rows="3" >{{ old('address', $user->address) }}</textarea>

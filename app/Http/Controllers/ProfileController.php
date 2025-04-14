@@ -76,6 +76,11 @@ class ProfileController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'alamat' => 'required|string',
         ];
+
+        // Add WhatsApp validation for drafters
+        if ($user->role === 'drafter') {
+            $rules['no_whatsapp'] = 'required|digits_between:10,15';
+        }
     
         // Define validation messages
         $messages = [
@@ -86,6 +91,8 @@ class ProfileController extends Controller
             'email.email' => 'Format email tidak valid',
             'username.unique' => 'Username sudah digunakan',
             'email.unique' => 'Email sudah digunakan',
+            'no_whatsapp.required' => 'Nomor WhatsApp wajib diisi',
+            'no_whatsapp.digits_between' => 'Nomor WhatsApp harus terdiri dari 10 sampai 15 digit',
         ];
     
         // Separate password validation
