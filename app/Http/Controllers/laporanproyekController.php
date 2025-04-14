@@ -155,7 +155,6 @@ class laporanproyekController extends Controller
             $dateField = 'tgl_pembuatan';
         } else {
             $query = DB::table('proyek')
-                ->where('kategori', $jenis) // Filter by kategori
                 ->leftJoin('drafter', 'proyek.id_drafter', '=', 'drafter.id_drafter')
                 ->select('proyek.*', DB::raw("COALESCE(drafter.id_drafter, '-') as id_drafter"))
                 ->whereNull('proyek.deleted_at')
