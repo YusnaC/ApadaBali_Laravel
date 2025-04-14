@@ -192,11 +192,12 @@ class KlienController extends Controller
                 return redirect()->back()->with('error', 'Data klien tidak ditemukan!');
             }
             
-            $klien->delete(); // This will now soft delete due to SoftDeletes trait
+            // Use forceDelete() instead of delete() to permanently remove the record
+            $klien->forceDelete();
             
             DB::commit();
             return redirect()->route('tables.klien')
-                ->with('success', 'Data klien berhasil dihapus!');
+                ->with('success', 'Data klien berhasil dihapus permanen!');
                 
         } catch (\Exception $e) {
             DB::rollBack();
