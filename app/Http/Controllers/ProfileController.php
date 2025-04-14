@@ -75,11 +75,12 @@ class ProfileController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'alamat' => 'required|string',
+            
         ];
 
         // Add WhatsApp validation for drafters
         if ($user->role === 'drafter') {
-            $rules['no_whatsapp'] = 'required|digits_between:10,15';
+            $rules['no_hp'] = 'required|digits_between:10,15';
         }
     
         // Define validation messages
@@ -113,7 +114,8 @@ class ProfileController extends Controller
                 'username' => $request->username,
                 'name' => $request->nama,
                 'email' => $request->email,
-                'address' => $request->alamat
+                'address' => $request->alamat,
+                'phone' => $request->no_hp ?? $user->phone,
             ];
     
             // Handle password update separately
