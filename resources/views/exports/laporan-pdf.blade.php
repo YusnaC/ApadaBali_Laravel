@@ -70,9 +70,9 @@
             <tr>
                 @if($reportType === 'pemasukan')
                     <th>No</th>
-                    <th>Tanggal Transaksi</th>
                     <th>Jenis Order</th>
                     <th>ID Order</th>
+                    <th>Tanggal Transaksi</th>
                     <th>Jumlah</th>
                     <th>Termin</th>
                     <th>Keterangan</th>
@@ -92,9 +92,9 @@
                 <tr>
                     @if($reportType === 'pemasukan')
                         <td class="text-center">{{ $index + 1 }}</td>
-                        <td class="text-center">{{ $item->tgl_transaksi }}</td>
                         <td>{{ $item->jenis_order }}</td>
                         <td class="text-center">{{ $item->id_order }}</td>
+                        <td class="text-center">{{ $item->tgl_transaksi }}</td>
                         <td class="text-right">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                         <td class="text-center">{{ $item->termin }}</td>
                         <td>{{ $item->keterangan }}</td>

@@ -71,9 +71,9 @@
                     <th>Kategori</th>
                     <th>Tgl Proyek</th>
                     <th>Nama Proyek</th>
+                    <th>Lokasi</th>
                     <th>Luas</th>
                     <th>Jumlah Lantai</th>
-                    <th>Lokasi</th>
                     <th>Tgl Deadline</th>
                     <th>ID Drafter</th>
 =                @else
@@ -94,14 +94,14 @@
                         <td>{{ $item->id_proyek }}</td>
                         <td>{{ 
                             $item->kategori == '1' ? 'Proyek Arsitektur' : 
-                            ($item->kategori == '2' ? 'Furniture' : 
-                            ($item->kategori == '3' ? 'Jasa' : $item->kategori)) 
+                            ($item->kategori == '2' ? 'Jasa' : 
+                            ($item->kategori == '3' ? 'Furniture' : $item->kategori)) 
                         }}</td>
                         <td>{{ $item->tgl_proyek }}</td>
                         <td>{{ $item->nama_proyek }}</td>
                         <td>{{ $item->lokasi }}</td>
-                        <td>{{ $item->luas }}</td>
-                        <td>{{ $item->jumlah_lantai }}</td>
+                        <td>{{ (int)$item->luas }}</td>
+                        <td>{{ (int)$item->jumlah_lantai }}</td>
                         <td>{{ $item->tgl_deadline }}</td>
                         <td>{{ $item->id_drafter }}</td>
                     @else

@@ -51,7 +51,7 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
             case '1': // Proyek
                 return [
                     $row->id_proyek,
-                    'Proyek Arsitektur',
+                    $row->kategori,
                     $row->tgl_proyek,
                     $row->nama_proyek,
                     $row->lokasi,
