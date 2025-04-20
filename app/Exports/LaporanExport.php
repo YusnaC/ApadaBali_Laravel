@@ -63,13 +63,11 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
             case '2': // Furniture
                 return [
                     $row->id_furniture,
-                    'Furniture',
                     $row->tgl_pembuatan,
                     $row->nama_furniture,
-                    $row->lokasi,
-                    $row->luas ?? '-',
                     $row->jumlah_unit,
                     $row->harga_unit,
+                    $row->lokasi,
                     $row->tgl_selesai,
                 ];
             default:
@@ -115,15 +113,12 @@ class LaporanExport implements FromCollection, WithHeadings, WithMapping
             case '2': // Furniture
                 return [
                     'ID Furniture',
-                    'Kategori',
                     'Tanggal Pembuatan',
                     'Nama Furniture',
-                    'Lokasi',
-                    'Luas (m²)',
                     'Jumlah Unit',
                     'Harga Unit',
+                    'Lokasi',
                     'Tanggal Selesai',
-                    'ID Drafter'
                 ];
             default:
                 return [];
