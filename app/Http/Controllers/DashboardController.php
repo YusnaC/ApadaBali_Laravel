@@ -48,8 +48,8 @@ class DashboardController extends Controller
                     DB::raw('DATE(tgl_proyek) as date'),
                     DB::raw('COUNT(*) as total')
                 )
-                ->whereRaw('DATE(tgl_proyek) >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)')
-                ->whereRaw('DATE(tgl_proyek) <= CURDATE()')
+                ->whereRaw('DATE(tgl_proyek) >= ?', [date('Y-m-d', strtotime('-6 days'))])
+                ->whereRaw('DATE(tgl_proyek) <= ?', [date('Y-m-d')])
                 ->whereNull('deleted_at')
                 ->groupBy(DB::raw('DATE(tgl_proyek)'))
                 ->orderBy('date')
@@ -87,9 +87,9 @@ class DashboardController extends Controller
                 $projectData = $years->map(function($year) use ($rawProjectData) {
                     return [
                         'year' => (int)$year,
-                        'total' => $rawProjectData->get($year)?->total ?? 0
+                        'total' => $rawProjectData->get((string)$year)?->total ?? 0
                     ];
-                });
+                })->values()->toArray();
                 
                 // Get yearly revenue data
                 $pemasukan = DB::table('pemasukan')
@@ -99,7 +99,8 @@ class DashboardController extends Controller
                         DB::raw('SUM(jumlah) as pemasukan')
                     )
                     ->whereYear('tgl_transaksi', '>=', date('Y')-4)
-                    ->groupBy('year')
+                    ->groupBy(DB::raw('YEAR(tgl_transaksi)'))
+                    ->orderBy('year')
                     ->get()
                     ->keyBy('year');
 
@@ -110,13 +111,15 @@ class DashboardController extends Controller
                         DB::raw('SUM(total_harga) as pengeluaran')
                     )
                     ->whereYear('tanggal_transaksi', '>=', date('Y')-4)
-                    ->groupBy('year')
+                    ->groupBy(DB::raw('YEAR(tanggal_transaksi)'))
+                    ->orderBy('year')
                     ->get()
                     ->keyBy('year');
 
                 $revenueData = $years->map(function($year) use ($pemasukan, $pengeluaran) {
-                    $pemasukanAmount = isset($pemasukan[$year]) ? (float)$pemasukan[$year]->pemasukan : 0;
-                    $pengeluaranAmount = isset($pengeluaran[$year]) ? (float)$pengeluaran[$year]->pengeluaran : 0;
+                    $yearStr = (string)$year;
+                    $pemasukanAmount = isset($pemasukan[$yearStr]) ? (float)$pemasukan[$yearStr]->pemasukan : 0;
+                    $pengeluaranAmount = isset($pengeluaran[$yearStr]) ? (float)$pengeluaran[$yearStr]->pengeluaran : 0;
                     
                     return [
                         'year' => (int)$year,
@@ -124,7 +127,7 @@ class DashboardController extends Controller
                         'pengeluaran' => $pengeluaranAmount,
                         'total' => $pemasukanAmount - $pengeluaranAmount
                     ];
-                })->values();
+                })->values()->toArray();
                 break;
 
             default: // month

@@ -219,7 +219,7 @@ li {
 /* Penataan tombol pembatalan di popup */
 .custom-cancel-button {
     background-color: var(--primary);
-    color: var(--secondary);
+    color: var(--text-clr);
     border: none;
     border-radius: 0.5rem;
     padding: 1rem 1.5rem;
