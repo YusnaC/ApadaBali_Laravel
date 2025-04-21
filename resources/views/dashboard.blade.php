@@ -149,34 +149,76 @@ document.addEventListener('DOMContentLoaded', function() {
     const projectData = {!! json_encode($projectData) !!};
     const revenueData = {!! json_encode($revenueData) !!};
     const filter = '{{ $filter }}';
+    // Add data validation and cleanup
+    function validateData(data) {
+        return Array.isArray(data) ? data : [];
+    }
 
-    // Project Chart
-    const projectLabels = projectData.map(item => {
-        try {
-            if (!item) return 'Invalid Date';
-            
-            switch(filter) {
-                case 'week':
-                    if (!item.date) return 'Invalid Date';
-                    return new Date(item.date).toLocaleDateString('id-ID', { 
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                case 'month':
-                    return monthNames[item.month - 1];
-                case 'year':
-                    return item.year.toString();
-                default:
-                    return 'Invalid Date';
-            }
-        } catch (error) {
-            console.error('Date parsing error:', error, item);
-            return 'Invalid Date';
+    const cleanProjectData = validateData(projectData);
+    const cleanRevenueData = validateData(revenueData);
+
+
+    // Add this helper function at the start of your script
+    // Modify the getLast7Days function
+    function getLast7Days() {
+        const dates = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            dates.push({
+                date: date,
+                formatted: date.toISOString().split('T')[0]
+            });
+        }
+        return dates;
+    }
+
+    // Modify the weekly data processing
+    const processWeeklyData = (data) => {
+        const last7Days = getLast7Days();
+        const weeklyData = last7Days.map(day => {
+            const matchingData = data.find(item => {
+                const itemDate = new Date(item.date);
+                itemDate.setHours(0, 0, 0, 0);
+                return itemDate.getTime() === day.date.getTime();
+            });
+            return matchingData || { date: day.formatted, total: 0, pemasukan: 0, pengeluaran: 0 };
+        });
+        return weeklyData;
+    };
+
+    // Update data processing based on filter
+    const processedProjectData = filter === 'week' ? processWeeklyData(cleanProjectData) : cleanProjectData;
+    const processedRevenueData = filter === 'week' ? processWeeklyData(cleanRevenueData) : cleanRevenueData;
+
+    // Update the labels and values processing
+    const projectLabels = processedProjectData.map(item => {
+        switch(filter) {
+            case 'week':
+                const date = new Date(item.date);
+                return date.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long'
+                });
+            case 'month':
+                return item.month && item.month >= 1 && item.month <= 12 
+                    ? monthNames[item.month - 1] 
+                    : 'Invalid Month';
+            case 'year':
+                return item.year && !isNaN(item.year) 
+                    ? item.year.toString() 
+                    : 'Invalid Year';
+            default:
+                return 'Invalid Date';
         }
     });
 
     const projectValues = projectData.map(item => parseInt(item.total) || 0);
+    
     const revData = revenueData.map(item => parseInt(item.total) || 0);
     // console.log("this is fucking data", revData);
     // Project Chart
@@ -237,7 +279,16 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             switch(filter) {
                 case 'week':
-                    return new Date(item.date).toLocaleDateString('id-ID', { 
+                    if (!item.date) {
+                        console.log("Missing date in revenue item:", item);
+                        return 'Invalid Date';
+                    }
+                    const date = new Date(item.date);
+                    if (isNaN(date.getTime())) {
+                        console.log("Invalid revenue date:", item.date);
+                        return 'Invalid Date';
+                    }
+                    return date.toLocaleDateString('id-ID', { 
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric'
@@ -272,9 +323,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!hasRevenueData || revenueData.length === 0 || revData.every(value=>value === 0)) {
         noRevenueDataMessage.classList.remove('d-none');
         revenueChartCanvas.style.display = 'none';
-        if (window.revenueChart) {
-            window.revenueChart.destroy();
-        }
+        // if (window.revenueChart) {
+        //     window.revenueChart.destroy();
+        // }
     } else {
         noRevenueDataMessage.classList.add('d-none');
         revenueChartCanvas.style.display = 'block';
@@ -320,27 +371,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Event listeners for filters
+    // Modified filter event handlers
     ['projectFilterSelect', 'filterSelect'].forEach(id => {
         const select = document.getElementById(id);
         if (select) {
+            select.value = filter;
+            
             select.addEventListener('change', function(e) {
                 e.preventDefault();
                 const filterValue = this.value;
                 
-                // Create form and submit
-                const form = document.createElement('form');
-                form.method = 'GET';
-                form.action = window.location.pathname;
+                // Update URL without form submission
+                const url = new URL(window.location.href);
+                url.searchParams.set('filter', filterValue);
                 
-                const filterInput = document.createElement('input');
-                filterInput.type = 'hidden';
-                filterInput.name = 'filter';
-                filterInput.value = filterValue;
-                
-                form.appendChild(filterInput);
-                document.body.appendChild(form);
-                form.submit();
+                // Update other select
+                const otherSelectId = id === 'projectFilterSelect' ? 'filterSelect' : 'projectFilterSelect';
+                const otherSelect = document.getElementById(otherSelectId);
+                if (otherSelect) {
+                    otherSelect.value = filterValue;
+                }
+
+                // Navigate to new URL
+                window.location.href = url.toString();
             });
         }
     });
