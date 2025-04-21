@@ -12,17 +12,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 confirmButtonText: "Yes, Logout",
                 cancelButtonText: "No, cancel!",
                 reverseButtons: true,
-
+                buttonsStyling: true,
                 customClass: {
                     popup: "custom-popup",
                     title: "custom-title",
-                    cancelButton: "custom-cancel-button",
-                    confirmButton: "custom-confirm-button",
+                    cancelButton: "custom-confirm-button",
+                    confirmButton: "custom-cancel-button",
+                    actions: "swal2-actions",
+                },
+                didOpen: () => {
+                    const buttons =
+                        document.getElementsByClassName("swal2-styled");
+                    for (let button of buttons) {
+                        button.style.boxShadow = "none";
+                    }
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Redirect ke route logout
-                    document.getElementById('logout-form').submit();
+                    document.getElementById("logout-form").submit();
                 }
             });
         });
@@ -30,13 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add delete confirmation handler
     const deleteButtons = document.querySelectorAll(".btn-delete");
-    
+
     if (deleteButtons) {
-        deleteButtons.forEach(button => {
+        deleteButtons.forEach((button) => {
             button.addEventListener("click", function (e) {
                 e.preventDefault();
-                const form = this.closest('form');
-                
+                const form = this.closest("form");
+
                 Swal.fire({
                     title: "Apakah Anda yakin?",
                     icon: "warning",

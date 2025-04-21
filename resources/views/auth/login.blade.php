@@ -41,7 +41,7 @@
                                 required 
                                 style="border-color: gray-800 !important;" 
                                 autocomplete="current-password" />
-                        <div class="absolute custom-right !important left-[15rem] h-full pt-1 flex items-center pr-1">
+                        <div class="absolute custom-right !important left-[14rem] lg:left-[15rem] h-full pt-1 flex items-center pr-1">
                             <button type="button" 
                                     class="focus:outline-none" 
                                     id="togglePassword">

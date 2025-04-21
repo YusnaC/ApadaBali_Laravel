@@ -152,7 +152,6 @@ li {
     transition: background 0.3s ease-in-out; /* Animasi halus */
 }
 
-
 /* ============================ LOGOUT BUTTON ============================*/
 /* Penataan tombol logout di sidebar */
 #sidebar .side-menu .logout {
@@ -208,8 +207,8 @@ li {
 
 /* Penataan tombol konfirmasi di popup */
 .custom-confirm-button {
-    background-color: var(--sidebar);
-    color: var(--sidebar);
+    background-color: var(--body-clr);
+    color: var(--secondary);
     border: none;
     border-radius: 0.5rem;
     padding: 1rem 1.5rem;
@@ -219,7 +218,7 @@ li {
 /* Penataan tombol pembatalan di popup */
 .custom-cancel-button {
     background-color: var(--primary);
-    color: var(--secondary);
+    color: var(--body-clr);
     border: none;
     border-radius: 0.5rem;
     padding: 1rem 1.5rem;
@@ -282,7 +281,6 @@ li {
     margin-left: 20%;
     transition: margin-left 0.3s ease;
 }
-
 
 /* When sidebar is hidden */
 #sidebar[style*="translateX(-100%)"] + section #header .wrap {
@@ -568,117 +566,118 @@ button:focus {
 .sidebar-link.active,
 .sidebar-link.active li,
 .slide-dropdown li a.active {
-  background-color: #f97316 !important; /* Tambahkan ini */
-  color: white !important;
-  /* border-radius: 0.375rem; 
+    background-color: #f97316 !important; /* Tambahkan ini */
+    color: white !important;
+    /* border-radius: 0.375rem; 
   padding: 0.5rem 1rem;  */
 }
 
 /* Add new responsive styles */
 @media screen and (max-width: 1200px) {
-  .card {
-    margin-bottom: 1rem;
-  }
-  
-  .card-text {
-    font-size: 1.25rem;
-  }
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .card-text {
+        font-size: 1.25rem;
+    }
 }
 
 @media screen and (max-width: 768px) {
-  /* Header adjustments */
-  #header .wrap {
-    margin-left: 0;
-  }
-  
-  /* Dashboard cards */
-  .card {
-    margin-bottom: 1rem;
-  }
-  
-  .card-icon h5 {
-    font-size: 0.9rem;
-  }
-  
-  .card-text {
-    font-size: 1.2rem;
-    margin: 0.5rem 0;
-  }
-  
-  .btn-card {
-    font-size: 0.75rem;
-    padding: 0.6rem;
-  }
-  
-  /* Chart containers */
-  .barchart {
-    margin-bottom: 1.5rem;
-  }
-  
-  .chart-container {
-    height: 300px !important;
-  }
-  
-  /* Sidebar adjustments */
-  #sidebar {
-    width: 250px;
-  }
+    /* Header adjustments */
+    #header .wrap {
+        margin-left: 0;
+    }
+
+    /* Dashboard cards */
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .card-icon h5 {
+        font-size: 0.9rem;
+    }
+
+    .card-text {
+        font-size: 1.2rem;
+        margin: 0.5rem 0;
+    }
+
+    .btn-card {
+        font-size: 0.75rem;
+        padding: 0.6rem;
+    }
+
+    /* Chart containers */
+    .barchart {
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-container {
+        height: 300px !important;
+    }
+
+    /* Sidebar adjustments */
+    #sidebar {
+        width: 250px;
+    }
 }
 
 @media screen and (max-width: 576px) {
-  /* Dashboard header */
-  .d-flex.justify-content-between.align-items-center.mb-4 h3 {
-    font-size: 1.5rem;
-  }
-  
-  /* Cards */
-  .card-icon img {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .card-text {
-    font-size: 1.1rem;
-  }
-  
-  /* Charts */
-  .bg-header h6 {
-    font-size: 0.9rem;
-  }
-  
-  .chart-container {
-    height: 250px !important;
-  }
-  
-  /* Sidebar */
-  #sidebar {
-    width: 100%;
-    max-width: 300px;
-  }
+    /* Dashboard header */
+    .d-flex.justify-content-between.align-items-center.mb-4 h3 {
+        font-size: 1.5rem;
+    }
+
+    /* Cards */
+    .card-icon img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .card-text {
+        font-size: 1.1rem;
+    }
+
+    /* Charts */
+    .bg-header h6 {
+        font-size: 0.9rem;
+    }
+
+    .chart-container {
+        height: 250px !important;
+    }
+
+    /* Sidebar */
+    #sidebar {
+        width: 100%;
+        max-width: 300px;
+    }
 }
 
 /* Add grid system overrides */
 .row {
-  margin-right: -0.5rem;
-  margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    margin-left: -0.5rem;
 }
 
-.col-sm-3, .col-md-6 {
-  padding-right: 0.5rem;
-  padding-left: 0.5rem;
+.col-sm-3,
+.col-md-6 {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
 }
 
 /* Chart responsiveness */
 .chart-container {
-  position: relative;
-  height: 400px;
-  width: 100%;
+    position: relative;
+    height: 400px;
+    width: 100%;
 }
 
 /* Card improvements */
 .card {
-  height: 100%;
-  transition: transform 0.2s ease;
+    height: 100%;
+    transition: transform 0.2s ease;
 }
 
 /* .card:hover {
@@ -686,10 +685,10 @@ button:focus {
 } */
 
 .card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  /* padding-top: 3rem; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* padding-top: 3rem; */
 }
 
 .table tbody tr:nth-child(odd) {
@@ -698,16 +697,18 @@ button:focus {
 
 /* Warna untuk baris genap (abu-abu muda) */
 .table tbody tr:nth-child(even) {
-    background-color: #007BFF1A; /* Abu-abu muda */
+    background-color: #007bff1a; /* Abu-abu muda */
 }
-.prev-btn, .next-btn {
+.prev-btn,
+.next-btn {
     background-color: #007bff; /* Warna biru */
     color: white !important;
     border-radius: 5px;
     padding: 8px 15px;
 }
 
-.prev-btn:hover, .next-btn:hover {
+.prev-btn:hover,
+.next-btn:hover {
     background-color: #0056b3;
 }
 
@@ -800,81 +801,81 @@ button:focus {
 
 /* Notification Styles */
 .notification-list {
-  width: 300px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  padding: 0;
-  margin-top: 10px;
+    width: 300px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    margin-top: 10px;
 }
 
 .notification-header {
-  padding: 15px;
-  border-bottom: 1px solid #eee;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
 }
 
 .notification-header h6 {
-  font-weight: 600;
+    font-weight: 600;
 }
 
 .notification-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
-  gap: 12px;
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    gap: 12px;
 }
 
 .user-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .notification-content {
-  flex: 1;
+    flex: 1;
 }
 
 .user-name {
-  font-weight: 600;
-  color: #000;
+    font-weight: 600;
+    color: #000;
 }
 
 .action {
-  color: #666;
+    color: #666;
 }
 
 .notification-time {
-  font-size: 0.8rem;
-  color: #888;
-  margin-top: 4px;
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 4px;
 }
 
 .notification-status {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #00A3FF;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #00a3ff;
 }
 
 .notification-footer {
-  padding: 12px 15px;
-  text-align: center;
+    padding: 12px 15px;
+    text-align: center;
 }
 
 .see-all {
-  color: #00A3FF;
-  text-decoration: none;
-  font-size: 0.9rem;
+    color: #00a3ff;
+    text-decoration: none;
+    font-size: 0.9rem;
 }
 
 .see-all:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .notification-counter {
-  font-size: 10px;
-  padding: 4px 6px;
+    font-size: 10px;
+    padding: 4px 6px;
 }
 
 .custom-padding {
@@ -889,21 +890,20 @@ button:focus {
 
 .btn-outline-success:hover {
     background-color: #28a745 !important; /* Ubah background jadi hijau saat hover */
-    border-color: #28a745 !important; 
+    border-color: #28a745 !important;
     color: white !important; /* Pastikan teks tetap putih */
 }
 
 .btn-outline-success:hover i {
     color: white !important; /* Pastikan ikon mata tetap putih */
 }
-.table-custom td, 
+.table-custom td,
 .table-custom th {
     padding: 0.5rem; /* 8px */
 }
 @media (max-width: 768px) {
-
     .main-content {
-        padding-top: 2rem!important;
+        padding-top: 2rem !important;
         margin: 4rem 0 0 0 !important;
     }
 }
