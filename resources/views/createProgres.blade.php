@@ -121,7 +121,7 @@
                             @error('dokumen')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
-                            <small class="text-muted mt-2 d-block">Allowed file types: ZIP, RAR maximum size: 2MB</small>
+                            <small class="text-muted mt-2 d-block">Allowed file types: ZIP, RAR, PDF maximum size: 30MB</small>
                         </div>
 
                         <div class="text-center mb-5">
