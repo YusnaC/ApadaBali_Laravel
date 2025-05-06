@@ -72,7 +72,7 @@ class progresproyekController extends Controller
             'tgl_proyek' => 'required|date',
             'progres' => 'required|numeric|min:0|max:100',
             'keterangan' => 'required|string',
-            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,zip|max:2048',
+            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,zip|max:30720',
         ]);
 
         if ($request->hasFile('dokumen')) {
@@ -112,7 +112,7 @@ class progresproyekController extends Controller
             'tgl_proyek' => 'required|date',
             'progres' => 'required|numeric|min:0|max:100',
             'keterangan' => 'required|string',
-            'dokumen' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'dokumen' => 'nullable|file|mimes:pdf,doc,docx|max:30720',
         ]);
 
         if ($request->hasFile('dokumen')) {

@@ -29,6 +29,7 @@ class proyekController extends Controller
         $query->where(function($q) use ($search) {
             $q->where('nama_proyek', 'like', "%{$search}%")
               ->orWhere('lokasi', 'like', "%{$search}%")
+              ->orWhere('id_proyek', 'like', "%{$search}%")
               ->orWhere('id_drafter', 'like', "%{$search}%")
               ->orWhere(function($query) use ($search) {
                   if (strtolower($search) === 'jasa') {

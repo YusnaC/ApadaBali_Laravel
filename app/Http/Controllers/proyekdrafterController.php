@@ -32,7 +32,8 @@ class proyekdrafterController extends Controller
                   ->orWhere('luas', 'like', "%{$search}%")
                   ->orWhere('jumlah_lantai', 'like', "%{$search}%")
                   ->orWhere('tgl_proyek', 'like', "%{$search}%")
-                  ->orWhere('tgl_deadline', 'like', "%{$search}%");
+                  ->orWhere('tgl_deadline', 'like', "%{$search}%")
+                  ->orWhere('id_proyek', 'like', "%{$search}%");
             });
         }
 
