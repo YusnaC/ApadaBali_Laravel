@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 customClass: {
                     popup: "custom-popup",
                     title: "custom-title",
-                    cancelButton: "custom-confirm-button",
-                    confirmButton: "custom-cancel-button",
+                    cancelButton: "custom-cancel-button",
+                    confirmButton: "custom-confirm-button",
                     actions: "swal2-actions",
                 },
                 didOpen: () => {

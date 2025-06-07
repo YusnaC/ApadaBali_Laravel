@@ -23,10 +23,13 @@ class DashboardController extends Controller
         ->whereNull('deleted_at')
         ->count();
 
+        // Total pendapatan
         $totalPemasukan = Pemasukan::whereNull('deleted_at')->sum('jumlah');
         $totalPengeluaran = Pengeluaran::whereNull('deleted_at')->sum('total_harga');
         $totalPendapatan = $totalPemasukan - $totalPengeluaran;
+        // Total Klien
         $totalKlien = Klien::count();
+        // Proyek Berjalan
         $proyekBerjalan = Progres::whereIn('id_progres', function($query) {
                             $query->selectRaw('MAX(id_progres)')
                                 ->from('progres')
@@ -365,93 +368,6 @@ class DashboardController extends Controller
             ];
         })->values();
     }
-    
-    // private function getMonthlyRevenueData()
-    // {
-    //     // Get all days of current month
-    //     $daysInMonth = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
-    //     $days = collect(range(1, $daysInMonth));
-        
-    //     // Get pemasukan data
-    //     $pemasukan = DB::table('pemasukan')
-    //         ->select(
-    //             DB::raw('DAY(tgl_transaksi) as day'),
-    //             DB::raw('SUM(jumlah) as pemasukan')
-    //         )
-    //         ->whereMonth('tgl_transaksi', date('m'))
-    //         ->whereYear('tgl_transaksi', date('Y'))
-    //         ->groupBy('day')
-    //         ->get()
-    //         ->keyBy('day');
-    
-    //     // Get pengeluaran data
-    //     $pengeluaran = DB::table('pengeluaran')
-    //         ->select(
-    //             DB::raw('DAY(tanggal_transaksi) as day'),
-    //             DB::raw('SUM(total_harga) as pengeluaran')
-    //         )
-    //         ->whereMonth('tanggal_transaksi', date('m'))
-    //         ->whereYear('tanggal_transaksi', date('Y'))
-    //         ->groupBy('day')
-    //         ->get()
-    //         ->keyBy('day');
-    
-    //     // Combine data for all days
-    //     return $days->map(function($day) use ($pemasukan, $pengeluaran) {
-    //         $pemasukanAmount = isset($pemasukan[$day]) ? (float)$pemasukan[$day]->pemasukan : 0;
-    //         $pengeluaranAmount = isset($pengeluaran[$day]) ? (float)$pengeluaran[$day]->pengeluaran : 0;
-            
-    //         return [
-    //             'day' => (int)$day,
-    //             'pemasukan' => $pemasukanAmount,
-    //             'pengeluaran' => $pengeluaranAmount,
-    //             'total' => $pemasukanAmount - $pengeluaranAmount
-    //         ];
-    //     })->values();
-    // }
-    
-    // private function getWeeklyRevenueData()
-    // {
-    //     // Get dates for last 7 days
-    //     $dates = collect(range(0, 6))->map(function($day) {
-    //         return date('Y-m-d', strtotime("-$day days"));
-    //     })->reverse();
-        
-    //     // Get pemasukan data
-    //     $pemasukan = DB::table('pemasukan')
-    //         ->select(
-    //             DB::raw('DATE(tgl_transaksi) as date'),
-    //             DB::raw('SUM(jumlah) as pemasukan')
-    //         )
-    //         ->whereRaw('tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 7 DAY)')
-    //         ->groupBy('date')
-    //         ->get()
-    //         ->keyBy('date');
-    
-    //     // Get pengeluaran data
-    //     $pengeluaran = DB::table('pengeluaran')
-    //         ->select(
-    //             DB::raw('DATE(tanggal_transaksi) as date'),
-    //             DB::raw('SUM(total_harga) as pengeluaran')
-    //         )
-    //         ->whereRaw('tanggal_transaksi >= DATE_SUB(NOW(), INTERVAL 7 DAY)')
-    //         ->groupBy('date')
-    //         ->get()
-    //         ->keyBy('date');
-    
-    //     // Combine data for all dates
-    //     return $dates->map(function($date) use ($pemasukan, $pengeluaran) {
-    //         $pemasukanAmount = isset($pemasukan[$date]) ? (float)$pemasukan[$date]->pemasukan : 0;
-    //         $pengeluaranAmount = isset($pengeluaran[$date]) ? (float)$pengeluaran[$date]->pengeluaran : 0;
-            
-    //         return [
-    //             'date' => $date,
-    //             'pemasukan' => $pemasukanAmount,
-    //             'pengeluaran' => $pengeluaranAmount,
-    //             'total' => $pemasukanAmount - $pengeluaranAmount
-    //         ];
-    //     })->values();
-    // }
     
     public function index()
     {

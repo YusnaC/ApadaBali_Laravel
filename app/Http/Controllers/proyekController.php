@@ -16,6 +16,8 @@ use App\Jobs\SendProjectNotification; // Add this import
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use App\Models\Klien;
+use App\Models\Pemasukan;
 class proyekController extends Controller
 {
     public function proyek(Request $request)
@@ -229,29 +231,33 @@ public function create(Request $request)
     {
         try {
             DB::beginTransaction();
-            
-            // Find the project
+
             $proyek = Proyek::where('id_proyek', $id_proyek)->first();
-            
+
             if (!$proyek) {
                 DB::rollBack();
                 return redirect()->back()->with('error', 'Proyek tidak ditemukan!');
             }
-            
-            // Soft delete the project and its progress
+
+            $id_order = $proyek->id_proyek;
+
             Progres::where('id_proyek', $id_proyek)->delete();
+
+            Klien::where('id_order', $id_proyek)->delete();
+
+            Pemasukan::where('id_order', $id_proyek)->delete();
+
             $proyek->delete();
-            
+
             DB::commit();
-            return redirect()->route('tables.proyek')->with('success', 'Proyek berhasil dihapus!');
-            
+            return redirect()->route('tables.proyek')->with('success', 'Proyek beserta data terkait berhasil dihapus!');
+
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Project deletion error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus proyek: ' . $e->getMessage());
         }
     }
-
     public function edit($id)
     {
         $proyek = Proyek::findOrFail($id);

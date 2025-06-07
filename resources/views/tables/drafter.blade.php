@@ -163,7 +163,7 @@
                                 {{-- Tombol "Previous" --}}
                                 <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
                                     <a class="page-link arrow" 
-                                    href="{{ $currentPage > 1 ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
+                                    href="{{ $currentPage > 1 ? route('tables.drafter', array_merge(request()->all(), ['page' => $currentPage - 1])) : '#' }}">
                                         &#x276E;
                                     </a>
                                 </li>
@@ -172,7 +172,7 @@
                                 @for ($i = 1; $i <= ceil($total / $perPage); $i++)
                                     <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
                                         <a class="page-link"
-                                        href="{{ route('tables.proyek', array_merge(request()->all(), ['page' => $i])) }}">
+                                        href="{{ route('tables.drafter', array_merge(request()->all(), ['page' => $i])) }}">
                                             {{ $i }}
                                         </a>
                                     </li>
@@ -181,7 +181,7 @@
                                 {{-- Tombol "Next" --}}
                                 <li class="page-item {{ $currentPage == ceil($total / $perPage) ? 'disabled' : '' }}">
                                     <a class="page-link arrow" 
-                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.proyek', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
+                                    href="{{ $currentPage < ceil($total / $perPage) ? route('tables.drafter', array_merge(request()->all(), ['page' => $currentPage + 1])) : '#' }}">
                                         &#x276F;
                                     </a>
                                 </li>

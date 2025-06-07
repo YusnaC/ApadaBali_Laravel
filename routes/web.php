@@ -74,6 +74,7 @@ Route::get('/progres/{id}/edit', [ProgresController::class, 'edit'])->name('prog
 Route::put('/progres/{id}', [ProgresController::class, 'update'])->name('progres.update');
 Route::delete('/progres/{id}', [ProgresController::class, 'destroy'])->name('progres.destroy');
 //end progress
+
 //this is for project  CRUD
 Route::get('/Pencatatan-Proyek/{id}/edit', [proyekController::class, 'edit'])->name('proyek.edit');
 Route::put('/Pencatatan-Proyek/{id}', [proyekController::class, 'update'])->name('proyek.update');
@@ -134,6 +135,7 @@ Route::get('/Tambah-Data-Klien', function () { //form tambah / edit data klien o
 Route::get('/Admin-Profile', [ProfileController::class, 'index'])->middleware('auth');
 
 Route::get('/laporan-proyek/export', [App\Http\Controllers\LaporanProyekController::class, 'export'])->name('laporan.export');
+
 // ROUTES FOR DRAFTER
 Route::get('/dashboard-drafter', function () { //tampilan dashboard drafter
     return view('dashboarddrafter');

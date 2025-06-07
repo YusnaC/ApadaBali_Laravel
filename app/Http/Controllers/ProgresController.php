@@ -279,24 +279,6 @@ class ProgresController extends Controller
     return view('detailProyek', compact('progres', 'projects'));
     }
 
-    // public function update(Request $request, $id)
-    // {
-    //     $validated = $request->validate([
-    //         'id_proyek' => 'required|exists:proyek,id_proyek',
-    //         'tgl_progres' => 'required|date',
-    //         'status_progres' => 'required|string',
-    //         'progres' => 'required|integer|min:0|max:100',
-    //         'dokumen' => 'nullable|string',
-    //         'keterangan' => 'nullable|string'
-    //     ]);
-
-    //     $progres = Progres::findOrFail($id);
-    //     $progres->update($validated);
-
-    //     return redirect()->route('tables.progresproyek')
-    //         ->with('success', 'Progress berhasil diperbarui');
-    // }
-
     public function destroy($id)
     {
         $progres = Progres::findOrFail($id);

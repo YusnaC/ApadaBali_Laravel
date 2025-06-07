@@ -207,18 +207,26 @@ li {
 
 /* Penataan tombol konfirmasi di popup */
 .custom-confirm-button {
-    background-color: var(--body-clr);
-    color: var(--secondary);
+    background-color: var(--primary);
+    color: var(--body-clr);
     border: none;
     border-radius: 0.5rem;
     padding: 1rem 1.5rem;
     font-size: 1rem;
 }
 
+.custom-confirm-button:hover {
+    background-color: #c05e45; /* warna orange saat hover */
+    color: white; /* teks jadi putih saat hover */
+}
+.custom-cancel-button:hover {
+    background-color: rgb(194, 193, 193); /* warna orange saat hover */
+    color: white; /* teks jadi putih saat hover */
+}
 /* Penataan tombol pembatalan di popup */
 .custom-cancel-button {
-    background-color: var(--primary);
-    color: var(--body-clr);
+    background-color: var(--body-clr);
+    color: var(--secondary);
     border: none;
     border-radius: 0.5rem;
     padding: 1rem 1.5rem;

@@ -33,15 +33,14 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-    
-        // If only updating password
+
         if ($request->filled('current_password') || $request->filled('password')) {
             $passwordRules = [
                 'current_password' => 'required',
                 'password' => 'required|min:8',
                 'password_confirmation' => 'required|same:password'
             ];
-    
+
             $passwordMessages = [
                 'current_password.required' => 'Password saat ini wajib diisi',
                 'password.required' => 'Password baru wajib diisi',
@@ -53,37 +52,32 @@ class ProfileController extends Controller
             $validator = validator($request->all(), $passwordRules, $passwordMessages);
 
             if ($validator->fails()) {
-                $errors = $validator->errors();
-                
-                if (!Hash::check($request->current_password, $user->password)) {
-                    $errors->add('current_password', 'Password saat ini tidak sesuai');
-                }
-                
-                return back()
-                    ->withErrors($errors)
-                    ->withInput();
+                return back()->withErrors($validator)->withInput();
             }
-    
+
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai'])->withInput();
+            }
+
+            if (Hash::check($request->password, $user->password)) {
+                return back()->withErrors(['password' => 'Password baru tidak boleh sama dengan password lama'])->withInput();
+            }
+
             $user->update(['password' => Hash::make($request->password)]);
             return redirect()->route('profile.index')->with('success', 'Password berhasil diperbarui');
         }
-    
-        // For other profile updates
-        // Base validation rules
+
         $rules = [
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'alamat' => 'required|string',
-            
         ];
 
-        // Add WhatsApp validation for drafters
         if ($user->role === 'drafter') {
             $rules['no_hp'] = 'required|digits_between:10,15';
         }
-    
-        // Define validation messages
+
         $messages = [
             'username.required' => 'Username wajib diisi',
             'nama.required' => 'Nama wajib diisi',
@@ -95,21 +89,12 @@ class ProfileController extends Controller
             'no_whatsapp.required' => 'Nomor WhatsApp wajib diisi',
             'no_whatsapp.digits_between' => 'Nomor WhatsApp harus terdiri dari 10 sampai 15 digit',
         ];
-    
-        // Separate password validation
-        // if ($request->filled('current_password') || $request->filled('new_password')) {
-        //     $rules['current_password'] = 'required|min:8';
-        //     $rules['new_password'] = 'required|min:8|confirmed';
-        //     $rules['confirm-password'] = 'required';
-        // }
-        
-    
+
         $request->validate($rules, $messages);
-    
+
         try {
             DB::beginTransaction();
-    
-            // Update basic info
+
             $updateData = [
                 'username' => $request->username,
                 'name' => $request->nama,
@@ -117,20 +102,13 @@ class ProfileController extends Controller
                 'address' => $request->alamat,
                 'phone' => $request->no_hp ?? $user->phone,
             ];
-    
-            // Handle password update separately
-            if ($request->filled('current_password')) {
-                if (!Hash::check($request->current_password, $user->password)) {
-                    return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai']);
-                }
-                $updateData['password'] = Hash::make($request->password);
-            }
-    
+
             $user->update($updateData);
+
             DB::commit();
-            
+
             return redirect()->route('profile.index')->with('success', 'Profile berhasil diperbarui');
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Gagal mengupdate profile: ' . $e->getMessage()]);
