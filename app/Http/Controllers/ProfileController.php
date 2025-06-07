@@ -33,7 +33,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-
+        $oldName = $user->name;
         if ($request->filled('current_password') || $request->filled('password')) {
             $passwordRules = [
                 'current_password' => 'required',
@@ -104,6 +104,25 @@ class ProfileController extends Controller
             ];
 
             $user->update($updateData);
+
+            // Jika user adalah drafter, update data drafter juga
+            if ($user->role === 'drafter') {
+                // Cari drafter berdasarkan nama sebelum update (user->name masih data lama)
+                $drafter = \App\Models\Drafter::where('nama_drafter', $oldName)->first();
+                if ($drafter) {
+                    $nama_drafter = $request->nama;
+            
+                    // Gunakan data lama jika field tidak ada di request
+                    $no_whatsapp = $request->filled('no_hp') ? $request->no_hp : $drafter->no_whatsapp;
+                    $alamat_drafter = $request->filled('alamat') ? $request->alamat : $drafter->alamat_drafter;
+            
+                    $drafter->update([
+                        'nama_drafter' => $nama_drafter,
+                        'no_whatsapp' => $no_whatsapp,
+                        'alamat_drafter' => $alamat_drafter,
+                    ]);
+                }
+            }
 
             DB::commit();
 

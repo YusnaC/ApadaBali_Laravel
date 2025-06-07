@@ -138,10 +138,24 @@ class KlienController extends Controller
         $klien = Klien::where('id_klien', $id)->firstOrFail();
         
         // Get projects and furniture for dropdowns
-        $proyekOptions = DB::table('proyek')->select('id_proyek')->get();
-        $furnitureOptions = DB::table('furniture')->select('id_furniture')->get();
+        $proyekOptions = DB::table('proyek')
+        ->select('id_proyek')
+        ->whereNull('deleted_at')
+        ->get();
+
+        $jasaOptions = DB::table('proyek')
+        ->select('id_proyek')
+        ->whereNull('deleted_at')
+        ->where('kategori', 2)  // filter kategori = 2
+        ->get();
+
+        $furnitureOptions = DB::table('furniture')
+            ->select('id_furniture')
+            ->whereNull('deleted_at')
+            ->get();
+    
         
-        return view('dataKlien', compact('klien', 'proyekOptions', 'furnitureOptions'));
+        return view('dataKlien', compact('klien', 'proyekOptions', 'furnitureOptions', 'jasaOptions'));
     }
 
     public function update(Request $request, $id)

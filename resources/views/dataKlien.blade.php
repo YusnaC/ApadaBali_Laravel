@@ -76,6 +76,12 @@
                                                     {{ $proyek->id_proyek }}
                                                 </option>
                                             @endforeach
+                                        @elseif($klien->jenis_order == 'Jasa')
+                                            @foreach($jasaOptions as $proyek)
+                                                <option value="{{ $proyek->id_proyek }}" {{ $klien->id_order == $proyek->id_proyek ? 'selected' : '' }}>
+                                                    {{ $proyek->id_proyek }}
+                                                </option>
+                                            @endforeach
                                         @else
                                             @foreach($furnitureOptions as $furniture)
                                                 <option value="{{ $furniture->id_furniture }}" {{ $klien->id_order == $furniture->id_furniture ? 'selected' : '' }}>

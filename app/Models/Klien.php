@@ -31,9 +31,25 @@ class Klien extends Model
             }
 
             if (!$klien->id_order) {
-                $prefix = $klien->jenis_order === 'Proyek Arsitektur' ? 'ASB' : 'AFB';
-                $latestOrder = static::where('jenis_order', $klien->jenis_order)->latest()->first();
+                $prefixes = [
+                    'Proyek Arsitektur' => 'ASB',
+                    'Jasa' => 'AJB',
+                    'Furniture' => 'AJB',
+                    // jenis_order lain sesuai kebutuhan
+                ];
+            
+                // Ambil prefix berdasarkan jenis_order, default 'AFB' jika tidak ada
+                $prefix = $prefixes[$klien->jenis_order] ?? 'AFB';
+            
+                // Ambil data terbaru yang sesuai jenis_order, urutkan berdasarkan nomor di id_order
+                $latestOrder = static::where('jenis_order', $klien->jenis_order)
+                    ->orderByRaw("CAST(SUBSTRING(id_order, 4) AS UNSIGNED) DESC")
+                    ->first();
+            
+                // Ambil nomor urut dari id_order terbaru
                 $number = $latestOrder ? intval(substr($latestOrder->id_order, 3)) + 1 : 1;
+            
+                // Buat id_order baru dengan prefix + nomor urut 4 digit
                 $klien->id_order = $prefix . str_pad($number, 4, '0', STR_PAD_LEFT);
             }
         });

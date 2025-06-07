@@ -6,7 +6,8 @@ use App\Models\Furniture;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\Klien;
+use App\Models\Pemasukan;
 class FurnitureController extends Controller
 {
     public function index(Request $request)
@@ -60,25 +61,22 @@ class FurnitureController extends Controller
     }
 
     public function create()
-{
-    $prefix = 'AFB';
+    {
+        $prefix = 'AFB';
 
-    $lastFurniture = Furniture::withTrashed()
-        ->orderByRaw("CAST(SUBSTRING(id_furniture, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
-        ->first();
+        $lastFurniture = Furniture::withTrashed()
+            ->orderByRaw("CAST(SUBSTRING(id_furniture, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
+            ->first();
 
-    if (!$lastFurniture) {
-        $newId = $prefix . '0001';
-    } else {
-        $lastNumber = intval(substr($lastFurniture->id_furniture, strlen($prefix)));
-        $newId = $prefix . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        if (!$lastFurniture) {
+            $newId = $prefix . '0001';
+        } else {
+            $lastNumber = intval(substr($lastFurniture->id_furniture, strlen($prefix)));
+            $newId = $prefix . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        }
+
+        return view('furniture', compact('newId'))->with('furniture', null);
     }
-
-    return view('furniture', compact('newId'))->with('furniture', null);
-}
-
-
-
 
     public function store(Request $request)
     {
@@ -179,7 +177,12 @@ class FurnitureController extends Controller
                 DB::rollBack();
                 return redirect()->back()->with('error', 'Furniture tidak ditemukan!');
             }
-            
+             // Soft delete dari tabel pemasukan berdasarkan id_order = id_furniture
+            Pemasukan::where('id_order', $furniture->id_furniture)->delete();
+
+            // Soft delete dari tabel klien berdasarkan id_order = id_furniture
+            Klien::where('id_order', $furniture->id_furniture)->delete();
+
             $furniture->delete(); // This will now soft delete due to SoftDeletes trait
             
             DB::commit();
